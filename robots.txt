@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://feliciti.fr/sitemap.xml

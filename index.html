@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="only light">
+  <title>Feliciti — Le faire-part vidéo qui raconte votre histoire</title>
+  <meta name="description" content="Il existe un mot pour le bonheur parfait : la félicité. Feliciti la met en récit : faire-part vidéo racontant votre histoire, site de mariage sur mesure, invités orchestrés avec soin.">
+  <meta name="keywords" content="faire-part vidéo mariage, site de mariage sur mesure, faire-part mariage haut de gamme, livre d'or vidéo mariage, save the date vidéo">
+  <link rel="canonical" href="https://feliciti.fr/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Feliciti">
+  <meta property="og:title" content="Feliciti — Le faire-part vidéo qui raconte votre histoire">
+  <meta property="og:description" content="Feliciti met votre bonheur en récit : faire-part vidéo sur mesure, site de mariage, invités orchestrés avec soin.">
+  <meta property="og:url" content="https://feliciti.fr/">
+  <meta property="og:image" content="https://feliciti.fr/public/posters/hero.webp">
+  <meta property="og:locale" content="fr_FR">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Feliciti — Le faire-part vidéo qui raconte votre histoire">
+  <meta name="twitter:description" content="Feliciti met votre bonheur en récit : faire-part vidéo sur mesure, site de mariage, invités orchestrés avec soin.">
+  <meta name="twitter:image" content="https://feliciti.fr/public/posters/hero.webp">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=6">
+  <link rel="preload" as="image" href="public/posters/hero.webp">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Feliciti",
+    "description": "Prestations digitales haut de gamme dédiées au mariage : faire-part vidéo sur mesure, site de mariage, livre d'or vidéo.",
+    "url": "https://feliciti.fr/",
+    "areaServed": "FR",
+    "sameAs": ["https://www.instagram.com/feliciti"]
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Marque + navigation -->
+  <header class="brand" id="brand" aria-label="Feliciti">
+    <a class="brand-mark wordmark" href="/">FELICIT<span class="wm-i">I</span></a>
+    <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="brand-nav" aria-label="Navigation principale">
+      <a href="prestations/">Prestations</a>
+      <a href="le-grand-jour/">Le Grand Jour</a>
+      <a href="#contact">Devis</a>
+    </nav>
+  </header>
+
+  <!-- Le fil (récit visuel) — tracé signature rouge, révélé par le scroll -->
+  <svg class="fil" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
+    <path id="fil-path" pathLength="1000" vector-effect="non-scaling-stroke"
+      d="M 500 -10
+         C 520 90, 460 160, 505 250
+         C 545 330, 470 390, 500 470
+         C 525 540, 485 560, 505 585
+         C 525 610, 545 590, 530 570
+         C 515 550, 480 590, 505 650
+         C 535 720, 560 760, 610 830
+         C 650 890, 590 950, 500 1010" />
+  </svg>
+
+  <!-- Effets cinématiques globaux -->
+  <div class="grain" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="tint" aria-hidden="true"></div>
+
+  <!-- Loader : le récit s'écrit -->
+  <div class="loader" id="loader" role="status" aria-live="polite">
+    <div class="loader-line"><span id="loader-fill"></span></div>
+    <span class="loader-label" id="loader-label">le récit s'écrit</span>
+  </div>
+
+  <main>
+
+    <!-- ACTE I — canvas pinné + hero overlay -->
+    <section class="acte" id="acte1" aria-label="Acte I — La Rencontre">
+      <canvas class="acte-canvas" id="canvas1"></canvas>
+      <img class="acte-poster" src="public/posters/hero.webp" alt="Un fil rouge relie les mains de deux amoureux sur une table de café" width="1920" height="1080">
+
+      <div class="hero" id="hero">
+        <h1 class="wordmark">FELICIT<span class="wm-i">I</span></h1>
+        <p class="hero-base">Prestations digitales haut de gamme</p>
+        <p class="hero-sub">Il existe un mot ancien pour dire le bonheur parfait : la félicité.<br>Ceux qui la rencontrent la reconnaissent au premier regard.</p>
+      </div>
+      <p class="scroll-cue" id="scroll-cue">déroulez le récit</p>
+
+      <p class="caption caption-left" id="cap-pluie">Il y a d'abord un café,<br>une pluie, un livre partagé.</p>
+      <p class="caption caption-right" id="cap-picnic">Puis les heures qui s'envolent<br>sans qu'on les compte.</p>
+      <p class="caption caption-center" id="cap-bague">Et un jour, la promesse se dessine.</p>
+    </section>
+
+    <!-- INTERLUDE — respiration éditoriale -->
+    <section class="interlude" id="interlude">
+      <div class="interlude-bloc">
+        <p class="eyebrow eyebrow-dark smallcaps">Acte I — La Rencontre</p>
+        <h2>Votre histoire mérite mieux qu'un carton. <em>Elle mérite d'être vécue.</em></h2>
+        <p class="interlude-body">Feliciti la met en mouvement&nbsp;: un faire-part que vos invités ouvrent d'un lien
+        et déroulent sous leurs doigts, un site qui les accueille, un film qui réunit tous ceux qui vous aiment.
+        Chaque création est pensée sur mesure&nbsp;— livrée sous 7 jours, retouchée sous 48 heures.</p>
+      </div>
+      <div class="interlude-spacer" aria-hidden="true"></div>
+      <div class="interlude-bloc interlude-bloc-next">
+        <p class="eyebrow eyebrow-dark smallcaps">Acte II — La Promesse</p>
+      </div>
+    </section>
+
+    <!-- ACTE II — canvas pinné -->
+    <section class="acte" id="acte2" aria-label="Acte II — La Promesse">
+      <canvas class="acte-canvas" id="canvas2"></canvas>
+      <img class="acte-poster" src="public/posters/acte2-debut.webp" alt="Un fil rouge descend dans une lumière dorée" width="1920" height="1080">
+      <p class="caption caption-left" id="cap-ecrin">Une promesse<br>tient dans un écrin.</p>
+    </section>
+
+    <!-- ÉPILOGUE -->
+    <section class="final" id="final">
+      <p class="final-wordmark wordmark">FELICIT<span class="wm-i">I</span></p>
+      <p class="eyebrow eyebrow-gold smallcaps">Épilogue — votre histoire</p>
+      <h2>Écrivez<br><em>la suite.</em></h2>
+      <p class="final-body">Ce que vous venez de vivre en faisant défiler cette page,
+      vos invités le vivront avec votre histoire — un faire-part qui se déroule sous leurs doigts,
+      un site qui les accueille, un film qui réunit tous ceux qui vous aiment.</p>
+      <div class="final-actions">
+        <a class="btn btn-light" href="#contact">Écrire votre histoire</a>
+      </div>
+    </section>
+
+    <!-- APERÇU DES PRESTATIONS -->
+    <section class="section section-creme" id="prestations">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="sec-num">I</span>
+          <span class="sec-eyebrow smallcaps">Les prestations</span>
+          <h2 class="sec-title">Tout, <em>sur mesure</em></h2>
+          <p class="sec-lead">Ce que chaque prestation fait pour vous — et ce que vos invités en vivent. Le détail et le tarif sur chaque page.</p>
+        </div>
+        <div class="presta-grid">
+          <a class="presta-card" href="faire-part-video/">
+            <div class="presta-media" aria-hidden="true">Aperçu</div>
+            <span class="presta-num">I</span>
+            <h3>Le faire-part vidéo</h3>
+            <p>Un lien à partager : vos invités l'ouvrent et votre histoire se déroule en vidéo sous leurs doigts.</p>
+            <span class="presta-link">Découvrir</span>
+          </a>
+          <a class="presta-card" href="save-the-date/">
+            <div class="presta-media" aria-hidden="true">Aperçu</div>
+            <span class="presta-num">II</span>
+            <h3>Le save-the-date</h3>
+            <p>Une vidéo courte qui bloque votre date dans les agendas, des mois avant l'invitation.</p>
+            <span class="presta-link">Découvrir</span>
+          </a>
+          <a class="presta-card" href="site-de-mariage/">
+            <div class="presta-media" aria-hidden="true">Aperçu</div>
+            <span class="presta-num">III</span>
+            <h3>Le site de mariage</h3>
+            <p>Vos invités répondent, choisissent leur menu et se repèrent — vous n'y pensez plus.</p>
+            <span class="presta-link">Découvrir</span>
+          </a>
+          <a class="presta-card" href="video-temoin/">
+            <div class="presta-media" aria-hidden="true">Aperçu</div>
+            <span class="presta-num">IV</span>
+            <h3>« Veux-tu être mon témoin&nbsp;? »</h3>
+            <p>Demandez à vos témoins de tenir leur rôle par une vidéo qu'ils n'oublieront pas.</p>
+            <span class="presta-link">Découvrir</span>
+          </a>
+          <a class="presta-card" href="livre-d-or-video/">
+            <div class="presta-media" aria-hidden="true">Aperçu</div>
+            <span class="presta-num">V</span>
+            <h3>Le Livre d'Or vidéo</h3>
+            <p>Le jour J, un QR code sur les tables : vos invités vous répondent en vidéo, réunis en un film.</p>
+            <span class="presta-link">Découvrir</span>
+          </a>
+          <a class="presta-card" href="capsule-anniversaire/">
+            <div class="presta-media" aria-hidden="true">Aperçu</div>
+            <span class="presta-num">VI</span>
+            <h3>La capsule anniversaire</h3>
+            <p>Un an après, jour pour jour, votre film vous revient — sans que vous ayez à y penser.</p>
+            <span class="presta-link">Découvrir</span>
+          </a>
+          <a class="presta-card" href="le-grand-jour/">
+            <div class="presta-media" aria-hidden="true">Aperçu</div>
+            <span class="presta-num">VII</span>
+            <h3>Formule Le Grand Jour</h3>
+            <p>Toutes les prestations réunies, retouches illimitées et accompagnement prioritaire.</p>
+            <span class="presta-link">Découvrir</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOTRE APPROCHE -->
+    <section class="section section-lin" id="approche">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="sec-num">II</span>
+          <span class="sec-eyebrow smallcaps">Notre approche</span>
+          <h2 class="sec-title">Trois temps, <em>pensés pour vous</em></h2>
+        </div>
+        <div class="approche-grid">
+          <div class="step">
+            <div class="step-num">I</div>
+            <h3>Vous nous racontez votre histoire</h3>
+          </div>
+          <div class="step">
+            <div class="step-num">II</div>
+            <h3>Nous créons, vous validez</h3>
+          </div>
+          <div class="step">
+            <div class="step-num">III</div>
+            <h3>Vos invités vivent l'expérience</h3>
+          </div>
+        </div>
+        <p class="approche-delay">Votre création <span>sous 7 jours</span>. Chaque retouche <span>sous 48 heures</span>.</p>
+      </div>
+    </section>
+
+    <!-- POUR EUX AUSSI — l'expérience des invités -->
+    <section class="section section-creme" id="pour-eux">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="sec-num">III</span>
+          <span class="sec-eyebrow smallcaps">Pour eux aussi</span>
+          <h2 class="sec-title">Vos invités ne reçoivent pas une information, <em>ils reçoivent un moment</em></h2>
+        </div>
+        <div class="approche-grid">
+          <div class="step">
+            <div class="step-num">I</div>
+            <h3>Recevoir</h3>
+            <p class="step-body">Un lien, pas un fichier. Un geste, et votre histoire s'ouvre.</p>
+          </div>
+          <div class="step">
+            <div class="step-num">II</div>
+            <h3>Vivre</h3>
+            <p class="step-body">Ils la déroulent sous leurs doigts — la grand-mère qui la regarde trois fois, l'ami qui la partage, les larmes avant même le grand jour.</p>
+          </div>
+          <div class="step">
+            <div class="step-num">III</div>
+            <h3>Répondre</h3>
+            <p class="step-body">Ils répondent en un geste. Et le jour J, ce sont eux qui vous répondent en vidéo.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALERIE -->
+    <section class="section section-lin" id="galerie">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="sec-num">IV</span>
+          <span class="sec-eyebrow smallcaps">La galerie</span>
+          <h2 class="sec-title">Des histoires <em>déjà écrites</em></h2>
+        </div>
+        <div class="galerie-grid">
+          <figure class="galerie-item">
+            <div class="galerie-media" aria-hidden="true">Création vidéo</div>
+            <figcaption class="galerie-cap">Camille &amp; Thomas — Provence</figcaption>
+          </figure>
+          <figure class="galerie-item">
+            <div class="galerie-media" aria-hidden="true">Création vidéo</div>
+            <figcaption class="galerie-cap">Inès &amp; Gabriel — Chantilly</figcaption>
+          </figure>
+          <figure class="galerie-item">
+            <div class="galerie-media" aria-hidden="true">Création vidéo</div>
+            <figcaption class="galerie-cap">Sofia &amp; Aaron — Lac de Côme</figcaption>
+          </figure>
+          <figure class="galerie-item">
+            <div class="galerie-media" aria-hidden="true">Création vidéo</div>
+            <figcaption class="galerie-cap">Léa &amp; Malik — Saint-Malo</figcaption>
+          </figure>
+          <figure class="galerie-item">
+            <div class="galerie-media" aria-hidden="true">Création vidéo</div>
+            <figcaption class="galerie-cap">Clara &amp; Antoine — Lubéron</figcaption>
+          </figure>
+          <figure class="galerie-item">
+            <div class="galerie-media" aria-hidden="true">Création vidéo</div>
+            <figcaption class="galerie-cap">Awa &amp; Julien — Deauville</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- TÉMOIGNAGES -->
+    <section class="section section-creme" id="temoignages">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="sec-num">V</span>
+          <span class="sec-eyebrow smallcaps">Mariés et invités</span>
+        </div>
+        <div class="temoignages">
+          <figure class="temoignage">
+            <blockquote>J'ai reçu le faire-part de ma sœur par un simple message. J'ai cliqué, et leur histoire s'est déroulée sous mes doigts — leur rencontre, la demande, la date à la fin. J'ai pleuré avant même de savoir quoi répondre. Je n'avais jamais rien reçu de tel.</blockquote>
+            <cite>Léa — invitée, sœur de la mariée</cite>
+          </figure>
+          <figure class="temoignage">
+            <blockquote>Pendant que Feliciti orchestrait nos invités — les réponses, les menus, les relances — nous préparions notre mariage l'esprit tranquille. Et la première fois que nous avons vu notre histoire en film, nous avons compris pourquoi nous avions dit oui à ce format.</blockquote>
+            <cite>Camille &amp; Thomas — Provence</cite>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- DÉMO VÉCUE -->
+    <section class="section section-lin demo" id="demo">
+      <div class="section-inner">
+        <span class="sec-num">VI</span>
+        <span class="sec-eyebrow smallcaps">La démo vécue</span>
+        <h2 class="sec-title">Vivez ce que vivront <em>vos invités</em></h2>
+        <div class="btn-row">
+          <a class="btn btn-solid btn-wa" href="https://wa.me/33600000000?text=Bonjour%20Feliciti%2C%20j%27aimerais%20recevoir%20un%20faire-part%20d%27exemple" target="_blank" rel="noopener">Recevoir un faire-part d'exemple sur WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT / DEVIS -->
+    <section class="section section-creme" id="contact">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="sec-num">VII</span>
+          <span class="sec-eyebrow smallcaps">Le devis</span>
+          <h2 class="sec-title">Racontez-nous <em>votre histoire</em></h2>
+          <p class="sec-lead">Chaque projet est unique. Confiez-nous quelques mots&nbsp;: nous revenons vers vous avec une proposition sur mesure.</p>
+        </div>
+
+        <div class="form-wrap">
+          <!-- Endpoint Formspree placeholder : remplacer xxxxxxxx -->
+          <form id="devis-form" action="https://formspree.io/f/xxxxxxxx" method="POST">
+            <div class="form-field">
+              <label for="f-couple">Vos prénoms</label>
+              <input id="f-couple" name="prenoms" type="text" placeholder="Camille &amp; Thomas" required>
+            </div>
+            <div class="form-field">
+              <label for="f-date">Date envisagée</label>
+              <input id="f-date" name="date" type="text" placeholder="Printemps 2027, ou une date précise">
+            </div>
+            <div class="form-field">
+              <label for="f-lieu">Lieu</label>
+              <input id="f-lieu" name="lieu" type="text" placeholder="Ville ou domaine">
+            </div>
+            <div class="form-field">
+              <label for="f-invites">Nombre d'invités approximatif</label>
+              <input id="f-invites" name="invites" type="text" placeholder="Environ 120">
+            </div>
+            <div class="form-field">
+              <label for="f-presta">Prestation(s) souhaitée(s)</label>
+              <select id="f-presta" name="prestation">
+                <option value="">Choisissez une prestation</option>
+                <option>Le faire-part vidéo</option>
+                <option>Le save-the-date</option>
+                <option>Le site de mariage</option>
+                <option>La vidéo témoin</option>
+                <option>Le Livre d'Or vidéo</option>
+                <option>La capsule anniversaire</option>
+                <option>Formule Le Grand Jour</option>
+                <option>Je ne sais pas encore</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="f-email">E-mail</label>
+              <input id="f-email" name="email" type="email" placeholder="vous@exemple.fr" required>
+            </div>
+            <div class="form-field">
+              <label for="f-wa">Numéro WhatsApp (optionnel)</label>
+              <input id="f-wa" name="whatsapp" type="tel" placeholder="06 00 00 00 00">
+            </div>
+            <div class="form-field">
+              <label for="f-histoire">Racontez-nous votre histoire</label>
+              <textarea id="f-histoire" name="histoire" placeholder="Votre rencontre, votre demande, ce qui vous ressemble…"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-solid">Demander mon devis</button>
+            </div>
+          </form>
+
+          <div class="form-confirm" id="form-confirm" tabindex="-1" role="status" aria-live="polite">
+            <h3>Votre histoire est entre nos mains</h3>
+            <p>Merci de votre confiance. Nous revenons vers vous très vite avec une proposition sur mesure.</p>
+            <div class="btn-row">
+              <a class="btn btn-solid" href="https://wa.me/33600000000?text=Bonjour%20Feliciti%2C%20je%20viens%20de%20remplir%20le%20formulaire%20de%20devis" target="_blank" rel="noopener">Poursuivre la conversation sur WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Pied de page -->
+  <footer class="site-footer">
+    <p class="footer-mark wordmark">FELICIT<span class="wm-i">I</span></p>
+    <p class="footer-base">France</p>
+    <nav class="footer-links" aria-label="Liens de pied de page">
+      <a href="prestations/">Prestations</a>
+      <a href="mentions-legales/">Mentions légales</a>
+      <a href="confidentialite/">Confidentialité</a>
+      <a href="cgv/">CGV</a>
+      <a href="https://www.instagram.com/feliciti" target="_blank" rel="noopener">Instagram</a>
+    </nav>
+    <p class="footer-fine">La félicité qui relie ceux qui doivent s'aimer.</p>
+  </footer>
+
+  <noscript>
+    <style>.acte-canvas,.loader{display:none!important}.acte-poster{opacity:1!important}.caption,.hero{opacity:1!important;visibility:visible!important}.brand-nav{position:static!important;transform:none!important;flex-direction:row!important;background:none!important;width:auto!important;border:none!important}</style>
+  </noscript>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js" defer></script>
+  <script src="js/main.js?v=6" defer></script>
+  <script src="js/site.js?v=6" defer></script>
+</body>
+</html>
