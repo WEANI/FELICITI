@@ -1,0 +1,9 @@
+# Ne pas embarquer dans l'image de déploiement
+.git
+.gitignore
+.dockerignore
+Dockerfile
+dist
+assets/video
+README.md
+.netlify
