@@ -1,0 +1,17 @@
+# FELICITI — hébergement statique sur Netlify
+# Le dépôt racine EST le site : rien à builder, on publie tel quel.
+[build]
+  publish = "."
+
+# Cache long pour les médias (frames/posters). Le CSS/JS est busté par ?v=N.
+[[headers]]
+  for = "/public/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+# En-têtes de sécurité sobres
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
