@@ -9,10 +9,18 @@
   'use strict';
 
   /* ---------- Réglages ---------- */
-  var FRAME_COUNT = 181;                      /* nb de frames extraites (voir README) */
+  var FRAME_COUNT = 181;                      /* hero : nb de frames extraites (voir README) */
   var FRAME_DIR   = 'public/hero/frames/';
+  var SLP_COUNT   = 165;                      /* section « Sous le pouce » : nb de frames */
+  var SLP_DIR     = 'public/sous-le-pouce/frames/';
   var REVEAL_AT   = 0.90;                     /* progression à laquelle la révélation apparaît */
   var CHAP_SPAN   = 0.13;                     /* durée de visibilité d'un chapitre (± autour de data-at) */
+
+  function slpSrc(i) {
+    var n = String(i + 1);
+    while (n.length < 3) n = '0' + n;
+    return SLP_DIR + 'slp_' + n + '.webp';
+  }
 
   var reduced  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var isMobile = window.matchMedia('(max-width: 768px)').matches;
@@ -81,6 +89,7 @@
     } else {
       reveal.classList.add('on');
     }
+    slpVideoMode();
     return;
   }
 
@@ -220,6 +229,104 @@
     });
   });
 
+  /* ============================================================
+     SECTION 6 — scrub « Sous le pouce »
+     Préchargement DIFFÉRÉ (IntersectionObserver ~1500px avant) :
+     le hero garde la priorité réseau au chargement initial.
+     ============================================================ */
+  var slpSection = document.getElementById('sous-le-pouce');
+  if (slpSection) {
+    var slpCanvas = document.getElementById('slp-canvas');
+    var slpCtx = slpCanvas.getContext('2d');
+    var slpTint = slpSection.querySelector('.slp-tint');
+    var slpChaps = Array.prototype.slice.call(slpSection.querySelectorAll('.slp-chap'));
+    var slpImgs = new Array(SLP_COUNT);
+    var slpLoaded = new Array(SLP_COUNT);
+    var slpState = { frame: 0 };
+    var slpStarted = false;
+
+    var resizeSlp = function () {
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      slpCanvas.width  = slpCanvas.clientWidth  * dpr;
+      slpCanvas.height = slpCanvas.clientHeight * dpr;
+    };
+    resizeSlp();
+
+    var renderSlp = function (frame) {
+      var f = Math.max(0, Math.min(SLP_COUNT - 1, Math.round(frame)));
+      if (!slpLoaded[f]) {
+        for (var d = 1; d < SLP_COUNT; d++) {
+          if (f - d >= 0 && slpLoaded[f - d]) { f = f - d; break; }
+          if (f + d < SLP_COUNT && slpLoaded[f + d]) { f = f + d; break; }
+        }
+        if (!slpLoaded[f]) return;
+      }
+      var img = slpImgs[f];
+      var cw = slpCanvas.width, ch = slpCanvas.height;
+      var s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+      var w = img.naturalWidth * s, h = img.naturalHeight * s;
+      slpCtx.clearRect(0, 0, cw, ch);
+      slpCtx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
+    };
+
+    var preloadSlp = function () {
+      if (slpStarted) return;
+      slpStarted = true;
+      var BATCH = 30, count = 0;
+      (function batch(start) {
+        if (start >= SLP_COUNT) return;
+        var end = Math.min(start + BATCH, SLP_COUNT), jobs = [];
+        for (var i = start; i < end; i++) (function (idx) {
+          jobs.push(new Promise(function (res) {
+            var im = new Image();
+            im.onload = im.onerror = function () {
+              slpImgs[idx] = im; slpLoaded[idx] = true; count++;
+              if (count === 15) { slpSection.classList.add('ready'); renderSlp(slpState.frame); }
+              res();
+            };
+            im.src = slpSrc(idx);
+          }));
+        })(i);
+        Promise.all(jobs).then(function () { batch(end); });
+      })(0);
+    };
+
+    /* Déclenche le préchargement ~1500px avant l'arrivée sur la section */
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { preloadSlp(); io.disconnect(); }
+        });
+      }, { rootMargin: '1500px 0px' });
+      io.observe(slpSection);
+    } else {
+      window.addEventListener('load', function () { setTimeout(preloadSlp, 2500); });
+    }
+
+    ScrollTrigger.create({
+      trigger: '#sous-le-pouce',
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 0.7,
+      onUpdate: function (self) {
+        var p = self.progress;
+        slpState.frame = p * (SLP_COUNT - 1);
+        renderSlp(slpState.frame);
+        slpChaps.forEach(function (el) {
+          var at = parseFloat(el.getAttribute('data-at'));
+          el.classList.toggle('on', p >= at - CHAP_SPAN / 2 && p <= at + CHAP_SPAN);
+        });
+        /* tint chaud local : s'intensifie vers la fin du scrub */
+        if (slpTint) slpTint.style.opacity = (p * 0.5).toFixed(3);
+      }
+    });
+
+    window.addEventListener('resize', function () {
+      clearTimeout(rt);
+      rt = setTimeout(function () { resizeSlp(); renderSlp(slpState.frame); }, 160);
+    });
+  }
+
   /* ---------- Resize ---------- */
   var rt;
   window.addEventListener('resize', function () {
@@ -231,4 +338,35 @@
   });
 
   } /* fin init() */
+
+  /* ---------- Section 6, mode vidéo (mobile / reduced-motion) ---------- */
+  function slpVideoMode() {
+    var sec = document.getElementById('sous-le-pouce');
+    if (!sec) return;
+    var v = document.getElementById('slp-video');
+    var chaps = Array.prototype.slice.call(sec.querySelectorAll('.slp-chap'));
+    if (reduced || !v) return; /* reduced : poster statique, rien d'autre */
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            v.preload = 'auto';
+            v.classList.add('on');
+            var pl = v.play();
+            if (pl && pl.catch) pl.catch(function () {});
+          } else {
+            v.pause();
+          }
+        });
+      }, { rootMargin: '200px 0px' });
+      io.observe(sec);
+    }
+    v.addEventListener('timeupdate', function () {
+      var p = v.duration ? v.currentTime / v.duration : 0;
+      chaps.forEach(function (el) {
+        var at = parseFloat(el.getAttribute('data-at'));
+        el.classList.toggle('on', p >= at - CHAP_SPAN / 2 && p <= at + CHAP_SPAN);
+      });
+    });
+  }
 })();

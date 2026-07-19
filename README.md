@@ -30,6 +30,32 @@ du scroll du visiteur, comme le faire-part que vivront ses invités.
 ffmpeg -i hero.mp4 -vf "fps=12,scale=1280:-2" -c:v libwebp -q:v 78 public/hero/frames/frame_%03d.webp
 ```
 Cible ~180 frames / ≤6 Mo ; si trop lourd, refaire en `fps=8` (et ajuster `FRAME_COUNT`).
+
+## Section 6 — scrub « Sous le pouce »
+
+Deuxième séquence scrollée de l'accueil (le faire-part vécu sur un téléphone).
+- **Assets** : `public/sous-le-pouce/` — `sous-le-pouce.mp4` (fallback mobile),
+  `frames/slp_001→165.webp` (2,9 Mo), `poster.webp`.
+- **Réglages** : `SLP_COUNT = 165` dans `js/main.js` ; hauteur `.slp { height: 350vh }` ;
+  chapitres `data-at="0.15 | 0.45 | 0.75"` dans `index.html`.
+- **Préchargement différé** : les frames ne se chargent que ~1500px avant la section
+  (IntersectionObserver) — le hero garde la priorité réseau au chargement initial.
+- **Effets locaux** : vignette radiale `.slp-vignette` + tint chaud `.slp-tint`
+  (opacité = progression × 0.5). Pas de particules : la vidéo en contient déjà.
+- **Ré-extraction** :
+```
+ffmpeg -i sous-le-pouce.mp4 -vf "fps=11,scale=1280:-2" -c:v libwebp -q:v 75 public/sous-le-pouce/frames/slp_%03d.webp
+```
+Si le poids total de la page dépasse ~12 Mo au premier chargement, refaire en `fps=8`
+et ajuster `SLP_COUNT`.
+
+## Accueil — les 11 sections (ordre strict)
+
+1. Hero vidéo scrollée · 2. Manifeste · 3. Prestations (aperçu, 3 cartes, sans prix →
+bouton vers `/creations`) · 4. L'approche · 5. L'expérience invité · 6. Scrub « Sous le
+pouce » · 7. Galerie (3 histoires) · 8. Témoignages · 9. Démo vécue (WhatsApp) ·
+10. Devis · 11. Footer. **Aucun prix sur l'accueil** — les prix vivent sur `/creations`
+et les pages produit.
 > Note : le lettrage doré visible dans la vidéo générée est approximatif (« Wedtng ») —
 > à corriger en régénérant le clip si besoin.
 

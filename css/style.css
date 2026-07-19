@@ -336,6 +336,70 @@ body.hero-video-mode .hero-scroll { height: 100vh; height: 100svh; }
 body.hero-video-mode .hero-canvas,
 body.hero-video-mode .hero-dust { display: none; }
 
+/* ---------- Section 6 — scrub « Sous le pouce » ---------- */
+.scrub {
+  position: relative;
+  background: #14100b;
+}
+.slp { height: 350vh; }
+.scrub-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+.scrub-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+}
+.scrub-poster {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+.scrub.ready .scrub-poster { opacity: 0; }
+.scrub-video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: none;
+}
+.scrub-video.on { display: block; }
+/* Vignette radiale légère, locale à la section */
+.slp-vignette {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: radial-gradient(ellipse 115% 100% at 50% 48%, transparent 62%, rgba(20, 12, 5, 0.34) 100%);
+}
+/* Color tint chaud : s'intensifie vers la fin du scrub (piloté en JS) */
+.slp-tint {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: linear-gradient(150deg, #7a5a34, #3a2c1c);
+  mix-blend-mode: soft-light;
+  opacity: 0;
+}
+body.hero-video-mode .slp { height: 100vh; height: 100svh; }
+body.hero-video-mode .scrub-canvas { display: none; }
+
+/* ---------- Variantes de grilles (accueil 11 sections) ---------- */
+.section-head-wide { max-width: 860px; }
+.presta-grid-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); max-width: 1020px; margin-left: auto; margin-right: auto; }
+.galerie-grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); max-width: 860px; margin-left: auto; margin-right: auto; }
+/* Filet bronze entre les trois temps de l'approche */
+@media (min-width: 861px) {
+  .approche-filets .step + .step { border-left: 1px solid var(--bronze-clr); }
+}
+@media (max-width: 860px) {
+  .approche-filets .step + .step { border-top: 1px solid var(--bronze-clr); padding-top: 2.2rem; }
+}
+
 /* ---------- Sections éditoriales (accueil clair) ---------- */
 .section {
   position: relative;
@@ -813,8 +877,8 @@ body.hero-video-mode .hero-dust { display: none; }
 
 /* ---------- Reduced motion : poster + révélation, aucune animation lourde ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .hero-canvas, .hero-dust, .loader, .scroll-cue::after { display: none; }
-  .hero-poster { opacity: 1 !important; }
+  .hero-canvas, .hero-dust, .scrub-canvas, .loader, .scroll-cue::after { display: none; }
+  .hero-poster, .scrub-poster { opacity: 1 !important; }
   .hero-reveal { transition: none; }
   .chapitre { display: none; }
   * { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
