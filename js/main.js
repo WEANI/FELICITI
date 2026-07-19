@@ -1,264 +1,234 @@
 /* ============================================================
-   FELICITI — le fil d'or · scroll-scrub engine
-   GSAP ScrollTrigger + Lenis · frames webp 12 fps · pacing map
+   FELICITI — hero scroll-driven
+   Séquence de frames webp scrubée au scroll (technique Apple)
+   Lenis + GSAP ScrollTrigger · chapitres synchronisés · reveal
+   Fallback mobile / reduced-motion : lecture vidéo + timeupdate
    ============================================================ */
 
 (function () {
   'use strict';
 
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* ---------- Réglages ---------- */
+  var FRAME_COUNT = 181;                      /* nb de frames extraites (voir README) */
+  var FRAME_DIR   = 'public/hero/frames/';
+  var REVEAL_AT   = 0.90;                     /* progression à laquelle la révélation apparaît */
+  var CHAP_SPAN   = 0.13;                     /* durée de visibilité d'un chapitre (± autour de data-at) */
+
+  var reduced  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var isMobile = window.matchMedia('(max-width: 768px)').matches;
 
-  if (reduced || typeof gsap === 'undefined') {
-    document.body.classList.add('reduced');
-    var loaderEl = document.getElementById('loader');
-    if (loaderEl) loaderEl.classList.add('done');
-    return; // frames-clés statiques via CSS, aucun scrub
+  var loader    = document.getElementById('loader');
+  var loaderFill= document.getElementById('loader-fill');
+  var section   = document.getElementById('hero-scroll');
+  var canvas    = document.getElementById('hero-canvas');
+  var poster    = document.getElementById('hero-poster');
+  var video     = document.getElementById('hero-video');
+  var dust      = document.getElementById('hero-dust');
+  var reveal    = document.getElementById('hero-reveal');
+  var cue       = document.getElementById('scroll-cue');
+  var tint      = document.querySelector('.tint');
+  var chapitres = Array.prototype.slice.call(document.querySelectorAll('.chapitre'));
+
+  function src(i) {
+    var n = String(i + 1);
+    while (n.length < 3) n = '0' + n;
+    return FRAME_DIR + 'frame_' + n + '.webp';
   }
 
+  /* Si les CDN (gsap/Lenis) n'ont pas encore répondu, retenter une fois
+     au window.load avant de se rabattre sur le mode vidéo. */
+  if (!reduced && !isMobile && (typeof gsap === 'undefined' || typeof Lenis === 'undefined')) {
+    if (!window.__feliciti_retry) {
+      window.__feliciti_retry = true;
+      window.addEventListener('load', function () { setTimeout(init, 300); });
+      return;
+    }
+  }
+  init();
+
+  function init() {
+
+  /* ============================================================
+     MODE VIDÉO — mobile & prefers-reduced-motion
+     Pas de scrub : lecture douce, chapitres sur timeupdate.
+     ============================================================ */
+  if (reduced || isMobile || typeof gsap === 'undefined') {
+    document.body.classList.add('hero-video-mode');
+    if (loader) loader.classList.add('done');
+    if (video) {
+      video.preload = 'auto';
+      var showReveal = function () {
+        reveal.classList.add('on');
+        if (cue) cue.classList.add('off');
+      };
+      if (reduced) {
+        /* Reduced motion : pas d'autoplay — poster + révélation immédiate */
+        showReveal();
+      } else {
+        video.classList.add('on');
+        var played = video.play();
+        if (played && played.catch) played.catch(showReveal);
+        video.addEventListener('timeupdate', function () {
+          var p = video.duration ? video.currentTime / video.duration : 0;
+          chapitres.forEach(function (el) {
+            var at = parseFloat(el.getAttribute('data-at'));
+            el.classList.toggle('on', p >= at - CHAP_SPAN / 2 && p <= at + CHAP_SPAN);
+          });
+          if (p >= REVEAL_AT) showReveal();
+        });
+        video.addEventListener('ended', showReveal);
+      }
+    } else {
+      reveal.classList.add('on');
+    }
+    return;
+  }
+
+  /* ============================================================
+     MODE SCRUB — desktop
+     ============================================================ */
   gsap.registerPlugin(ScrollTrigger);
 
-  /* ---------- Lenis (scroll doux) ---------- */
-  var lenis = new Lenis({ duration: 1.2, smoothWheel: true });
+  /* ---------- Lenis (scroll pacing : doux, jamais de snap) ---------- */
+  var lenis = new Lenis({ duration: 1.1, smoothWheel: true });
   window.lenis = lenis; /* exposé pour le défilement d'ancres (site.js) */
   lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
+  gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
   gsap.ticker.lagSmoothing(0);
 
-  /* ---------- Séquences de frames ---------- */
-  var FRAME_COUNT = 181;
-  var dir1 = isMobile ? 'public/frames/acte1-m/' : 'public/frames/acte1/';
-  var dir2 = isMobile ? 'public/frames/acte2-m/' : 'public/frames/acte2/';
-
-  function src(dir, i) {
-    var n = String(i + 1);
-    while (n.length < 4) n = '0' + n;
-    return dir + 'f_' + n + '.webp';
-  }
-
-  function makeSeq(dir) {
-    return { dir: dir, imgs: new Array(FRAME_COUNT), loaded: new Array(FRAME_COUNT), started: false, done: false };
-  }
-  var seq1 = makeSeq(dir1);
-  var seq2 = makeSeq(dir2);
-
-  /* Préchargement par lots de 30 (progressif, sans bloquer la 1re peinture) */
-  function loadSeq(seq, onProgress, onDone) {
-    if (seq.started) return;
-    seq.started = true;
-    var BATCH = 30;
-    var count = 0;
-
-    function loadBatch(start) {
-      if (start >= FRAME_COUNT) {
-        seq.done = true;
-        if (onDone) onDone();
-        return;
-      }
-      var end = Math.min(start + BATCH, FRAME_COUNT);
-      var jobs = [];
-      for (var i = start; i < end; i++) {
-        (function (idx) {
-          jobs.push(new Promise(function (resolve) {
-            var img = new Image();
-            img.onload = img.onerror = function () {
-              seq.imgs[idx] = img;
-              seq.loaded[idx] = true;
-              count++;
-              if (onProgress) onProgress(count / FRAME_COUNT);
-              resolve();
-            };
-            img.src = src(seq.dir, idx);
-          }));
-        })(i);
-      }
-      Promise.all(jobs).then(function () { loadBatch(end); });
-    }
-    loadBatch(0);
-  }
-
   /* ---------- Canvas ---------- */
-  function setupCanvas(canvas) {
-    var ctx = canvas.getContext('2d');
-    function resize() {
-      var dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = canvas.clientWidth * dpr;
-      canvas.height = canvas.clientHeight * dpr;
-    }
-    resize();
-    return { canvas: canvas, ctx: ctx, resize: resize };
+  var ctx = canvas.getContext('2d');
+  function resizeCanvas() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width  = canvas.clientWidth  * dpr;
+    canvas.height = canvas.clientHeight * dpr;
   }
+  resizeCanvas();
 
-  var c1 = setupCanvas(document.getElementById('canvas1'));
-  var c2 = setupCanvas(document.getElementById('canvas2'));
+  var imgs = new Array(FRAME_COUNT);
+  var loaded = new Array(FRAME_COUNT);
+  var state = { frame: 0 };
 
-  /* Rend la frame demandée, ou la plus proche déjà chargée */
-  function render(c, seq, frame) {
-    var f = Math.round(frame);
-    if (!seq.loaded[f]) {
-      var found = -1;
+  /* Dessine la frame demandée (ou la plus proche chargée), en cover */
+  function render(frame) {
+    var f = Math.max(0, Math.min(FRAME_COUNT - 1, Math.round(frame)));
+    if (!loaded[f]) {
       for (var d = 1; d < FRAME_COUNT; d++) {
-        if (f - d >= 0 && seq.loaded[f - d]) { found = f - d; break; }
-        if (f + d < FRAME_COUNT && seq.loaded[f + d]) { found = f + d; break; }
+        if (f - d >= 0 && loaded[f - d]) { f = f - d; break; }
+        if (f + d < FRAME_COUNT && loaded[f + d]) { f = f + d; break; }
       }
-      if (found === -1) return;
-      f = found;
+      if (!loaded[f]) return;
     }
-    var img = seq.imgs[f];
-    var cw = c.canvas.width, ch = c.canvas.height;
-    var scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
-    var w = img.naturalWidth * scale, h = img.naturalHeight * scale;
-    c.ctx.clearRect(0, 0, cw, ch);
-    c.ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
+    var img = imgs[f];
+    var cw = canvas.width, ch = canvas.height;
+    var s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+    var w = img.naturalWidth * s, h = img.naturalHeight * s;
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
   }
 
-  var state1 = { frame: 0 };
-  var state2 = { frame: 0 };
-
-  /* ---------- Timelines à pacing différencié (timecode map) ----------
-     Frames = secondes × 12. Durée du tween ∝ distance de scroll :
-     tunnels courts (accélérés), scènes longues (lentes).            */
-
-  var SEGS_1 = [
-    { to: 36,  d: 3.0 },  /* 0–3 s   couture, café — lent            */
-    { to: 60,  d: 0.9 },  /* 3–5 s   thread-tunnel 1 — accéléré      */
-    { to: 96,  d: 3.0 },  /* 5–8 s   fenêtre pluie — lent            */
-    { to: 120, d: 0.9 },  /* 8–10 s  thread-tunnel 2 — accéléré      */
-    { to: 156, d: 3.0 },  /* 10–13 s pique-nique — lent              */
-    { to: 180, d: 3.2 }   /* 13–15 s bague — très lent (pause)       */
-  ];
-  var SEGS_2 = [
-    { to: 36,  d: 2.6 },  /* 0–3 s   écrin — lent                    */
-    { to: 60,  d: 0.9 },  /* 3–5 s   tunnel diamant — accéléré       */
-    { to: 96,  d: 3.0 },  /* 5–8 s   demande golden hour — lent      */
-    { to: 120, d: 0.9 },  /* 8–10 s  tunnel dentelle — accéléré      */
-    { to: 156, d: 2.2 },  /* 10–13 s grue cathédrale — décélération  */
-    { to: 180, d: 3.4 }   /* 13–15 s fin de grue — très lent → CTA   */
-  ];
-
-  function buildActe(sectionId, c, seq, state, segs, endDist) {
-    var tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionId,
-        pin: true,
-        scrub: 0.8,
-        start: 'top top',
-        end: '+=' + endDist
-      }
-    });
-    segs.forEach(function (s) {
-      tl.to(state, {
-        frame: s.to,
-        duration: s.d,
-        snap: 'frame',
-        ease: 'none',
-        onUpdate: function () { render(c, seq, state.frame); }
-      });
-    });
-    return tl;
+  /* ---------- Préchargement par lots (loader wordmark + barre bronze) ---------- */
+  function preload(onDone) {
+    var BATCH = 30, count = 0;
+    function batch(start) {
+      if (start >= FRAME_COUNT) { onDone(); return; }
+      var end = Math.min(start + BATCH, FRAME_COUNT), jobs = [];
+      for (var i = start; i < end; i++) (function (idx) {
+        jobs.push(new Promise(function (res) {
+          var im = new Image();
+          im.onload = im.onerror = function () {
+            imgs[idx] = im; loaded[idx] = true; count++;
+            loaderFill.style.width = Math.round(count / FRAME_COUNT * 100) + '%';
+            if (count === 20) { section.classList.add('ready'); render(state.frame); }
+            res();
+          };
+          im.src = src(idx);
+        }));
+      })(i);
+      Promise.all(jobs).then(function () { batch(end); });
+    }
+    batch(0);
   }
 
-  var end1 = isMobile ? 2500 : 4200;
-  var end2 = isMobile ? 2350 : 3900;
-
-  var tl1 = buildActe('#acte1', c1, seq1, state1, SEGS_1, end1);
-  var tl2 = buildActe('#acte2', c2, seq2, state2, SEGS_2, end2);
-
-  /* ---------- Textes : jamais pendant un tunnel ----------
-     Positions = temps cumulés de la timeline (bornes SEGS).  */
-
-  function cap(tl, el, tIn, tOut) {
-    tl.to(el, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power1.out' }, tIn);
-    tl.to(el, { autoAlpha: 0, duration: 0.4, ease: 'power1.in' }, tOut);
-  }
-  gsap.set(['#cap-pluie', '#cap-picnic', '#cap-bague', '#cap-ecrin'], { y: 24 });
-
-  /* Acte I — bornes : 0 · 3.0 · 3.9 · 6.9 · 7.8 · 10.8 · 14.0 */
-  tl1.to(['#hero', '#scroll-cue'], { autoAlpha: 0, duration: 0.8, ease: 'power1.in' }, 0.15);
-  cap(tl1, '#cap-pluie', 4.3, 6.4);
-  cap(tl1, '#cap-picnic', 8.2, 10.3);
-  cap(tl1, '#cap-bague', 11.6, 13.5);
-
-  /* Acte II — bornes : 0 · 2.6 · 3.5 · 6.5 · 7.4 · 9.6 · 13.0 */
-  cap(tl2, '#cap-ecrin', 0.35, 2.1);
-
-  /* ---------- Le trait rouge (signature) + color tint ---------- */
-  var filPath = document.getElementById('fil-path');
-  var fil = document.querySelector('.fil');
-  var tint = document.querySelector('.tint');
-
-  ScrollTrigger.create({
-    start: 0,
-    end: 'max',
+  /* ---------- Scrub : progression scroll → frame + narration ----------
+     Le pin est assuré par position:sticky (CSS) ; ScrollTrigger ne fait
+     que mesurer la progression sur la hauteur de la section (450vh).   */
+  var st = ScrollTrigger.create({
+    trigger: '#hero-scroll',
+    start: 'top top',
+    end: 'bottom bottom',
+    scrub: 0.7,
     onUpdate: function (self) {
-      filPath.style.strokeDashoffset = 1000 * (1 - self.progress);
-      tint.style.opacity = (self.progress * 0.16).toFixed(3);
+      var p = self.progress;
+
+      /* frame */
+      state.frame = p * (FRAME_COUNT - 1);
+      render(state.frame);
+
+      /* chapitres : fondu autour de leur data-at */
+      chapitres.forEach(function (el) {
+        var at = parseFloat(el.getAttribute('data-at'));
+        el.classList.toggle('on', p >= at - CHAP_SPAN / 2 && p <= at + CHAP_SPAN);
+      });
+
+      /* color tint : voile chaud qui se réchauffe vers la fin */
+      if (tint) tint.style.opacity = (p * 0.14).toFixed(3);
+
+      /* reveal + cue */
+      reveal.classList.toggle('on', p >= REVEAL_AT);
+      if (cue) cue.classList.toggle('off', p > 0.02);
     }
   });
 
-  /* Le fil s'affirme dans l'interlude et au final, discret sur les canvases */
-  ScrollTrigger.create({
-    trigger: '#interlude',
-    start: 'top 70%',
-    end: 'bottom 20%',
-    onToggle: function (self) {
-      gsap.to(fil, { opacity: self.isActive ? 1 : 0.45, duration: 0.6 });
-    }
-  });
-  ScrollTrigger.create({
-    trigger: '#final',
-    start: 'top 60%',
-    onToggle: function (self) {
-      gsap.to(fil, { opacity: self.isActive ? 0.85 : 0.45, duration: 0.6 });
-    }
-  });
-
-  /* ---------- Préchargement orchestré ---------- */
-  var loader = document.getElementById('loader');
-  var loaderFill = document.getElementById('loader-fill');
-  var loaderLabel = document.getElementById('loader-label');
-  var acte1El = document.getElementById('acte1');
-  var acte2El = document.getElementById('acte2');
-
-  loadSeq(seq1, function (p) {
-    loaderFill.style.width = Math.round(p * 100) + '%';
-    if (p >= 30 / FRAME_COUNT && !acte1El.classList.contains('ready')) {
-      acte1El.classList.add('ready');
-      render(c1, seq1, state1.frame);
-    }
-  }, function () {
+  preload(function () {
     loader.classList.add('done');
-    render(c1, seq1, state1.frame);
-    /* Acte II en différé, une fois l'Acte I complet */
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(function () { startSeq2(); });
-    } else {
-      setTimeout(startSeq2, 800);
-    }
+    render(state.frame);
+    ScrollTrigger.refresh();
   });
 
-  function startSeq2() {
-    loadSeq(seq2, null, function () {
-      acte2El.classList.add('ready');
-      render(c2, seq2, state2.frame);
+  /* ---------- Particules : fines poussières dorées (très basse densité) ---------- */
+  var dctx = dust.getContext('2d');
+  var parts = [];
+  function resizeDust() {
+    dust.width = dust.clientWidth; dust.height = dust.clientHeight;
+  }
+  resizeDust();
+  for (var i = 0; i < 22; i++) {
+    parts.push({
+      x: Math.random(), y: Math.random(),
+      r: 0.6 + Math.random() * 1.4,
+      vx: (Math.random() - 0.5) * 0.00012,
+      vy: -0.00006 - Math.random() * 0.00012,
+      a: 0.08 + Math.random() * 0.20,
+      ph: Math.random() * Math.PI * 2
     });
   }
-  /* Filet de sécurité : l'utilisateur approche de l'Acte II */
-  ScrollTrigger.create({
-    trigger: '#interlude',
-    start: 'top bottom',
-    once: true,
-    onEnter: startSeq2
+  var dustTime = 0;
+  gsap.ticker.add(function () {
+    dustTime += 0.016;
+    var w = dust.width, h = dust.height;
+    dctx.clearRect(0, 0, w, h);
+    parts.forEach(function (pt) {
+      pt.x += pt.vx; pt.y += pt.vy;
+      if (pt.y < -0.02) { pt.y = 1.02; pt.x = Math.random(); }
+      if (pt.x < -0.02) pt.x = 1.02; else if (pt.x > 1.02) pt.x = -0.02;
+      var tw = pt.a * (0.7 + 0.3 * Math.sin(dustTime * 0.8 + pt.ph));
+      dctx.beginPath();
+      dctx.arc(pt.x * w, pt.y * h, pt.r, 0, Math.PI * 2);
+      dctx.fillStyle = 'rgba(212, 178, 122,' + tw.toFixed(3) + ')';
+      dctx.fill();
+    });
   });
 
   /* ---------- Resize ---------- */
-  var resizeTimer;
+  var rt;
   window.addEventListener('resize', function () {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function () {
-      c1.resize(); c2.resize();
-      render(c1, seq1, state1.frame);
-      render(c2, seq2, state2.frame);
+    clearTimeout(rt);
+    rt = setTimeout(function () {
+      resizeCanvas(); resizeDust(); render(state.frame);
+      ScrollTrigger.refresh();
     }, 150);
   });
+
+  } /* fin init() */
 })();

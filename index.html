@@ -15,21 +15,21 @@
   <meta property="og:title" content="Feliciti — Le faire-part vidéo qui raconte votre histoire">
   <meta property="og:description" content="Feliciti met votre bonheur en récit : faire-part vidéo sur mesure, site de mariage, invités orchestrés avec soin.">
   <meta property="og:url" content="https://feliciti.fr/">
-  <meta property="og:image" content="https://feliciti.fr/public/posters/hero.webp">
+  <meta property="og:image" content="https://feliciti.fr/public/hero/poster.webp">
   <meta property="og:locale" content="fr_FR">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Feliciti — Le faire-part vidéo qui raconte votre histoire">
   <meta name="twitter:description" content="Feliciti met votre bonheur en récit : faire-part vidéo sur mesure, site de mariage, invités orchestrés avec soin.">
-  <meta name="twitter:image" content="https://feliciti.fr/public/posters/hero.webp">
+  <meta name="twitter:image" content="https://feliciti.fr/public/hero/poster.webp">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400&display=swap">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=6">
-  <link rel="preload" as="image" href="public/posters/hero.webp">
+  <link rel="stylesheet" href="css/style.css?v=8">
+  <link rel="preload" as="image" href="public/hero/poster.webp">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
 
   <script type="application/ld+json">
@@ -57,81 +57,49 @@
     </nav>
   </header>
 
-  <!-- Le fil (récit visuel) — tracé signature rouge, révélé par le scroll -->
-  <svg class="fil" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
-    <path id="fil-path" pathLength="1000" vector-effect="non-scaling-stroke"
-      d="M 500 -10
-         C 520 90, 460 160, 505 250
-         C 545 330, 470 390, 500 470
-         C 525 540, 485 560, 505 585
-         C 525 610, 545 590, 530 570
-         C 515 550, 480 590, 505 650
-         C 535 720, 560 760, 610 830
-         C 650 890, 590 950, 500 1010" />
-  </svg>
-
   <!-- Effets cinématiques globaux -->
   <div class="grain" aria-hidden="true"></div>
   <div class="vignette" aria-hidden="true"></div>
   <div class="tint" aria-hidden="true"></div>
 
-  <!-- Loader : le récit s'écrit -->
+  <!-- Écran de chargement : wordmark + fine barre bronze -->
   <div class="loader" id="loader" role="status" aria-live="polite">
+    <p class="loader-mark wordmark">FELICIT<span class="wm-i">I</span></p>
     <div class="loader-line"><span id="loader-fill"></span></div>
-    <span class="loader-label" id="loader-label">le récit s'écrit</span>
   </div>
 
   <main>
 
-    <!-- ACTE I — canvas pinné + hero overlay -->
-    <section class="acte" id="acte1" aria-label="Acte I — La Rencontre">
-      <canvas class="acte-canvas" id="canvas1"></canvas>
-      <img class="acte-poster" src="public/posters/hero.webp" alt="Un fil rouge relie les mains de deux amoureux sur une table de café" width="1920" height="1080">
+    <!-- HERO SCROLL-DRIVEN — la vidéo se déroule au rythme du scroll -->
+    <section class="hero-scroll" id="hero-scroll" aria-label="Le faire-part qui devient lumière">
+      <div class="hero-sticky">
+        <canvas class="hero-canvas" id="hero-canvas" aria-hidden="true"></canvas>
+        <img class="hero-poster" id="hero-poster" src="public/hero/poster.webp"
+             alt="Un faire-part de mariage s'illumine et devient particules d'or" width="1280" height="720">
+        <video class="hero-video" id="hero-video" src="public/hero/hero.mp4"
+               poster="public/hero/poster.webp" muted playsinline preload="none"
+               aria-label="Un faire-part de mariage s'illumine, traverse la ville et devient constellation"></video>
 
-      <div class="hero" id="hero">
-        <h1 class="wordmark">FELICIT<span class="wm-i">I</span></h1>
-        <p class="hero-base">Prestations digitales haut de gamme</p>
-        <p class="hero-sub">Il existe un mot ancien pour dire le bonheur parfait : la félicité.<br>Ceux qui la rencontrent la reconnaissent au premier regard.</p>
-      </div>
-      <p class="scroll-cue" id="scroll-cue">déroulez le récit</p>
+        <canvas class="hero-dust" id="hero-dust" aria-hidden="true"></canvas>
 
-      <p class="caption caption-left" id="cap-pluie">Il y a d'abord un café,<br>une pluie, un livre partagé.</p>
-      <p class="caption caption-right" id="cap-picnic">Puis les heures qui s'envolent<br>sans qu'on les compte.</p>
-      <p class="caption caption-center" id="cap-bague">Et un jour, la promesse se dessine.</p>
-    </section>
+        <!-- Narration synchronisée -->
+        <p class="chapitre" data-at="0.08">Tout commence par une invitation.</p>
+        <p class="chapitre" data-at="0.32">Elle voyage, portée par la lumière.</p>
+        <p class="chapitre" data-at="0.55">Elle arrive, comme un message.</p>
+        <p class="chapitre" data-at="0.75">Et votre histoire se déploie.</p>
 
-    <!-- INTERLUDE — respiration éditoriale -->
-    <section class="interlude" id="interlude">
-      <div class="interlude-bloc">
-        <p class="eyebrow eyebrow-dark smallcaps">Acte I — La Rencontre</p>
-        <h2>Votre histoire mérite mieux qu'un carton. <em>Elle mérite d'être vécue.</em></h2>
-        <p class="interlude-body">Feliciti la met en mouvement&nbsp;: un faire-part que vos invités ouvrent d'un lien
-        et déroulent sous leurs doigts, un site qui les accueille, un film qui réunit tous ceux qui vous aiment.
-        Chaque création est pensée sur mesure&nbsp;— livrée sous 7 jours, retouchée sous 48 heures.</p>
-      </div>
-      <div class="interlude-spacer" aria-hidden="true"></div>
-      <div class="interlude-bloc interlude-bloc-next">
-        <p class="eyebrow eyebrow-dark smallcaps">Acte II — La Promesse</p>
-      </div>
-    </section>
+        <!-- Révélation finale (glass card) -->
+        <div class="hero-reveal glass" id="hero-reveal">
+          <h1 class="wordmark">FELICIT<span class="wm-i">I</span></h1>
+          <p class="reveal-baseline">Le faire-part vidéo qui raconte votre histoire</p>
+          <p class="reveal-line">Ce que vous venez de vivre, vos invités le vivront avec votre histoire.</p>
+          <div class="btn-row">
+            <a class="btn btn-solid" href="#contact">Écrire votre histoire</a>
+            <a class="btn" href="https://wa.me/33600000000?text=Bonjour%20Feliciti%2C%20j%27aimerais%20recevoir%20un%20faire-part%20d%27exemple" target="_blank" rel="noopener">Recevoir un exemple sur WhatsApp</a>
+          </div>
+        </div>
 
-    <!-- ACTE II — canvas pinné -->
-    <section class="acte" id="acte2" aria-label="Acte II — La Promesse">
-      <canvas class="acte-canvas" id="canvas2"></canvas>
-      <img class="acte-poster" src="public/posters/acte2-debut.webp" alt="Un fil rouge descend dans une lumière dorée" width="1920" height="1080">
-      <p class="caption caption-left" id="cap-ecrin">Une promesse<br>tient dans un écrin.</p>
-    </section>
-
-    <!-- ÉPILOGUE -->
-    <section class="final" id="final">
-      <p class="final-wordmark wordmark">FELICIT<span class="wm-i">I</span></p>
-      <p class="eyebrow eyebrow-gold smallcaps">Épilogue — votre histoire</p>
-      <h2>Écrivez<br><em>la suite.</em></h2>
-      <p class="final-body">Ce que vous venez de vivre en faisant défiler cette page,
-      vos invités le vivront avec votre histoire — un faire-part qui se déroule sous leurs doigts,
-      un site qui les accueille, un film qui réunit tous ceux qui vous aiment.</p>
-      <div class="final-actions">
-        <a class="btn btn-light" href="#contact">Écrire votre histoire</a>
+        <p class="scroll-cue" id="scroll-cue">déroulez le récit</p>
       </div>
     </section>
 
@@ -415,7 +383,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js" defer></script>
-  <script src="js/main.js?v=6" defer></script>
-  <script src="js/site.js?v=6" defer></script>
+  <script src="js/main.js?v=8" defer></script>
+  <script src="js/site.js?v=8" defer></script>
 </body>
 </html>

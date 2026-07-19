@@ -143,25 +143,6 @@ select:focus-visible,
 .brand.solid .brand-nav a:hover,
 .brand.scrolled .brand-nav a:hover { color: var(--bronze); }
 
-/* ---------- Le fil (récit visuel) : tracé signature rouge ---------- */
-.fil {
-  position: fixed;
-  inset: 0;
-  width: 100%; height: 100%;
-  z-index: 40;
-  pointer-events: none;
-  opacity: 0.55;
-}
-.fil path {
-  fill: none;
-  stroke: var(--fil);
-  stroke-width: 1.4px;
-  stroke-linecap: round;
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-  filter: drop-shadow(0 0 5px rgba(142, 42, 53, 0.35));
-}
-
 /* ---------- Effets cinématiques (grain papier léger) ---------- */
 .grain {
   position: fixed; inset: -50px;
@@ -181,25 +162,32 @@ select:focus-visible,
   position: fixed; inset: 0;
   z-index: 44;
   pointer-events: none;
-  background: linear-gradient(160deg, #6b543a, #3a2c1c);
-  mix-blend-mode: multiply;
+  background: linear-gradient(160deg, #7a5a34, #3a2c1c);
+  mix-blend-mode: soft-light;
   opacity: 0;
 }
 
-/* ---------- Loader : le fil se tisse ---------- */
+/* ---------- Écran de chargement : wordmark + fine barre bronze ---------- */
 .loader {
   position: fixed;
-  bottom: 2rem; left: 2.2rem;
-  z-index: 70;
+  inset: 0;
+  z-index: 90;
+  background: var(--creme);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.9rem;
-  transition: opacity 0.8s ease;
+  justify-content: center;
+  gap: 1.6rem;
+  transition: opacity 0.9s var(--ease), visibility 0.9s;
 }
-.loader.done { opacity: 0; pointer-events: none; }
+.loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
+.loader-mark {
+  font-size: 1.3rem;
+  color: var(--encre);
+}
 .loader-line {
-  width: 120px; height: 1px;
-  background: rgba(46, 38, 32, 0.22);
+  width: 160px; height: 1px;
+  background: rgba(46, 38, 32, 0.15);
   position: relative;
 }
 .loader-line span {
@@ -208,90 +196,120 @@ select:focus-visible,
   background: var(--bronze);
   transition: width 0.3s ease;
 }
-.loader-label {
-  font-size: 0.6rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: rgba(232, 220, 200, 0.85);
-  mix-blend-mode: difference;
-}
 
-/* ---------- Actes (canvas pinnés) ---------- */
-.acte {
+/* ---------- Hero scroll-driven ---------- */
+.hero-scroll {
   position: relative;
+  height: 450vh;
+  background: #14100b;
+}
+.hero-sticky {
+  position: sticky;
+  top: 0;
   height: 100vh;
   height: 100svh;
   overflow: hidden;
-  background: #1b140d;
 }
-.acte-canvas {
+.hero-canvas {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   display: block;
 }
-.acte-poster {
+.hero-poster {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
   opacity: 1;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.6s ease;
 }
-.acte.ready .acte-poster { opacity: 0; }
+.hero-scroll.ready .hero-poster { opacity: 0; }
+.hero-video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: none;
+}
+.hero-video.on { display: block; }
+.hero-dust {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 3;
+}
 
-/* ---------- Hero ---------- */
-.hero {
+/* Chapitres — narration synchronisée */
+.chapitre {
   position: absolute;
-  inset: 0;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%) translateY(18px);
   z-index: 5;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  width: min(90vw, 720px);
   text-align: center;
-  padding: 0 1.5rem;
-}
-.eyebrow {
-  font-family: var(--corps);
-  font-size: 0.66rem;
-  font-weight: 400;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  color: var(--creme);
-  opacity: 0.82;
-  margin-bottom: 2.2rem;
-}
-.hero h1 {
   font-family: var(--display);
+  font-style: italic;
   font-weight: 500;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  font-size: clamp(3.4rem, 12vw, 9rem);
-  line-height: 1;
+  font-size: clamp(1.6rem, 3.4vw, 2.8rem);
+  line-height: 1.35;
   color: var(--creme);
-  text-shadow: 0 2px 40px rgba(20, 12, 5, 0.45);
+  text-shadow: 0 1px 26px rgba(10, 6, 2, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), visibility 0.6s;
+  pointer-events: none;
 }
-.hero h1 .wm-i::after {
-  background: var(--bronze);
-  width: 0.13em; height: 0.13em;
-  top: -0.06em;
+.chapitre.on {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) translateY(0);
 }
-.hero-base {
-  margin-top: 3.4rem;
-  font-size: 0.72rem;
+
+/* Révélation finale — glass card */
+.glass {
+  backdrop-filter: blur(14px) saturate(115%);
+  -webkit-backdrop-filter: blur(14px) saturate(115%);
+  background: rgba(250, 246, 239, 0.74);
+  border: 1px solid var(--bronze-clr);
+}
+.hero-reveal {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%) scale(0.97);
+  z-index: 6;
+  width: min(92vw, 640px);
+  padding: clamp(2.2rem, 5vh, 3.5rem) clamp(1.5rem, 4vw, 3rem);
+  text-align: center;
+  border-radius: 4px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease), visibility 0.7s;
+}
+.hero-reveal.on {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+}
+.hero-reveal h1 {
+  font-size: clamp(2rem, 5.5vw, 3.4rem);
+  color: var(--encre);
+}
+.reveal-baseline {
+  margin-top: 1.1rem;
+  font-size: 0.68rem;
   font-weight: 400;
-  letter-spacing: 0.36em;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--bronze);
 }
-.hero-sub {
-  margin-top: 2.4rem;
-  font-size: clamp(0.85rem, 1.4vw, 1.02rem);
-  font-weight: 300;
-  letter-spacing: 0.06em;
-  line-height: 1.9;
-  color: var(--creme);
-  opacity: 0.9;
+.reveal-line {
+  margin-top: 1.6rem;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  line-height: 1.5;
+  color: var(--encre);
 }
+.hero-reveal .btn-row { margin-top: 2.2rem; }
+
 .scroll-cue {
   position: absolute;
   bottom: 2.2rem; left: 50%;
@@ -302,7 +320,9 @@ select:focus-visible,
   text-transform: uppercase;
   color: var(--creme);
   opacity: 0.8;
+  transition: opacity 0.5s var(--ease);
 }
+.scroll-cue.off { opacity: 0; }
 .scroll-cue::after {
   content: "";
   display: block;
@@ -311,54 +331,10 @@ select:focus-visible,
   background: linear-gradient(var(--bronze), transparent);
 }
 
-/* ---------- Captions dans les actes ---------- */
-.caption {
-  position: absolute;
-  z-index: 5;
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 500;
-  font-size: clamp(1.4rem, 2.8vw, 2.3rem);
-  line-height: 1.4;
-  color: var(--creme);
-  text-shadow: 0 1px 22px rgba(20, 12, 5, 0.55);
-  opacity: 0;
-  visibility: hidden;
-}
-.caption-left   { left: 8%;  bottom: 18%; }
-.caption-right  { right: 8%; top: 20%; text-align: right; }
-.caption-center { left: 50%; bottom: 14%; transform: translateX(-50%); text-align: center; white-space: nowrap; }
-
-/* ---------- Interlude ---------- */
-.interlude {
-  position: relative;
-  background: var(--lin);
-  padding: clamp(7rem, 16vh, 12rem) 1.5rem;
-  text-align: center;
-}
-.eyebrow-dark { color: var(--bronze); opacity: 1; }
-.interlude-bloc { max-width: 780px; margin: 0 auto; }
-.interlude h2 {
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: clamp(2rem, 4.6vw, 3.4rem);
-  line-height: 1.24;
-  color: var(--encre);
-  margin-top: 1.4rem;
-}
-.interlude h2 em { font-style: italic; color: var(--bronze); }
-.interlude-body {
-  margin-top: 2.2rem;
-  font-size: clamp(0.95rem, 1.5vw, 1.08rem);
-  line-height: 1.9;
-  letter-spacing: 0.02em;
-  color: var(--brun-gris);
-  max-width: 580px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.interlude-spacer { height: clamp(30vh, 45vh, 50vh); }
-.interlude-bloc-next { padding-bottom: 4rem; }
+/* Mode vidéo (mobile / reduced-motion) : hauteur normale, pas de scrub */
+body.hero-video-mode .hero-scroll { height: 100vh; height: 100svh; }
+body.hero-video-mode .hero-canvas,
+body.hero-video-mode .hero-dust { display: none; }
 
 /* ---------- Sections éditoriales (accueil clair) ---------- */
 .section {
@@ -585,43 +561,6 @@ select:focus-visible,
   justify-content: center;
   align-items: center;
 }
-
-/* ---------- Épilogue / final ---------- */
-.final {
-  position: relative;
-  min-height: 100vh;
-  background: #1b140d;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 6rem 1.5rem;
-}
-.eyebrow-gold { color: var(--bronze); opacity: 1; }
-.final-wordmark {
-  font-size: clamp(1.3rem, 3vw, 2rem);
-  color: var(--creme);
-  margin-bottom: 2.4rem;
-}
-.final-wordmark .wm-i::after { background: var(--bronze); }
-.final h2 {
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: clamp(3rem, 8vw, 6.5rem);
-  line-height: 1;
-  color: var(--creme);
-}
-.final h2 em { font-style: italic; color: var(--bronze); }
-.final-body {
-  margin-top: 2.2rem;
-  font-size: clamp(0.92rem, 1.4vw, 1.05rem);
-  line-height: 1.9;
-  letter-spacing: 0.03em;
-  color: rgba(250, 246, 239, 0.72);
-  max-width: 520px;
-}
-.final-actions { margin-top: 3.2rem; }
 
 /* ---------- Formulaire de contact / devis ---------- */
 .form-wrap { max-width: 640px; margin: 0 auto; }
@@ -872,16 +811,14 @@ select:focus-visible,
   color: rgba(250, 246, 239, 0.4);
 }
 
-/* ---------- Reduced motion ---------- */
+/* ---------- Reduced motion : poster + révélation, aucune animation lourde ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .acte-canvas, .loader, .scroll-cue::after { display: none; }
-  .acte-poster { opacity: 1 !important; }
-  .caption, .hero { opacity: 1 !important; visibility: visible !important; }
-  .fil { opacity: 0.55; }
-  .fil path { stroke-dashoffset: 0; }
-  * { scroll-behavior: auto !important; }
+  .hero-canvas, .hero-dust, .loader, .scroll-cue::after { display: none; }
+  .hero-poster { opacity: 1 !important; }
+  .hero-reveal { transition: none; }
+  .chapitre { display: none; }
+  * { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
 }
-body.reduced .acte { height: 100svh; }
 
 /* ---------- Mobile ---------- */
 @media (max-width: 860px) {
@@ -930,8 +867,6 @@ body.reduced .acte { height: 100svh; }
   .product-inner { grid-template-columns: 1fr; }
   .product-media { max-height: 70vh; order: -1; }
 
-  .caption-left  { left: 7%; bottom: 22%; }
-  .caption-right { right: 7%; top: 16%; }
-  .caption-center { white-space: normal; width: 88%; }
-  .hero-sub br { display: none; }
+  .chapitre { font-size: clamp(1.3rem, 6vw, 1.8rem); }
+  .hero-reveal { padding: 2rem 1.4rem; }
 }

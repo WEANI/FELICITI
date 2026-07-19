@@ -5,18 +5,38 @@ Site éditorial multipage : accueil scrollytelling + une page par prestation.
 
 > Le dossier s'appelle encore `le-fil-rouge/` (historique). La marque, elle, est **FELICITI**.
 
-## Deux plans, une intention
+## Le hero scroll-driven
 
-Le site vit sur deux registres complémentaires :
+Le hero EST la démo du produit : la vidéo (« le faire-part qui devient lumière » —
+enveloppes → particules d'or → ville de nuit → constellation) se déroule au rythme
+du scroll du visiteur, comme le faire-part que vivront ses invités.
 
-- **Le récit visuel** — la vidéo et les posters, où un **fil rouge** relie les amoureux.
-  C'est une image ; elle n'a pas besoin d'être nommée.
-- **La voix de la marque** — les textes, qui parlent de **félicité**, de bonheur, de
-  lumière, de récit et de promesse. Le mot *félicité* (bonheur parfait) donne son nom à la maison.
+- **Source** : `public/hero/hero.mp4` (1280×720, 15 s) + 181 frames webp dans
+  `public/hero/frames/` (~5,9 Mo) + `public/hero/poster.webp`.
+- **Moteur** : `js/main.js` — préchargement par lots, canvas scrubé
+  (Lenis + GSAP ScrollTrigger), chapitres synchronisés, révélation finale.
+- **Fallback mobile / reduced-motion** : pas de scrub — lecture du mp4
+  (autoplay muet) avec chapitres sur `timeupdate` ; reduced-motion = poster + révélation.
 
-Un symbole à l'écran (rouge), un mot à l'oreille (félicité) : c'est ce contraste qui fait
-le haut de gamme. Le vocabulaire de la couture (fil, tisser, coudre…) est banni des textes
-marketing ; il ne subsiste que dans les `alt`, qui décrivent sobrement l'image.
+### Réglages (dans `js/main.js` et `index.html`)
+- `FRAME_COUNT = 181` — nombre de frames extraites.
+- Hauteur du scrub : `.hero-scroll { height: 450vh }` dans le CSS (plus haut = plus lent).
+- Position des chapitres : attributs `data-at="0.08 | 0.32 | 0.55 | 0.75"` dans `index.html`
+  (progression 0→1) ; fenêtre de visibilité `CHAP_SPAN` dans `main.js`.
+- Révélation : `REVEAL_AT = 0.90`.
+
+### Ré-extraire les frames (ffmpeg)
+```
+ffmpeg -i hero.mp4 -vf "fps=12,scale=1280:-2" -c:v libwebp -q:v 78 public/hero/frames/frame_%03d.webp
+```
+Cible ~180 frames / ≤6 Mo ; si trop lourd, refaire en `fps=8` (et ajuster `FRAME_COUNT`).
+> Note : le lettrage doré visible dans la vidéo générée est approximatif (« Wedtng ») —
+> à corriger en régénérant le clip si besoin.
+
+### Legacy
+`public/frames/acte1(-m)`, `acte2(-m)`, `public/posters/` et `assets/video/acte*.mp4`
+appartiennent à l'ancien hero (fil rouge, 2 actes) — plus référencés par le code,
+conservés pour mémoire. Supprimables pour alléger le dépôt.
 
 ## Structure
 
@@ -70,18 +90,6 @@ Chaque tarif « à partir de » est rendu dans la page produit correspondante
 | Capsule anniversaire | 49 € (offerte avec Le Grand Jour) |
 | Formule Le Grand Jour| 1 490 €     |
 
-### 4. Frames du hero (ffmpeg)
-Le hero lit des séquences webp 12 fps depuis `public/frames/acte1(-m)/` et
-`public/frames/acte2(-m)/` (181 frames chacune, `f_0001.webp` …). Les posters et
-frames actuels (avec leur fil rouge) sont **conservés tels quels** — ils sont cohérents
-avec le récit visuel, aucune régénération n'est nécessaire.
-Pour intégrer d'autres vidéos, extraire les frames aux mêmes cadrages :
-```
-ffmpeg -i acte1.mp4 -vf "fps=12,scale=1920:-1" public/frames/acte1/f_%04d.webp
-ffmpeg -i acte1.mp4 -vf "fps=12,scale=828:-1"  public/frames/acte1-m/f_%04d.webp
-```
-(idem `acte2`). Voir `assets/video/` pour les sources.
-
 ### Cache des assets
 Les liens `css/style.css` et `js/*.js` portent un suffixe `?v=N`. Incrémenter `N`
 à chaque modification pour forcer le rafraîchissement (déjà `?v=5`).
@@ -96,9 +104,8 @@ python3 -m http.server 8642 --directory .
 - **Palette d'interface** : lin `#F3EDE4`, crème `#FAF6EF`, taupe `#D8CBB8`,
   encre `#2E2620`, brun grisé `#8A7D6D`, **accent unique bronze `#A6845C`**
   (liens, filets, boutons, point du « I »).
-- **Le fil du récit visuel** : carmin profond `--fil: #8E2A35` — réservé au tracé
-  animé et aux médias. Aucun bouton, lien, titre ou filet d'interface n'est rouge ;
-  le bronze n'apparaît dans aucun média représentant le fil.
+- **Le récit visuel** : l'or est la lumière du récit (particules, constellation) —
+  il vit dans la vidéo ; l'interface reste sobre, le bronze est son seul accent.
 - **Typo** : Cormorant Garamond (titres), Jost 300-400 (corps).
 - **Wordmark** : FELICITI, capitales espacées (0.28em), le point du dernier « I »
   est un point rond bronze au-dessus de la lettre (header, fin du hero, footer).
