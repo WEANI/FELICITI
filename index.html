@@ -28,7 +28,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400&display=swap">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=9">
+  <link rel="stylesheet" href="css/style.css?v=10">
   <link rel="preload" as="image" href="public/hero/poster.webp">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
 
@@ -115,7 +115,7 @@
       </div>
     </section>
 
-    <!-- SECTION 3 — LES PRESTATIONS (APERÇU) -->
+    <!-- SECTION 3 — LES PRESTATIONS (APERÇU) : cartes photo -->
     <section class="section section-lin" id="prestations">
       <div class="section-inner">
         <div class="section-head">
@@ -124,30 +124,40 @@
           <h2 class="sec-title">Unique <em>comme vous.</em></h2>
           <p class="sec-lead">Du premier faire-part au dernier merci, chaque création porte votre histoire et la fait vivre à vos invités.</p>
         </div>
-        <div class="presta-grid presta-grid-3">
-          <a class="presta-card" href="faire-part-video/">
-            <div class="presta-media" aria-hidden="true">Aperçu</div>
-            <span class="presta-num">I</span>
-            <h3>Le Faire-Part</h3>
-            <p>Un lien à partager : vos invités l'ouvrent et votre histoire se déroule en vidéo sous leurs doigts.</p>
-            <span class="presta-link">Découvrir</span>
+
+        <div class="presta-photos">
+          <a class="presta-photo" href="faire-part-video/">
+            <figure>
+              <img src="public/img/prestations/faire-part.webp" alt="Un téléphone tenu à deux mains, l'histoire d'un couple s'élevant de l'écran en lumière dorée" loading="lazy" width="900" height="1206">
+            </figure>
+            <div class="presta-photo-label">
+              <span class="presta-photo-num">I</span>
+              <h3>Le Faire-Part</h3>
+            </div>
           </a>
-          <a class="presta-card" href="site-de-mariage/">
-            <div class="presta-media" aria-hidden="true">Aperçu</div>
-            <span class="presta-num">II</span>
-            <h3>Le site de Mariage</h3>
-            <p>Vos invités répondent, choisissent leur menu et se repèrent — vous n'y pensez plus.</p>
-            <span class="presta-link">Découvrir</span>
+
+          <a class="presta-photo" href="site-de-mariage/">
+            <figure>
+              <img src="public/img/prestations/site-de-mariage.webp" alt="Un téléphone et un ordinateur portable reliés par un fil de lumière dorée, entourés de roses" loading="lazy" width="900" height="1206">
+            </figure>
+            <div class="presta-photo-label">
+              <span class="presta-photo-num">II</span>
+              <h3>Le site de Mariage</h3>
+            </div>
           </a>
-          <a class="presta-card" href="video-temoin/">
-            <div class="presta-media" aria-hidden="true">Aperçu</div>
-            <span class="presta-num">III</span>
-            <h3>« Veux-tu être mon témoin&nbsp;? »</h3>
-            <p>Demandez à vos témoins de tenir leur rôle par une vidéo qu'ils n'oublieront pas.</p>
-            <span class="presta-link">Découvrir</span>
+
+          <a class="presta-photo" href="video-temoin/">
+            <figure>
+              <img src="public/img/prestations/video-temoin.webp" alt="Deux coupes de champagne et un écrin d'où s'échappent des étincelles dorées" loading="lazy" width="900" height="1206">
+            </figure>
+            <div class="presta-photo-label">
+              <span class="presta-photo-num">III</span>
+              <h3>«&nbsp;Veux-tu être mon témoin&nbsp;?&nbsp;»</h3>
+            </div>
           </a>
         </div>
-        <div class="btn-row" style="margin-top:2.8rem">
+
+        <div class="btn-row" style="margin-top:clamp(2.5rem,6vw,3.8rem)">
           <a class="btn" href="creations/">Voir nos prestations</a>
         </div>
       </div>
@@ -377,7 +387,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js" defer></script>
-  <script src="js/main.js?v=9" defer></script>
-  <script src="js/site.js?v=9" defer></script>
+  <script src="js/main.js?v=10" defer></script>
+  <script src="js/site.js?v=10" defer></script>
 </body>
 </html>
