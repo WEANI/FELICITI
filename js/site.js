@@ -68,35 +68,65 @@
     }
   }
 
-  /* ---------- Formulaire de devis ---------- */
+  /* ---------- Formulaire de devis → Supabase (table demandes_devis) ----------
+     Clé PUBLISHABLE (anon) : conçue pour vivre côté client, protégée par les
+     politiques RLS de la base (insertion seule autorisée sur cette table).
+     ⇢ Colle ta clé anon ci-dessous (Dashboard Supabase → Project Settings →
+       API Keys → « anon / publishable »). Sans elle, le formulaire affiche la
+       confirmation + WhatsApp mais n'enregistre rien.                        */
+  var SUPABASE_URL      = 'https://wrpiggqshnoykqtmuprx.supabase.co';
+  var SUPABASE_ANON_KEY = ''; /* ← colle ta clé publishable (anon) ici */
+
   var form = document.getElementById('devis-form');
   if (form) {
     var confirmEl = document.getElementById('form-confirm');
+    var submitBtn = form.querySelector('button[type="submit"]');
+
+    var showConfirm = function () {
+      if (confirmEl) {
+        form.style.display = 'none';
+        confirmEl.classList.add('show');
+        confirmEl.setAttribute('tabindex', '-1');
+        confirmEl.focus();
+        confirmEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    };
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var data = new FormData(form);
-      var endpoint = form.getAttribute('action');
 
-      var showConfirm = function () {
-        if (confirmEl) {
-          form.style.display = 'none';
-          confirmEl.classList.add('show');
-          confirmEl.focus();
-          confirmEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
+      var payload = {
+        prenoms:        (data.get('prenoms')    || '').trim() || null,
+        date_envisagee: (data.get('date')       || '').trim() || null,
+        lieu:           (data.get('lieu')        || '').trim() || null,
+        nombre_invites: (data.get('invites')     || '').trim() || null,
+        prestation:     (data.get('prestation')  || '').trim() || null,
+        email:          (data.get('email')       || '').trim() || null,
+        whatsapp:       (data.get('whatsapp')     || '').trim() || null,
+        message:        (data.get('histoire')     || '').trim() || null
       };
 
-      /* Endpoint Formspree placeholder — remplacer par le vrai. */
-      if (endpoint && endpoint.indexOf('formspree.io/f/') !== -1 &&
-          endpoint.indexOf('xxxxxxxx') === -1) {
-        fetch(endpoint, {
-          method: 'POST',
-          body: data,
-          headers: { 'Accept': 'application/json' }
-        }).then(showConfirm).catch(showConfirm);
-      } else {
+      if (!SUPABASE_ANON_KEY) { showConfirm(); return; } /* clé non configurée */
+
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Envoi…'; }
+
+      fetch(SUPABASE_URL + '/rest/v1/demandes_devis', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(payload)
+      }).then(function (r) {
+        if (!r.ok) { console.warn('Feliciti · devis non enregistré (HTTP ' + r.status + ')'); }
         showConfirm();
-      }
+      }).catch(function (err) {
+        console.warn('Feliciti · devis : erreur réseau', err);
+        showConfirm();
+      });
     });
   }
 })();

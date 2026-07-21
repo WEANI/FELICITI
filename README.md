@@ -96,10 +96,14 @@ Remplacer par le vrai numéro (format international, sans `+`) :
 grep -rl "33600000000" .
 ```
 
-### 2. Endpoint du formulaire (Formspree)
-Dans `index.html`, `#devis-form` pointe vers `https://formspree.io/f/xxxxxxxx`.
-Remplacer `xxxxxxxx` par l'identifiant Formspree réel. `js/site.js` détecte le
-placeholder et affiche la confirmation sans POST tant qu'il n'est pas remplacé.
+### 2. Formulaire de devis → Supabase
+Le formulaire `#devis-form` enregistre dans la table `demandes_devis` du projet
+Supabase `wrpiggqshnoykqtmuprx` (API REST, `fetch` natif). Dans `js/site.js`,
+renseigner `SUPABASE_ANON_KEY` avec la clé **publishable (anon)** :
+Dashboard Supabase → Project Settings → API Keys → « anon / publishable ».
+Cette clé est publique (protégée par les politiques RLS : seule l'insertion sur
+`demandes_devis` est autorisée). Tant qu'elle est vide, le formulaire affiche la
+confirmation + WhatsApp sans rien enregistrer.
 
 ### 3. Prix
 Chaque tarif « à partir de » est rendu dans la page produit correspondante
