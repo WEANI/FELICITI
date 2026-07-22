@@ -294,7 +294,7 @@ select:focus-visible,
 }
 .reveal-baseline {
   margin-top: 1.1rem;
-  font-size: clamp(1.35rem, 4vw, 2.1rem);
+  font-size: clamp(1.2rem, 3.2vw, 1.7rem);
   font-weight: 400;
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -534,20 +534,16 @@ body.hero-video-mode .scrub-canvas { display: none; }
 }
 .presta-media img,
 .presta-media video { width: 100%; height: 100%; object-fit: cover; }
-.presta-num {
-  font-family: var(--display);
-  font-style: italic;
-  color: var(--bronze);
-  font-size: 1rem;
-  margin-bottom: 0.6rem;
-}
+/* Titres du catalogue : une seule taille partagée, jamais sur deux lignes
+   (le plus long — « Baby Shower / Gender Reveal / Baptême » — fixe le plancher). */
 .presta-card h3 {
   font-family: var(--display);
   font-weight: 500;
-  font-size: 1.7rem;
+  font-size: clamp(0.8rem, 1.7vw, 1.5rem);
   line-height: 1.2;
   color: var(--encre);
   margin-bottom: 0.9rem;
+  white-space: nowrap;
 }
 .presta-card p {
   color: var(--brun-gris);
@@ -908,6 +904,21 @@ body.hero-video-mode .scrub-canvas { display: none; }
   border-radius: 4px;
   padding: 0.3rem 0.7rem;
   margin-bottom: 2rem;
+}
+.legal ul { margin: 0 0 1.2rem 1.2rem; }
+.legal li { color: var(--brun-gris); margin-bottom: 0.6rem; line-height: 1.7; }
+/* Champs à compléter par le client : signalés en bronze italique, jamais silencieux */
+.legal .todo-inline { color: var(--bronze); font-style: italic; }
+/* Note éditoriale (ex. rappel de faire valider les CGV par un professionnel) */
+.legal-note {
+  border-left: 2px solid var(--bronze);
+  background: var(--lin);
+  padding: 1rem 1.4rem;
+  margin-bottom: 2.4rem;
+  font-size: 0.88rem;
+  font-style: italic;
+  color: var(--brun-gris);
+  line-height: 1.7;
 }
 
 /* ---------- Pied de page ---------- */
