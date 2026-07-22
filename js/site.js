@@ -121,10 +121,10 @@
         },
         body: JSON.stringify(payload)
       }).then(function (r) {
-        if (!r.ok) { console.warn('Feliciti · devis non enregistré (HTTP ' + r.status + ')'); }
+        if (!r.ok) { console.warn('FELICITI · devis non enregistré (HTTP ' + r.status + ')'); }
         showConfirm();
       }).catch(function (err) {
-        console.warn('Feliciti · devis : erreur réseau', err);
+        console.warn('FELICITI · devis : erreur réseau', err);
         showConfirm();
       });
     });
