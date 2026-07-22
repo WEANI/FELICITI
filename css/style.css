@@ -422,16 +422,10 @@ body.hero-video-mode .scrub-canvas { display: none; }
 .presta-photo:focus-visible { outline: 1.5px solid var(--bronze); outline-offset: 6px; }
 .presta-photo-label {
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 14px;
   margin-top: 18px;
-}
-.presta-photo-num {
-  font-family: var(--display);
-  color: var(--bronze);
-  font-size: 1.05rem;
-  letter-spacing: 0.25em;
 }
 .presta-photo-label h3 {
   font-family: var(--display);
@@ -440,6 +434,12 @@ body.hero-video-mode .scrub-canvas { display: none; }
   font-size: clamp(1.25rem, 2.4vw, 1.55rem);
   position: relative;
   padding-bottom: 8px;
+}
+/* Titre long ("Veux-tu être mon témoin ?") : jamais sur deux lignes.
+   Le retrait des guillemets (fallback JS à 360px) prime sur un rétrécissement supplémentaire. */
+.presta-photo-label h3.title-nowrap {
+  white-space: nowrap;
+  font-size: clamp(0.85rem, 4.6vw, 1.2rem);
 }
 .presta-photo-label h3::after {
   content: "";
@@ -579,6 +579,22 @@ body.hero-video-mode .scrub-canvas { display: none; }
   color: var(--bronze);
   line-height: 1;
   margin-bottom: 1.2rem;
+}
+
+/* Icônes de section (remplacent les chiffres romains I/II/III) */
+.section-ico { width: 44px; height: 44px; display: block; margin: 0 auto 16px; }
+.section-ico * {
+  fill: none;
+  stroke: var(--bronze);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.step-item, .exp-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 .step h3 {
   font-family: var(--display);
