@@ -340,9 +340,10 @@
       }
     });
 
+    var rtSlp;
     window.addEventListener('resize', function () {
-      clearTimeout(rt);
-      rt = setTimeout(function () { resizeSlp(); renderSlp(slpState.frame); }, 160);
+      clearTimeout(rtSlp);
+      rtSlp = setTimeout(function () { resizeSlp(); renderSlp(slpState.frame); }, 160);
     });
   }
 

@@ -411,7 +411,14 @@ body.hero-video-mode .scrub-canvas { display: none; }
   }
   .hero-canvas, .hero-dust, .scrub-canvas { display: none !important; }
   .hero-poster, .scrub-poster { display: none !important; }
-  .hero-video, .scrub-video { display: block !important; }
+  /* La vidéo plein écran ne doit PAS capter le geste : sur iOS/Android un
+     swipe sur une <video> peut être absorbé et empêcher le scroll de la page.
+     pointer-events:none laisse le doigt faire défiler par-dessus la vidéo.
+     Les CTA/menu restent cliquables (au-dessus dans l'empilement). */
+  .hero-video, .scrub-video {
+    display: block !important;
+    pointer-events: none !important;
+  }
 }
 
 /* ---------- Section 3 : cartes photo des prestations ---------- */
