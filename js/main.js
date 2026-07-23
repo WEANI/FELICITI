@@ -23,7 +23,11 @@
   }
 
   var reduced  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var isMobile = window.matchMedia('(max-width: 768px)').matches;
+  /* Mode vidéo (scroll natif) dès qu'on est sur un écran étroit OU tactile.
+     Lenis (mode scrub) détournerait le scroll au doigt sur mobile/tablette :
+     on ne l'active donc que sur un pointeur fin (souris/trackpad). */
+  var isMobile = window.matchMedia('(max-width: 768px)').matches
+              || window.matchMedia('(pointer: coarse)').matches;
 
   var loader    = document.getElementById('loader');
   var loaderFill= document.getElementById('loader-fill');
