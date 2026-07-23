@@ -396,6 +396,24 @@ body.hero-video-mode .hero-dust { display: none; }
 body.hero-video-mode .slp { height: 100vh; height: 100svh; }
 body.hero-video-mode .scrub-canvas { display: none; }
 
+/* ============================================================
+   MOBILE / TACTILE — scroll natif garanti + vidéo verticale
+   Cette couche est PUREMENT CSS : elle neutralise le scrub
+   (sections hautes + position:sticky) même si le JS bascule à
+   tort en mode scrub. Le doigt scrolle donc toujours la page.
+   ============================================================ */
+@media (max-width: 768px), (pointer: coarse) {
+  .hero-scroll, .slp { height: auto !important; }
+  .hero-sticky, .scrub-sticky {
+    position: relative !important;
+    top: auto !important;
+    height: 100svh;
+  }
+  .hero-canvas, .hero-dust, .scrub-canvas { display: none !important; }
+  .hero-poster, .scrub-poster { display: none !important; }
+  .hero-video, .scrub-video { display: block !important; }
+}
+
 /* ---------- Section 3 : cartes photo des prestations ---------- */
 .presta-photos {
   display: grid;

@@ -77,9 +77,24 @@
         /* Reduced motion : pas d'autoplay — poster + révélation immédiate */
         showReveal();
       } else {
+        /* Vidéo verticale 9:16 dédiée au mobile */
         video.classList.add('on');
-        var played = video.play();
-        if (played && played.catch) played.catch(showReveal);
+        video.src = 'public/hero/hero-mobile.mp4';
+        video.muted = true;
+        video.setAttribute('playsinline', '');
+        video.load();
+        var tryPlay = function () {
+          if (!video.paused) return;
+          var pl = video.play();
+          if (pl && pl.catch) pl.catch(function () {});
+        };
+        tryPlay();
+        /* iOS/Low-Power peut différer l'autoplay : on relance à chaque geste
+           tant que la vidéo n'a pas démarré (la garde ci-dessus rend l'appel
+           inoffensif une fois qu'elle joue). */
+        ['touchstart', 'pointerdown', 'scroll'].forEach(function (ev) {
+          window.addEventListener(ev, tryPlay, { passive: true });
+        });
         video.addEventListener('timeupdate', function () {
           var p = video.duration ? video.currentTime / video.duration : 0;
           chapitres.forEach(function (el) {
@@ -350,20 +365,41 @@
     var v = document.getElementById('slp-video');
     var chaps = Array.prototype.slice.call(sec.querySelectorAll('.slp-chap'));
     if (reduced || !v) return; /* reduced : poster statique, rien d'autre */
+    /* Vidéo verticale 9:16 dédiée au mobile, en boucle */
+    v.src = 'public/sous-le-pouce/sous-le-pouce-mobile.mp4';
+    v.loop = true;
+    v.muted = true;
+    v.setAttribute('playsinline', '');
+    v.classList.add('on');
+    var slpInView = false;
+    /* Ne (re)lance que si la section est visible ET la vidéo en pause :
+       inoffensif à répéter, ne joue jamais hors écran. */
+    var playSlp = function () {
+      if (!slpInView || !v.paused) return;
+      var pl = v.play();
+      if (pl && pl.catch) pl.catch(function () {});
+    };
+    ['touchstart', 'pointerdown', 'scroll'].forEach(function (ev) {
+      window.addEventListener(ev, playSlp, { passive: true });
+    });
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
           if (e.isIntersecting) {
+            slpInView = true;
             v.preload = 'auto';
-            v.classList.add('on');
-            var pl = v.play();
-            if (pl && pl.catch) pl.catch(function () {});
+            playSlp();
           } else {
+            slpInView = false;
             v.pause();
           }
         });
       }, { rootMargin: '200px 0px' });
       io.observe(sec);
+    } else {
+      slpInView = true;
+      v.preload = 'auto';
+      playSlp();
     }
     v.addEventListener('timeupdate', function () {
       var p = v.duration ? v.currentTime / v.duration : 0;
