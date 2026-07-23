@@ -8,11 +8,20 @@
 (function () {
   'use strict';
 
-  /* ---------- Réglages ---------- */
-  var FRAME_COUNT = 181;                      /* hero : nb de frames extraites (voir README) */
-  var FRAME_DIR   = 'public/hero/frames/';
-  var SLP_COUNT   = 165;                      /* section « Sous le pouce » : nb de frames */
-  var SLP_DIR     = 'public/sous-le-pouce/frames/';
+  /* ---------- Détection ---------- */
+  var reduced  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* Tactile / petit écran : on garde le SCRUB (frames au scroll) mais piloté
+     par le scroll NATIF. Lenis n'est activé que sur pointeur fin (souris/
+     trackpad) — au doigt il détournerait le scroll. Sur mobile on charge des
+     frames verticales 9:16 dédiées, plus légères que la vidéo. */
+  var isMobile = window.matchMedia('(max-width: 768px)').matches
+              || window.matchMedia('(pointer: coarse)').matches;
+
+  /* ---------- Réglages (frames adaptées à l'appareil) ---------- */
+  var FRAME_COUNT = isMobile ? 150 : 181;               /* hero : nb de frames */
+  var FRAME_DIR   = isMobile ? 'public/hero/frames-mobile/' : 'public/hero/frames/';
+  var SLP_COUNT   = isMobile ? 150 : 165;               /* section « Sous le pouce » */
+  var SLP_DIR     = isMobile ? 'public/sous-le-pouce/frames-mobile/' : 'public/sous-le-pouce/frames/';
   var REVEAL_AT   = 0.90;                     /* progression à laquelle la révélation apparaît */
   var CHAP_SPAN   = 0.13;                     /* durée de visibilité d'un chapitre (± autour de data-at) */
 
@@ -21,13 +30,6 @@
     while (n.length < 3) n = '0' + n;
     return SLP_DIR + 'slp_' + n + '.webp';
   }
-
-  var reduced  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  /* Mode vidéo (scroll natif) dès qu'on est sur un écran étroit OU tactile.
-     Lenis (mode scrub) détournerait le scroll au doigt sur mobile/tablette :
-     on ne l'active donc que sur un pointeur fin (souris/trackpad). */
-  var isMobile = window.matchMedia('(max-width: 768px)').matches
-              || window.matchMedia('(pointer: coarse)').matches;
 
   var loader    = document.getElementById('loader');
   var loaderFill= document.getElementById('loader-fill');
@@ -61,10 +63,10 @@
   function init() {
 
   /* ============================================================
-     MODE VIDÉO — mobile & prefers-reduced-motion
-     Pas de scrub : lecture douce, chapitres sur timeupdate.
+     FALLBACK VIDÉO — prefers-reduced-motion ou GSAP indisponible
+     (le scrub, lui, tourne pour desktop ET mobile, voir plus bas).
      ============================================================ */
-  if (reduced || isMobile || typeof gsap === 'undefined') {
+  if (reduced || typeof gsap === 'undefined') {
     document.body.classList.add('hero-video-mode');
     if (loader) loader.classList.add('done');
     if (video) {
@@ -77,9 +79,9 @@
         /* Reduced motion : pas d'autoplay — poster + révélation immédiate */
         showReveal();
       } else {
-        /* Vidéo verticale 9:16 dédiée au mobile */
+        /* GSAP absent : on joue la vidéo (verticale sur mobile) */
         video.classList.add('on');
-        video.src = 'public/hero/hero-mobile.mp4';
+        video.src = isMobile ? 'public/hero/hero-mobile.mp4' : 'public/hero/hero.mp4';
         video.muted = true;
         video.setAttribute('playsinline', '');
         video.load();
@@ -113,16 +115,21 @@
   }
 
   /* ============================================================
-     MODE SCRUB — desktop
+     MODE SCRUB — desktop & mobile (frames au scroll)
+     Mobile : frames verticales + scroll NATIF (pas de Lenis).
      ============================================================ */
   gsap.registerPlugin(ScrollTrigger);
 
-  /* ---------- Lenis (scroll pacing : doux, jamais de snap) ---------- */
-  var lenis = new Lenis({ duration: 1.1, smoothWheel: true });
-  window.lenis = lenis; /* exposé pour le défilement d'ancres (site.js) */
-  lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
-  gsap.ticker.lagSmoothing(0);
+  /* ---------- Lenis (scroll pacing doux) — pointeur fin uniquement ----------
+     Au doigt, Lenis détourne le scroll : sur tactile on laisse le scroll
+     natif piloter ScrollTrigger directement. */
+  if (!isMobile && typeof Lenis !== 'undefined') {
+    var lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+    window.lenis = lenis; /* exposé pour le défilement d'ancres (site.js) */
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
+    gsap.ticker.lagSmoothing(0);
+  }
 
   /* ---------- Canvas ---------- */
   var ctx = canvas.getContext('2d');

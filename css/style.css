@@ -397,28 +397,21 @@ body.hero-video-mode .slp { height: 100vh; height: 100svh; }
 body.hero-video-mode .scrub-canvas { display: none; }
 
 /* ============================================================
-   MOBILE / TACTILE — scroll natif garanti + vidéo verticale
-   Cette couche est PUREMENT CSS : elle neutralise le scrub
-   (sections hautes + position:sticky) même si le JS bascule à
-   tort en mode scrub. Le doigt scrolle donc toujours la page.
+   MOBILE / TACTILE — SCRUB avec frames verticales, scroll NATIF
+   On garde le pin (position:sticky) et la hauteur de scroll (le
+   JS pilote la progression sans Lenis). Hauteurs un peu plus
+   courtes qu'en desktop pour un défilement plus vif au doigt.
    ============================================================ */
 @media (max-width: 768px), (pointer: coarse) {
-  .hero-scroll, .slp { height: auto !important; }
-  .hero-sticky, .scrub-sticky {
-    position: relative !important;
-    top: auto !important;
-    height: 100svh;
-  }
-  .hero-canvas, .hero-dust, .scrub-canvas { display: none !important; }
-  .hero-poster, .scrub-poster { display: none !important; }
-  /* La vidéo plein écran ne doit PAS capter le geste : sur iOS/Android un
-     swipe sur une <video> peut être absorbé et empêcher le scroll de la page.
-     pointer-events:none laisse le doigt faire défiler par-dessus la vidéo.
-     Les CTA/menu restent cliquables (au-dessus dans l'empilement). */
-  .hero-video, .scrub-video {
-    display: block !important;
+  .hero-scroll { height: 320vh; }
+  .slp { height: 300vh; }
+  /* Canvases décoratifs : ne captent jamais le geste → le doigt scrolle.
+     (un swipe sur un <canvas>/<video> plein écran peut sinon être absorbé) */
+  .hero-canvas, .hero-dust, .scrub-canvas, .hero-video, .scrub-video {
     pointer-events: none !important;
   }
+  /* Poster desktop (paysage) masqué : le canvas vertical prend le relais. */
+  .hero-poster, .scrub-poster { display: none; }
 }
 
 /* ---------- Section 3 : cartes photo des prestations ---------- */
