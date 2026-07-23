@@ -3,3 +3,6 @@
 
 # Stale build artifact (old branding)
 dist/
+
+# macOS
+.DS_Store
