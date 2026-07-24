@@ -127,6 +127,21 @@ select:focus-visible,
 }
 .brand-nav a:hover { opacity: 1; color: var(--bronze); }
 
+/* Bouton d'accent bronze dans la nav (RECEVOIR UN EXEMPLE) */
+.brand-nav .nav-cta {
+  background: var(--bronze);
+  color: var(--creme);
+  border: 1px solid var(--bronze);
+  padding: 0.8em 1.5em;
+  opacity: 1;
+}
+.brand-nav .nav-cta:hover { background: var(--encre); border-color: var(--encre); color: var(--creme); }
+/* Reste lisible quand l'en-tête passe sur fond clair */
+.brand.solid .brand-nav .nav-cta,
+.brand.scrolled .brand-nav .nav-cta { color: var(--creme); background: var(--bronze); }
+.brand.solid .brand-nav .nav-cta:hover,
+.brand.scrolled .brand-nav .nav-cta:hover { background: var(--encre); color: var(--creme); }
+
 .nav-toggle { display: none; }
 .menu-close { display: none; } /* croix visible seulement dans le tiroir mobile */
 
@@ -585,6 +600,30 @@ body.hero-video-mode .scrub-canvas { display: none; }
   transition: letter-spacing 0.4s var(--ease);
 }
 .presta-card:hover .presta-link { letter-spacing: 0.34em; }
+
+/* Carte mise en avant : la formule complète (filet bronze discret) */
+.presta-card--feature {
+  position: relative;
+  z-index: 1;
+  box-shadow: inset 0 0 0 1px var(--bronze);
+}
+.presta-feature-tag {
+  align-self: flex-start;
+  margin-bottom: 1rem;
+  font-size: 0.56rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--bronze);
+  border: 1px solid var(--bronze-clr);
+  padding: 0.4em 0.85em;
+  border-radius: 2px;
+}
+/* Sous-titre de groupe « Autres occasions » */
+.presta-subhead {
+  scroll-margin-top: 90px;         /* compense l'en-tête fixe lors de l'ancre */
+  text-align: center;
+  margin: 4.5rem auto 2.4rem;
+}
 
 /* ---------- Notre approche ---------- */
 .approche-grid {
