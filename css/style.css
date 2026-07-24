@@ -128,6 +128,7 @@ select:focus-visible,
 .brand-nav a:hover { opacity: 1; color: var(--bronze); }
 
 .nav-toggle { display: none; }
+.menu-close { display: none; } /* croix visible seulement dans le tiroir mobile */
 
 /* En-tête sur fond clair (pages intérieures + accueil après scroll) */
 .brand.solid,
@@ -1022,21 +1023,33 @@ body.hero-video-mode .scrub-canvas { display: none; }
   .brand.solid, .brand.scrolled { backdrop-filter: none; background: rgba(250, 246, 239, 0.96); }
   .brand-nav {
     position: fixed;
-    top: 0; right: 0; bottom: 0; left: auto;
+    top: 0; right: 0; bottom: 0; left: 0;
     height: 100vh; height: 100svh;
-    width: min(78vw, 340px);
+    width: 100%;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
     gap: 2.2rem;
     background: var(--creme);
-    border-left: 1px solid var(--taupe);
     transform: translateX(100%);
     transition: transform 0.5s var(--ease);
     padding: 2rem;
     z-index: 65;
   }
   .brand.nav-open .brand-nav { transform: translateX(0); }
-  .brand-nav a { color: var(--encre); font-size: 0.78rem; }
+  .brand-nav a { color: var(--encre); font-size: 0.9rem; }
+
+  /* Croix de fermeture — cible tactile confortable */
+  .menu-close {
+    position: absolute; top: 18px; right: 18px;
+    width: 48px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    background: none; border: none; cursor: pointer;
+    color: var(--encre);
+    transition: opacity 0.4s var(--ease);
+  }
+  .menu-close:hover { opacity: 0.6; }
+  .menu-close:focus-visible { outline: 1px solid var(--bronze); outline-offset: 4px; }
 
   .product-inner { grid-template-columns: 1fr; }
   .product-media { max-height: 70vh; order: -1; }

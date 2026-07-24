@@ -20,12 +20,44 @@
 
   /* ---------- Navigation mobile ---------- */
   if (toggle && brand) {
+    var panel = brand.querySelector('.brand-nav');
+    var closeBtn = brand.querySelector('.menu-close');
+
+    var openMenu = function () {
+      brand.classList.add('nav-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      if (closeBtn) closeBtn.focus();
+    };
+    /* returnFocus : ramène le focus sur le hamburger (croix, Échap) */
+    var closeMenu = function (returnFocus) {
+      brand.classList.remove('nav-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      if (returnFocus) toggle.focus();
+    };
+
     toggle.addEventListener('click', function () {
-      var open = brand.classList.toggle('nav-open');
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (brand.classList.contains('nav-open')) closeMenu(true);
+      else openMenu();
     });
+    if (closeBtn) closeBtn.addEventListener('click', function () { closeMenu(true); });
+
+    /* Clic sur un lien → fermeture (le focus part vers la cible du lien) */
     Array.prototype.forEach.call(brand.querySelectorAll('.brand-nav a'), function (a) {
-      a.addEventListener('click', function () { brand.classList.remove('nav-open'); });
+      a.addEventListener('click', function () { closeMenu(false); });
+    });
+
+    /* Touche Échap → fermeture + focus au hamburger */
+    document.addEventListener('keydown', function (e) {
+      if ((e.key === 'Escape' || e.key === 'Esc') && brand.classList.contains('nav-open')) {
+        closeMenu(true);
+      }
+    });
+
+    /* Clic hors du panneau (et hors du hamburger) → fermeture */
+    document.addEventListener('click', function (e) {
+      if (!brand.classList.contains('nav-open')) return;
+      if ((panel && panel.contains(e.target)) || toggle.contains(e.target)) return;
+      closeMenu(false);
     });
   }
 
