@@ -428,6 +428,8 @@ body.hero-video-mode .scrub-canvas { display: none; }
   }
   /* Poster desktop (paysage) masqué : le canvas vertical prend le relais. */
   .hero-poster, .scrub-poster { display: none; }
+  /* Narration masquée sur mobile : la vidéo joue sans texte par-dessus. */
+  .hero-scroll .chapitre { display: none; }
 }
 
 /* ---------- Section 3 : cartes photo des prestations ---------- */
