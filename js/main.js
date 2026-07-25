@@ -19,7 +19,7 @@
 
   /* ---------- Réglages (frames adaptées à l'appareil) ---------- */
   var FRAME_COUNT = isMobile ? 170 : 181;               /* mobile : New project (2) ; desktop inchangé */
-  var FRAME_DIR   = isMobile ? 'public/hero/frames-mobile/' : 'public/hero/frames/';
+  var FRAME_DIR   = isMobile ? 'public/hero/frames-mobile-2/' : 'public/hero/frames/';
   var SLP_COUNT   = isMobile ? 150 : 165;               /* section « Sous le pouce » */
   var SLP_DIR     = isMobile ? 'public/sous-le-pouce/frames-mobile/' : 'public/sous-le-pouce/frames/';
   var REVEAL_AT   = 0.90;                     /* progression à laquelle la révélation apparaît */
