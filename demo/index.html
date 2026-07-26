@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<!-- Charte FELICITI : empêche l'inversion en dark mode sur mobile -->
+<meta name="color-scheme" content="only light"/>
+<title>FELICITI — Démo (hero scrub-scroll)</title>
+<meta name="robots" content="noindex"/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
+<!-- Dépendances scrub : GSAP + ScrollTrigger + Lenis (desktop) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+
+<style>
+:root{
+  --lin:#F3EDE4; --creme:#FAF6EF; --taupe:#D8CBB8; --encre:#2E2620;
+  --brun:#8A7D6D; --bronze:#A6845C;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--lin);color:var(--encre);
+  font-family:'Jost',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+
+/* ================= SECTION 1 — HERO SCRUB ================= */
+.fs-scrub{position:relative;background:var(--lin)}
+.fs-stage{position:relative;height:100vh;height:100svh;width:100%;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--lin)}
+/* fond flou (desktop) : le poster agrandi/flouté derrière la colonne vidéo */
+.fs-stage::before{content:"";position:absolute;inset:0;z-index:0;
+  background:var(--bg-poster) center/cover no-repeat;filter:blur(38px) brightness(.72);
+  transform:scale(1.15);opacity:.55}
+/* colonne vidéo : plein écran sur mobile, colonne 9:16 centrée sur desktop */
+.fs-viewport{position:relative;z-index:1;height:100vh;height:100svh;width:100%;
+  max-width:calc(100svh * 9 / 16);overflow:hidden;background:#000;
+  box-shadow:0 30px 80px -30px rgba(46,38,32,.5)}
+.fs-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;
+  will-change:transform;transform-origin:center;pointer-events:none}
+/* effets ciné dosés */
+.fs-vign{position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:radial-gradient(120% 100% at 50% 42%,rgba(0,0,0,0) 55%,rgba(20,15,10,.26) 100%)}
+.fs-grain{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* textes overlay (2 temps) */
+.fs-cap{position:absolute;left:0;right:0;z-index:5;text-align:center;pointer-events:none;
+  opacity:0;padding:0 28px;bottom:15%}
+.fs-cap .fs-over{display:block;font-size:10px;letter-spacing:.34em;text-transform:uppercase;
+  color:var(--taupe);margin-bottom:10px}
+.fs-cap .fs-line{display:block;font-family:'Cormorant Garamond',serif;font-weight:400;
+  font-size:clamp(22px,5vw,30px);line-height:1.22;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.38)}
+/* indice de scroll */
+.fs-hint{position:absolute;left:0;right:0;bottom:7%;z-index:6;text-align:center;color:#fff;
+  pointer-events:none;transition:opacity .4s ease}
+.fs-hint .fs-t{font-size:11px;letter-spacing:.22em;text-transform:uppercase;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.fs-hint .fs-chev{display:block;margin-top:8px;font-size:18px;animation:fs-bob 1.8s ease-in-out infinite}
+@keyframes fs-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+/* loader de préchargement des frames */
+.fs-loader{position:absolute;left:0;bottom:0;z-index:7;height:2px;width:100%;background:rgba(255,255,255,.12)}
+.fs-loader-bar{display:block;height:100%;width:0%;background:var(--bronze);transition:width .2s ease}
+.fs-scrub.is-ready .fs-loader{opacity:0;transition:opacity .5s ease}
+@media (prefers-reduced-motion: reduce){ .fs-hint .fs-chev{animation:none} }
+
+/* ================= SECTIONS 2 & 3 — contenu ================= */
+.demo-section{padding:clamp(5rem,14vh,9rem) clamp(1.5rem,6vw,4rem);
+  display:flex;justify-content:center}
+.demo-inner{width:100%;max-width:720px;text-align:center}
+.demo-eyebrow{display:block;font-size:.66rem;letter-spacing:.34em;text-transform:uppercase;
+  color:var(--bronze);margin-bottom:1.4rem}
+.demo-title{font-family:'Cormorant Garamond',serif;font-weight:500;
+  font-size:clamp(2rem,6vw,3.4rem);line-height:1.12;color:var(--encre);margin:0 0 1.6rem}
+.demo-title em{font-style:italic;color:var(--bronze)}
+.demo-text{font-weight:300;font-size:clamp(1rem,2.2vw,1.15rem);line-height:1.85;
+  color:var(--encre);opacity:.9;margin:0 auto;max-width:56ch}
+.demo-text + .demo-text{margin-top:1.2rem}
+
+.demo-section--alt{background:var(--creme)}
+/* Section libre : cadre pointillé bronze pour marquer l'emplacement à remplir */
+.demo-section--free{background:var(--lin)}
+.demo-free-box{border:1px dashed var(--bronze-clr,rgba(166,132,92,.5));
+  border-radius:4px;padding:clamp(3rem,10vh,6rem) 2rem;color:var(--brun)}
+.demo-free-box .demo-eyebrow{color:var(--brun)}
+.demo-free-note{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:clamp(1.2rem,3.5vw,1.7rem);color:var(--brun)}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     SECTION 1 — HERO SCRUB SCROLL
+     (moteur autonome ; frames réutilisées du projet : 181 frames 9:16)
+     ============================================================ -->
+<section class="fs-scrub" id="feliciti-scrub" aria-label="Hero scrub — faire-part FELICITI">
+  <div class="fs-stage">
+    <div class="fs-viewport">
+      <canvas class="fs-canvas" aria-hidden="true"></canvas>
+      <div class="fs-vign"></div>
+      <div class="fs-grain"></div>
+
+      <div class="fs-cap" data-c="0.16" data-h="0.13">
+        <span class="fs-over">FELICITI</span>
+        <span class="fs-line">Votre faire-part mérite<br>plus qu'une enveloppe.</span>
+      </div>
+      <div class="fs-cap" data-c="0.80" data-h="0.14">
+        <span class="fs-line">Il doit raconter<br>votre histoire.</span>
+      </div>
+
+      <div class="fs-hint"><span class="fs-t">Faites défiler</span><span class="fs-chev">⌄</span></div>
+      <div class="fs-loader"><span class="fs-loader-bar"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 2 — TITRE + TEXTE
+     ============================================================ -->
+<section class="demo-section demo-section--alt" id="section-2">
+  <div class="demo-inner">
+    <span class="demo-eyebrow">Section deux</span>
+    <h2 class="demo-title">Un titre, <em>et le récit</em></h2>
+    <p class="demo-text">Ici vient le texte : quelques phrases pour poser l'intention, présenter une idée, ou introduire ce qui suit. Le ton reste sobre et éditorial, dans la charte FELICITI.</p>
+    <p class="demo-text">Ce bloc est un simple gabarit titre + texte : on ajuste les mots, la longueur et le rythme une fois le contenu défini.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 3 — LIBRE (contenu à définir)
+     ============================================================ -->
+<section class="demo-section demo-section--free" id="section-3">
+  <div class="demo-inner">
+    <div class="demo-free-box">
+      <span class="demo-eyebrow">Section trois</span>
+      <p class="demo-free-note">Section libre — on verra ensemble ce qu'on intègre ici.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================================
+     Moteur scrub-scroll (canvas + GSAP ScrollTrigger). Réglages : CFG.
+     ===================================================================== -->
+<script>
+const CFG = {
+  framePath:  '/public/hero/frames-mobile-3/', // frames déjà présentes dans le projet
+  framePrefix:'frame_',
+  frameExt:   'webp',
+  framePad:   3,             // frame_001 => padding 3
+  frameStart: 1,
+  frameCount: 181,           // nombre réel de frames (New project 3)
+  posterUrl:  '/public/hero/frames-mobile-3/frame_001.webp',
+
+  scrollLength: '320%',      // distance d'épinglage
+  scrub: 0.6,
+  breath: 0.03,
+  useLenisDesktop: true      // Lenis desktop only ; coupé sur mobile
+};
+
+(function(){
+  const section  = document.getElementById('feliciti-scrub');
+  const stage    = section.querySelector('.fs-stage');
+  const viewport = section.querySelector('.fs-viewport');
+  const canvas   = section.querySelector('.fs-canvas');
+  const ctx      = canvas.getContext('2d');
+  const caps     = Array.from(section.querySelectorAll('.fs-cap'));
+  const hint     = section.querySelector('.fs-hint');
+  const bar      = section.querySelector('.fs-loader-bar');
+
+  stage.style.setProperty('--bg-poster', `url("${CFG.posterUrl}")`);
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobile = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+
+  const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+  const ease =t=>t*t*(3-2*t);
+  const bell =(v,c,h)=>clamp(1-Math.abs(v-c)/h,0,1);
+
+  const N = CFG.frameCount;
+  const urls = [];
+  for(let i=0;i<N;i++){
+    const num = String(CFG.frameStart+i).padStart(CFG.framePad,'0');
+    urls.push(`${CFG.framePath}${CFG.framePrefix}${num}.${CFG.frameExt}`);
+  }
+
+  let dpr=1, vw=0, vh=0, lastFrame=-1;
+  function size(){
+    dpr = Math.min(window.devicePixelRatio||1, 2);
+    const r = viewport.getBoundingClientRect();
+    vw=r.width; vh=r.height;
+    canvas.width=Math.round(vw*dpr); canvas.height=Math.round(vh*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    lastFrame=-1;
+  }
+  function drawCover(img){
+    if(!img || !img.naturalWidth) return;
+    const iw=img.naturalWidth, ih=img.naturalHeight;
+    const s=Math.max(vw/iw, vh/ih), w=iw*s, h=ih*s;
+    ctx.clearRect(0,0,vw,vh);
+    ctx.drawImage(img,(vw-w)/2,(vh-h)/2,w,h);
+  }
+
+  const images = new Array(N);
+  let loaded = 0;
+  function preload(){
+    return new Promise(resolve=>{
+      urls.forEach((u,idx)=>{
+        const im=new Image();
+        im.onload = im.onerror = ()=>{
+          images[idx]=im; loaded++;
+          bar.style.width = Math.round(loaded/N*100)+'%';
+          if(loaded===N) resolve();
+        };
+        im.src=u;
+      });
+    });
+  }
+
+  function render(frame){
+    const i = clamp(Math.round(frame),0,N-1);
+    if(i!==lastFrame){ drawCover(images[i]); lastFrame=i; }
+    canvas.style.transform = 'scale(' + (1 + CFG.breath*(frame/(N-1))) + ')';
+    const p = N>1 ? frame/(N-1) : 0;
+    caps.forEach(cap=>{
+      const c=parseFloat(cap.dataset.c), h=parseFloat(cap.dataset.h);
+      cap.style.opacity = ease(bell(p,c,h)).toFixed(3);
+    });
+    hint.style.opacity = (1 - ease(clamp(p/0.05,0,1))).toFixed(3);
+  }
+
+  let lenis=null;
+  function initLenis(){
+    if(!CFG.useLenisDesktop || isMobile || reduce || typeof Lenis==='undefined') return;
+    lenis = new Lenis({ duration:1.1, smoothWheel:true });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(t=>lenis.raf(t*1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+
+  function start(){
+    size();
+    if(reduce){
+      render(Math.round((N-1)*0.5));
+      caps.forEach((c,idx)=>{ c.style.transition='opacity .6s ease'; c.style.opacity = idx===caps.length-1 ? 1 : 0; });
+      hint.style.display='none';
+      section.classList.add('is-ready');
+      return;
+    }
+    gsap.registerPlugin(ScrollTrigger);
+    initLenis();
+
+    const state = { frame:0 };
+    gsap.to(state, {
+      frame: N-1,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top top',
+        end: '+=' + CFG.scrollLength,
+        pin: stage,
+        scrub: CFG.scrub,
+        anticipatePin: 1,
+        invalidateOnRefresh: true
+      },
+      onUpdate: ()=>render(state.frame)
+    });
+
+    render(0);
+    section.classList.add('is-ready');
+    ScrollTrigger.refresh();
+  }
+
+  let rAF=null;
+  window.addEventListener('resize', ()=>{
+    cancelAnimationFrame(rAF);
+    rAF=requestAnimationFrame(()=>{ size(); render(lastFrame<0?0:lastFrame);
+      if(!reduce && window.ScrollTrigger) ScrollTrigger.refresh(); });
+  });
+
+  preload().then(start);
+})();
+</script>
+</body>
+</html>
