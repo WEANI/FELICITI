@@ -186,12 +186,14 @@
   }
 
   /* ---------- Scrub : progression scroll → frame + narration ----------
-     Le pin est assuré par position:sticky (CSS) ; ScrollTrigger ne fait
-     que mesurer la progression sur la hauteur de la section (450vh).   */
+     Le pin est assuré par position:sticky (CSS). Le scrub se termine 100vh
+     AVANT la fin de la section (height − 2vh) : les 100vh restants servent au
+     recouvrement par la section 2, une fois le scrub à 100 %. */
   var st = ScrollTrigger.create({
     trigger: '#hero-scroll',
     start: 'top top',
-    end: 'bottom bottom',
+    end: function () { return '+=' + (section.offsetHeight - 2 * window.innerHeight); },
+    invalidateOnRefresh: true,
     scrub: 0.7,
     onUpdate: function (self) {
       var p = self.progress;

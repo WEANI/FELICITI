@@ -216,8 +216,11 @@ select:focus-visible,
 /* ---------- Hero scroll-driven ---------- */
 .hero-scroll {
   position: relative;
-  height: 450vh;
+  /* scrub (350vh de pin) + recouvrement (100vh) + les 100vh qu'un sticky
+     de 100vh « consomme » avant de se dé-épingler = 550vh. */
+  height: 550vh;
   background: #14100b;
+  z-index: 1;
 }
 .hero-sticky {
   position: sticky;
@@ -225,6 +228,22 @@ select:focus-visible,
   height: 100vh;
   height: 100svh;
   overflow: hidden;
+  z-index: 1;
+}
+
+/* ---- Recouvrement : la section 2 (#manifeste) remonte PAR-DESSUS le hero
+   resté épinglé, à la fin du scrub. Actif seulement en mode scrub
+   (désactivé en fallback vidéo / reduced-motion via body.hero-video-mode). */
+body:not(.hero-video-mode) #manifeste {
+  position: relative;
+  z-index: 2;
+  margin-top: -100vh;            /* glisse sur la zone de recouvrement (100vh) */
+  border-radius: 28px 28px 0 0;
+  box-shadow: 0 -26px 60px -12px rgba(46, 38, 32, 0.30);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll { height: 100svh; }
+  body:not(.hero-video-mode) #manifeste { margin-top: 0; box-shadow: none; border-radius: 0; }
 }
 .hero-canvas {
   position: absolute; inset: 0;
@@ -419,7 +438,7 @@ body.hero-video-mode .scrub-canvas { display: none; }
    courtes qu'en desktop pour un défilement plus vif au doigt.
    ============================================================ */
 @media (max-width: 768px), (pointer: coarse) {
-  .hero-scroll { height: 320vh; }
+  .hero-scroll { height: 420vh; } /* scrub 220vh + recouvrement 100vh + 100vh sticky */
   .slp { height: 300vh; }
   /* Canvases décoratifs : ne captent jamais le geste → le doigt scrolle.
      (un swipe sur un <canvas>/<video> plein écran peut sinon être absorbé) */
