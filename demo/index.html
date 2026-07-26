@@ -27,8 +27,12 @@ html,body{margin:0;background:var(--lin);color:var(--encre);
   font-family:'Jost',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 
 /* ================= SECTION 1 — HERO SCRUB ================= */
-.fs-scrub{position:relative;background:var(--lin)}
-.fs-stage{position:relative;height:100vh;height:100svh;width:100%;
+/* Un sticky de 100vh reste épinglé sur (hauteur − 100vh) de scroll.
+   On veut qu'il reste épinglé pendant le scrub (320vh) PUIS le recouvrement
+   (100vh) : hauteur = 320 + 100 + 100 = 520vh. */
+.fs-scrub{position:relative;background:var(--lin);height:520vh;z-index:1}
+/* .fs-stage épinglée en haut pendant tout le scrub ET le recouvrement */
+.fs-stage{position:sticky;top:0;height:100vh;height:100svh;width:100%;z-index:1;
   display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--lin)}
 /* fond flou (desktop) : le poster agrandi/flouté derrière la colonne vidéo */
 .fs-stage::before{content:"";position:absolute;inset:0;z-index:0;
@@ -78,13 +82,32 @@ html,body{margin:0;background:var(--lin);color:var(--encre);
 .demo-text + .demo-text{margin-top:1.2rem}
 
 .demo-section--alt{background:var(--creme)}
+
+/* ---- Recouvrement : la section 2 remonte PAR-DESSUS le hero épinglé ----
+   z-index supérieur + margin-top négatif (elle glisse sur la zone de
+   recouvrement) + ombre portée vers le haut + coins supérieurs arrondis. */
+#section-2{
+  position:relative;
+  z-index:2;
+  margin-top:-100vh;            /* remonte sur la zone de recouvrement du hero */
+  border-radius:28px 28px 0 0;
+  box-shadow:0 -26px 60px -12px rgba(46,38,32,.30);
+}
+
 /* Section libre : cadre pointillé bronze pour marquer l'emplacement à remplir */
-.demo-section--free{background:var(--lin)}
+.demo-section--free{background:var(--lin);position:relative;z-index:2}
 .demo-free-box{border:1px dashed var(--bronze-clr,rgba(166,132,92,.5));
   border-radius:4px;padding:clamp(3rem,10vh,6rem) 2rem;color:var(--brun)}
 .demo-free-box .demo-eyebrow{color:var(--brun)}
 .demo-free-note{font-family:'Cormorant Garamond',serif;font-style:italic;
   font-size:clamp(1.2rem,3.5vw,1.7rem);color:var(--brun)}
+
+/* Reduced-motion : défilement normal, aucune superposition */
+@media (prefers-reduced-motion: reduce){
+  .fs-scrub{height:100vh;height:100svh}
+  .fs-stage{position:relative}
+  #section-2{margin-top:0;box-shadow:none;border-radius:0}
+}
 </style>
 </head>
 <body>
@@ -249,6 +272,10 @@ const CFG = {
     gsap.registerPlugin(ScrollTrigger);
     initLenis();
 
+    /* Épinglage assuré par CSS (position:sticky), pas par GSAP : ainsi la
+       section 2 peut remonter PAR-DESSUS le hero. Le scrub se termine à
+       320vh ; les 100vh suivants (hauteur .fs-scrub = 420vh) = recouvrement. */
+    const scrubVH = parseFloat(CFG.scrollLength) / 100;   // '320%' -> 3.2
     const state = { frame:0 };
     gsap.to(state, {
       frame: N-1,
@@ -256,10 +283,8 @@ const CFG = {
       scrollTrigger: {
         trigger: section,
         start: 'top top',
-        end: '+=' + CFG.scrollLength,
-        pin: stage,
+        end: () => '+=' + (window.innerHeight * scrubVH),
         scrub: CFG.scrub,
-        anticipatePin: 1,
         invalidateOnRefresh: true
       },
       onUpdate: ()=>render(state.frame)
