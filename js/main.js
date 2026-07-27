@@ -1,7 +1,7 @@
 /* ============================================================
    FELICITI — hero scroll-driven
    Séquence de frames webp scrubée au scroll (technique Apple)
-   Lenis + GSAP ScrollTrigger · chapitres synchronisés · reveal
+   Lenis + GSAP ScrollTrigger · chapitres synchronisés
    Fallback mobile / reduced-motion : lecture vidéo + timeupdate
    ============================================================ */
 
@@ -18,11 +18,10 @@
               || window.matchMedia('(pointer: coarse)').matches;
 
   /* ---------- Réglages (frames adaptées à l'appareil) ---------- */
-  var FRAME_COUNT = isMobile ? 181 : 181;               /* mobile : New project (3) ; desktop inchangé */
-  var FRAME_DIR   = isMobile ? 'public/hero/frames-mobile-3/' : 'public/hero/frames/';
+  var FRAME_COUNT = 241;                                /* hero v2 : 241 frames (hero_001…hero_241) */
+  var FRAME_DIR   = 'public/hero/frames-v2/';           /* même séquence 9:16 desktop & mobile */
   var SLP_COUNT   = isMobile ? 150 : 165;               /* section « Sous le pouce » */
   var SLP_DIR     = isMobile ? 'public/sous-le-pouce/frames-mobile/' : 'public/sous-le-pouce/frames/';
-  var REVEAL_AT   = 0.90;                     /* progression à laquelle la révélation apparaît */
   var CHAP_SPAN   = 0.13;                     /* durée de visibilité d'un chapitre (± autour de data-at) */
 
   function slpSrc(i) {
@@ -38,7 +37,6 @@
   var poster    = document.getElementById('hero-poster');
   var video     = document.getElementById('hero-video');
   var dust      = document.getElementById('hero-dust');
-  var reveal    = document.getElementById('hero-reveal');
   var cue       = document.getElementById('scroll-cue');
   var tint      = document.querySelector('.tint');
   var chapitres = Array.prototype.slice.call(document.querySelectorAll('.chapitre'));
@@ -46,7 +44,7 @@
   function src(i) {
     var n = String(i + 1);
     while (n.length < 3) n = '0' + n;
-    return FRAME_DIR + 'frame_' + n + '.webp';
+    return FRAME_DIR + 'hero_' + n + '.webp';
   }
 
   /* Si les CDN (gsap/Lenis) n'ont pas encore répondu, retenter une fois
@@ -69,47 +67,33 @@
   if (reduced || typeof gsap === 'undefined') {
     document.body.classList.add('hero-video-mode');
     if (loader) loader.classList.add('done');
-    if (video) {
+    if (video && !reduced) {
+      /* GSAP absent : lecture simple de la vidéo hero (autoplay muet) */
       video.preload = 'auto';
-      var showReveal = function () {
-        reveal.classList.add('on');
-        if (cue) cue.classList.add('off');
+      video.classList.add('on');
+      video.src = 'public/hero/hero.mp4';
+      video.muted = true;
+      video.setAttribute('playsinline', '');
+      video.load();
+      var tryPlay = function () {
+        if (!video.paused) return;
+        var pl = video.play();
+        if (pl && pl.catch) pl.catch(function () {});
       };
-      if (reduced) {
-        /* Reduced motion : pas d'autoplay — poster + révélation immédiate */
-        showReveal();
-      } else {
-        /* GSAP absent : on joue la vidéo (verticale sur mobile) */
-        video.classList.add('on');
-        video.src = isMobile ? 'public/hero/hero-mobile.mp4' : 'public/hero/hero.mp4';
-        video.muted = true;
-        video.setAttribute('playsinline', '');
-        video.load();
-        var tryPlay = function () {
-          if (!video.paused) return;
-          var pl = video.play();
-          if (pl && pl.catch) pl.catch(function () {});
-        };
-        tryPlay();
-        /* iOS/Low-Power peut différer l'autoplay : on relance à chaque geste
-           tant que la vidéo n'a pas démarré (la garde ci-dessus rend l'appel
-           inoffensif une fois qu'elle joue). */
-        ['touchstart', 'pointerdown', 'scroll'].forEach(function (ev) {
-          window.addEventListener(ev, tryPlay, { passive: true });
+      tryPlay();
+      /* iOS/Low-Power peut différer l'autoplay : on relance à chaque geste */
+      ['touchstart', 'pointerdown', 'scroll'].forEach(function (ev) {
+        window.addEventListener(ev, tryPlay, { passive: true });
+      });
+      video.addEventListener('timeupdate', function () {
+        var p = video.duration ? video.currentTime / video.duration : 0;
+        chapitres.forEach(function (el) {
+          var at = parseFloat(el.getAttribute('data-at'));
+          el.classList.toggle('on', p >= at - CHAP_SPAN / 2 && p <= at + CHAP_SPAN);
         });
-        video.addEventListener('timeupdate', function () {
-          var p = video.duration ? video.currentTime / video.duration : 0;
-          chapitres.forEach(function (el) {
-            var at = parseFloat(el.getAttribute('data-at'));
-            el.classList.toggle('on', p >= at - CHAP_SPAN / 2 && p <= at + CHAP_SPAN);
-          });
-          if (p >= REVEAL_AT) showReveal();
-        });
-        video.addEventListener('ended', showReveal);
-      }
-    } else {
-      reveal.classList.add('on');
+      });
     }
+    /* reduced-motion : on laisse le poster statique */
     slpVideoMode();
     return;
   }
@@ -211,8 +195,7 @@
       /* color tint : voile chaud qui se réchauffe vers la fin */
       if (tint) tint.style.opacity = (p * 0.14).toFixed(3);
 
-      /* reveal + cue */
-      reveal.classList.toggle('on', p >= REVEAL_AT);
+      /* cue : disparaît dès qu'on scrolle */
       if (cue) cue.classList.toggle('off', p > 0.02);
     }
   });
