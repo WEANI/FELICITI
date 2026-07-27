@@ -220,7 +220,6 @@ select:focus-visible,
      de 100vh « consomme » avant de se dé-épingler = 550vh. */
   height: 550vh;
   background: #14100b;
-  z-index: 1;
 }
 .hero-sticky {
   position: sticky;
@@ -228,15 +227,14 @@ select:focus-visible,
   height: 100vh;
   height: 100svh;
   overflow: hidden;
-  z-index: 1;
 }
 
 /* ---- Recouvrement : la section 2 (#manifeste) remonte PAR-DESSUS le hero
-   resté épinglé, à la fin du scrub. Actif seulement en mode scrub
-   (désactivé en fallback vidéo / reduced-motion via body.hero-video-mode). */
+   resté épinglé, à la fin du scrub. Pas de z-index : l'ordre DOM suffit
+   (les .section sont position:relative, donc chaque section plus bas se
+   peint au-dessus du hero). Actif seulement en mode scrub. */
 body:not(.hero-video-mode) #manifeste {
   position: relative;
-  z-index: 2;
   margin-top: -100vh;            /* glisse sur la zone de recouvrement (100vh) */
   border-radius: 28px 28px 0 0;
   box-shadow: 0 -26px 60px -12px rgba(46, 38, 32, 0.30);
