@@ -104,11 +104,12 @@ html,body{margin:0;background:var(--lin);color:var(--encre);
 
 /* ================= FAIRE-PART (récit + bas de page) ================= */
 /* Initiales — script calligraphique, très aéré */
-.demo-initials{min-height:100svh;padding:clamp(6rem,22vh,12rem) 1.5rem;background:var(--lin);
+/* hauteur divisée par 4 (100svh -> 25svh), taille des initiales inchangée */
+.demo-initials{min-height:25svh;padding:clamp(1.5rem,5.5vh,3rem) 1.5rem;background:var(--lin);
   align-items:center}
-.fp-initials{margin:0;text-align:center;font-family:'Great Vibes',cursive;
+.fp-initials{margin:0;text-align:center;font-family:'Great Vibes',cursive;letter-spacing:.3em;
   color:var(--bronze);line-height:1;font-size:clamp(5rem,20vw,11rem)}
-.fp-initials .fp-amp{font-size:.62em;color:var(--taupe);margin:0 .06em;vertical-align:.06em}
+.fp-initials .fp-amp{font-size:.62em;color:var(--taupe);margin:0 .12em;vertical-align:.06em}
 .fp-initials--sm{font-size:clamp(3rem,10vw,5rem)}
 
 /* Le récit */

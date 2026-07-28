@@ -510,6 +510,27 @@ body.hero-video-mode .scrub-canvas { display: none; }
   line-height: 1.85;
 }
 
+/* Section manifeste : titre « FELICITI » en wordmark, sous-titre italique, accroche en gras */
+.manifeste-mark { letter-spacing: 0.2em; color: var(--encre); }
+.manifeste-sub {
+  margin-top: 1rem;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: clamp(1.1rem, 2.8vw, 1.7rem);
+  color: var(--bronze);
+}
+.manifeste-hook {
+  margin-top: 1.6rem;
+  font-weight: 600;
+  font-size: clamp(1.02rem, 2.1vw, 1.22rem);
+  line-height: 1.5;
+  color: var(--encre);
+  max-width: 46ch;
+  margin-left: auto;
+  margin-right: auto;
+  text-wrap: balance;
+}
+
 /* ---------- Aperçu des prestations (grille) ---------- */
 .presta-grid {
   display: grid;
