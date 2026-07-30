@@ -161,4 +161,65 @@
       });
     });
   }
+
+  /* ---------- Carrousel « coverflow » des prestations (accueil) ----------
+     La carte la plus proche du centre devient active (nette + agrandie).
+     Défilement : doigt (mobile), trackpad, molette, et glissé souris (desktop). */
+  var cover = document.getElementById('prestaCover');
+  if (cover) {
+    var cards = Array.prototype.slice.call(cover.children);
+
+    var updateActive = function () {
+      var r = cover.getBoundingClientRect();
+      var center = r.left + r.width / 2;
+      var best = null, bestDist = Infinity;
+      cards.forEach(function (card) {
+        var cr = card.getBoundingClientRect();
+        var d = Math.abs(cr.left + cr.width / 2 - center);
+        if (d < bestDist) { bestDist = d; best = card; }
+      });
+      cards.forEach(function (c) { c.classList.toggle('active', c === best); });
+    };
+    cover.addEventListener('scroll', updateActive, { passive: true });
+    window.addEventListener('resize', updateActive);
+
+    /* Glissé à la souris (desktop) — plus naturel pour un coverflow */
+    var down = false, startX = 0, startScroll = 0, moved = false;
+    cover.addEventListener('mousedown', function (e) {
+      down = true; moved = false;
+      startX = e.pageX; startScroll = cover.scrollLeft;
+      cover.classList.add('dragging');
+      e.preventDefault();
+    });
+    window.addEventListener('mousemove', function (e) {
+      if (!down) return;
+      var dx = e.pageX - startX;
+      if (Math.abs(dx) > 4) moved = true;
+      cover.scrollLeft = startScroll - dx;
+    });
+    var endDrag = function () {
+      if (!down) return;
+      down = false;
+      cover.classList.remove('dragging');
+    };
+    window.addEventListener('mouseup', endDrag);
+    window.addEventListener('mouseleave', endDrag);
+    /* Un glissé ne doit pas déclencher le lien de la carte */
+    cards.forEach(function (card) {
+      card.addEventListener('click', function (e) { if (moved) e.preventDefault(); });
+      card.addEventListener('dragstart', function (e) { e.preventDefault(); });
+    });
+
+    /* Au chargement : centrer la première carte (Le Faire-Part) */
+    var centerFirst = function () {
+      var first = cards[0];
+      if (first) {
+        cover.scrollLeft = first.offsetLeft - (cover.clientWidth - first.offsetWidth) / 2;
+      }
+      updateActive();
+    };
+    centerFirst();
+    window.addEventListener('load', centerFirst);
+    setTimeout(centerFirst, 200);
+  }
 })();
