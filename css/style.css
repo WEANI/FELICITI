@@ -1352,3 +1352,79 @@ body.hero-video-mode .scrub-canvas { display: none; }
   margin-top: 10px;
   position: relative;
 }
+
+/* ---------- Page « Prestations » : liste éditoriale ---------- */
+.ed-list {
+  max-width: 800px;
+  margin: 0 auto;
+  border-top: 1px solid var(--taupe);
+}
+.ed-row {
+  display: grid;
+  grid-template-columns: 56px 90px 1fr auto;
+  gap: 22px;
+  align-items: center;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--taupe);
+  text-decoration: none;
+  color: inherit;
+  transition: 0.4s;
+}
+.ed-row:hover { background: var(--lin); }
+@media (max-width: 640px) {
+  .ed-row {
+    grid-template-columns: 40px 64px 1fr;
+    grid-template-areas: "num img title" "num img price";
+    column-gap: 14px;
+  }
+  .ed-num { grid-area: num; }
+  .ed-thumb { grid-area: img; }
+  .ed-row .ed-thumb { width: 64px; }
+  .ed-text { grid-area: title; min-width: 0; }
+  .ed-row .ed-text h3 { white-space: normal; }
+  .ed-price { grid-area: price; }
+}
+.ed-num {
+  font-family: var(--display);
+  color: var(--bronze);
+  font-size: 1.3rem;
+}
+.ed-thumb {
+  width: 90px;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 1px solid var(--taupe);
+  background: var(--lin);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ed-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.ed-thumb .ph {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 0.62rem;
+  line-height: 1.3;
+  color: var(--brun-gris);
+  text-align: center;
+  padding: 0.3rem;
+}
+.ed-text h3 {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 1.25rem;
+  color: var(--encre);
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+.ed-text p {
+  color: var(--brun-gris);
+  font-size: 0.85rem;
+}
+.ed-price {
+  font-size: 0.78rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--bronze);
+  white-space: nowrap;
+}
