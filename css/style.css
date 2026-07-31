@@ -737,35 +737,82 @@ body.hero-video-mode .scrub-canvas { display: none; }
   line-height: 1.85;
   color: var(--encre);
 }
-/* ---------- Galerie ---------- */
-.galerie-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1.6rem;
+/* ---------- Comment ça marche (accueil) : frise sur fond plein encre ---------- */
+.comment-accueil {
+  background: var(--encre);
+  padding: clamp(60px, 8vw, 100px) 24px;
 }
-.galerie-item { text-align: center; }
-.galerie-media {
-  aspect-ratio: 9 / 16;
-  background: linear-gradient(155deg, var(--lin), var(--taupe));
-  border: 1px solid var(--taupe);
+.comment-accueil h2 {
+  font-family: var(--display);
+  font-weight: 500;
+  color: var(--creme);
+  text-align: center;
+  font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+  margin-bottom: 48px;
+}
+.hframe {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+}
+@media (max-width: 760px) {
+  .hframe { grid-template-columns: 1fr; gap: 28px; }
+}
+.hf { text-align: center; padding: 0 18px; position: relative; }
+.hf:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 29px; left: 50%;
+  width: 100%; height: 1px;
+  background: rgba(250, 246, 239, 0.3);
+  z-index: 0;
+}
+@media (max-width: 760px) { .hf::after { display: none; } }
+.hf-dot {
+  position: relative;
+  z-index: 1;
+  width: 58px; height: 58px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: var(--creme);
+  color: var(--encre);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--brun-gris);
-  font-size: 0.58rem;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  overflow: hidden;
-}
-.galerie-media img,
-.galerie-media video { width: 100%; height: 100%; object-fit: cover; }
-.galerie-cap {
-  margin-top: 0.9rem;
   font-family: var(--display);
-  font-style: italic;
-  font-size: 1rem;
-  color: var(--brun-gris);
+  font-size: 1.35rem;
 }
+.hf h3 {
+  color: var(--creme);
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.hf p {
+  color: rgba(250, 246, 239, 0.85);
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+.comment-accueil .cta { display: block; text-align: center; margin-top: 44px; }
+.comment-accueil .cta a {
+  display: inline-block;
+  color: var(--creme);
+  border: 1px solid var(--creme);
+  padding: 14px 30px;
+  text-decoration: none;
+  font-family: var(--corps);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: 0.4s;
+}
+.comment-accueil .cta a:hover { background: var(--creme); color: var(--encre); }
 
 /* ---------- Témoignages ---------- */
 .temoignages { display: grid; gap: clamp(3rem, 7vh, 5rem); max-width: 860px; margin: 0 auto; }
