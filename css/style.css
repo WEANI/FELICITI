@@ -1300,10 +1300,55 @@ body.hero-video-mode .scrub-canvas { display: none; }
 }
 .acc-sub p { line-height: 1.75; }
 
-/* Texte descriptif sous chaque étape (page « Comment ça marche ») */
-.step-text {
-  margin-top: 0.9rem;
-  font-size: 0.92rem;
-  line-height: 1.75;
+/* ---------- Page « Comment ça marche » : cartes à chiffre filigrane ---------- */
+.cards2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+  max-width: 820px;
+  margin: 0 auto;
+}
+@media (max-width: 680px) {
+  .cards2 { grid-template-columns: 1fr; }
+}
+.c2 {
+  position: relative;
+  background: var(--lin);
+  border: 1px solid var(--taupe);
+  border-radius: 14px;
+  padding: 36px 30px 30px;
+  overflow: hidden;
+}
+.c2-num {
+  position: absolute;
+  top: -18px; right: 6px;
+  font-family: var(--display);
+  font-size: 6rem;
+  font-weight: 600;
+  color: rgba(166, 132, 92, 0.13);
+  line-height: 1;
+}
+.c2 h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  position: relative;
+  color: var(--encre);
+}
+.c2 h3::after {
+  content: "";
+  display: block;
+  width: 32px; height: 1px;
+  background: var(--bronze);
+  margin-top: 10px;
+}
+.c2 p {
   color: var(--brun-gris);
+  font-size: 0.92rem;
+  line-height: 1.65;
+  margin-top: 10px;
+  position: relative;
 }
