@@ -1158,3 +1158,105 @@ body.hero-video-mode .scrub-canvas { display: none; }
 
   .chapitre { font-size: clamp(1.3rem, 6vw, 1.8rem); }
 }
+
+/* ---------- Page « Notre approche » : trois cases ---------- */
+.cases-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(20px, 3vw, 36px);
+  max-width: 980px;
+  margin: clamp(2.5rem, 6vh, 4rem) auto 0;
+  padding: 0 1.5rem;
+}
+@media (max-width: 760px) {
+  .cases-grid { grid-template-columns: 1fr; max-width: 420px; }
+}
+.case {
+  background: var(--lin);
+  border-radius: 16px;
+  padding: clamp(32px, 4vw, 44px) clamp(22px, 3vw, 30px);
+  text-align: center;
+}
+.case-check {
+  display: block;
+  font-family: var(--display);
+  font-size: 2.1rem;
+  color: var(--encre);
+  margin-bottom: 18px;
+  line-height: 1;
+}
+.case h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.35rem;
+  color: var(--encre);
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+.case p {
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--brun-gris);
+}
+.approche-tagline {
+  max-width: 52ch;
+  margin: clamp(2.5rem, 6vh, 4rem) auto 0;
+  padding: 0 1.5rem;
+  text-align: center;
+  font-family: var(--display);
+  font-size: clamp(1.1rem, 2.4vw, 1.35rem);
+  color: var(--bronze);
+}
+
+/* ---------- Accordéon « Ce que contient votre invitation » ---------- */
+.approche-accordion { max-width: 720px; margin: 0 auto; }
+.approche-accordion details { border-bottom: 1px solid var(--taupe); }
+.approche-accordion summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 1.3rem 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  color: var(--encre);
+}
+.approche-accordion summary::-webkit-details-marker { display: none; }
+.approche-accordion summary::after {
+  content: "+";
+  color: var(--bronze);
+  font-size: 1.5rem;
+  font-weight: 300;
+  margin-left: 1rem;
+  flex-shrink: 0;
+}
+.approche-accordion details[open] summary::after { content: "–"; }
+.approche-accordion .acc-body {
+  padding: 0 0.2rem 1.6rem;
+  color: var(--encre);
+  opacity: 0.88;
+}
+.approche-accordion .acc-body p { line-height: 1.8; }
+.approche-accordion .acc-body ul { padding-left: 1.2rem; margin-top: 0.6rem; }
+.approche-accordion .acc-body li { line-height: 1.8; margin-bottom: 0.3rem; }
+.acc-sub { margin-bottom: 1.3rem; }
+.acc-sub:last-child { margin-bottom: 0; }
+.acc-sub-title {
+  display: block;
+  font-size: 0.68rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--bronze);
+  margin-bottom: 0.35rem;
+}
+.acc-sub p { line-height: 1.75; }
+
+/* Texte descriptif sous chaque étape (page « Comment ça marche ») */
+.step-text {
+  margin-top: 0.9rem;
+  font-size: 0.92rem;
+  line-height: 1.75;
+  color: var(--brun-gris);
+}
