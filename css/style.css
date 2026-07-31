@@ -12,7 +12,7 @@
   --creme:      #FAF6EF;   /* fond crème                */
   --taupe:      #D8CBB8;   /* surfaces / séparateurs    */
   --encre:      #2E2620;   /* texte brun encre          */
-  --brun-gris:  #8A7D6D;   /* texte secondaire          */
+  --brun-gris:  #2E2620;   /* texte secondaire — assombri (encre) pour la lisibilité, cf. correctif couleurs */
   --bronze:     #A6845C;   /* accent unique (UI, liens, filets, point du I) */
   --bronze-clr: rgba(166, 132, 92, 0.5);
   --fil:        #8E2A35;   /* carmin profond — le fil du récit visuel, jamais l'interface */
@@ -1219,7 +1219,7 @@ body.hero-video-mode .scrub-canvas { display: none; }
   .cases-grid { grid-template-columns: 1fr; max-width: 420px; }
 }
 .case {
-  background: var(--lin);
+  background: var(--bronze);
   border-radius: 16px;
   padding: clamp(32px, 4vw, 44px) clamp(22px, 3vw, 30px);
   text-align: center;
@@ -1234,7 +1234,7 @@ body.hero-video-mode .scrub-canvas { display: none; }
 }
 .case h3 {
   font-family: var(--display);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 1.35rem;
   color: var(--encre);
   margin-bottom: 16px;
@@ -1243,7 +1243,7 @@ body.hero-video-mode .scrub-canvas { display: none; }
 .case p {
   font-size: 0.92rem;
   line-height: 1.65;
-  color: var(--brun-gris);
+  color: var(--encre);
 }
 .approche-tagline {
   max-width: 52ch;
@@ -1292,6 +1292,7 @@ body.hero-video-mode .scrub-canvas { display: none; }
 .acc-sub:last-child { margin-bottom: 0; }
 .acc-sub-title {
   display: block;
+  font-weight: 700;
   font-size: 0.68rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
@@ -1321,16 +1322,16 @@ body.hero-video-mode .scrub-canvas { display: none; }
 }
 .c2-num {
   position: absolute;
-  top: -18px; right: 6px;
+  top: -22px; right: 8px;
   font-family: var(--display);
-  font-size: 6rem;
+  font-size: 8rem;
   font-weight: 600;
   color: rgba(166, 132, 92, 0.13);
   line-height: 1;
 }
 .c2 h3 {
   font-family: var(--display);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 1.15rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
