@@ -28,7 +28,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=38">
+  <link rel="stylesheet" href="css/style.css?v=39">
   <link rel="preload" as="image" href="public/hero/poster.webp">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
 
@@ -281,71 +281,86 @@
       </div>
     </section>
 
-    <!-- SECTION 10 — LE DEVIS -->
+    <!-- SECTION 10 — CE QUE CONTIENT VOTRE INVITATION -->
     <section class="section section-lin" id="contact">
       <div class="section-inner">
         <div class="section-head">
           <h2 class="sec-title">Ce que contient <em>votre invitation</em></h2>
-          <p class="sec-lead">Chaque projet est unique. Confiez-nous quelques mots&nbsp;: nous revenons vers vous avec une proposition sur mesure.</p>
         </div>
 
-        <div class="form-wrap">
-          <!-- Soumission gérée en JS → Supabase (table demandes_devis), voir js/site.js -->
-          <form id="devis-form">
-            <div class="form-field">
-              <label for="f-couple">Vos prénoms</label>
-              <input id="f-couple" name="prenoms" type="text" placeholder="Camille &amp; Thomas" required>
+        <div class="approche-accordion">
+          <details open>
+            <summary>Ce que vous recevez</summary>
+            <div class="acc-body">
+              <p>Votre invitation sous la forme d'un mini-site personnalisé&nbsp;:</p>
+              <ul>
+                <li>intégration de vos textes et informations</li>
+                <li>adaptation des sections selon votre événement</li>
+                <li>mise en page optimisée mobile et ordinateur</li>
+              </ul>
             </div>
-            <div class="form-field">
-              <label for="f-date">Date envisagée</label>
-              <input id="f-date" name="date" type="text" placeholder="Printemps 2027, ou une date précise">
-            </div>
-            <div class="form-field">
-              <label for="f-lieu">Lieu</label>
-              <input id="f-lieu" name="lieu" type="text" placeholder="Ville ou domaine">
-            </div>
-            <div class="form-field">
-              <label for="f-invites">Nombre d'invités approximatif</label>
-              <input id="f-invites" name="invites" type="text" placeholder="Environ 120">
-            </div>
-            <div class="form-field">
-              <label for="f-presta">Prestation(s) souhaitée(s)</label>
-              <select id="f-presta" name="prestation">
-                <option value="">Choisissez une prestation</option>
-                <option>Le faire-part vidéo</option>
-                <option>Le save-the-date</option>
-                <option>Le site de mariage</option>
-                <option>La vidéo témoin</option>
-                <option>Le Livre d'Or vidéo</option>
-                <option>La capsule anniversaire</option>
-                <option>Formule Le Grand Jour</option>
-                <option>Je ne sais pas encore</option>
-              </select>
-            </div>
-            <div class="form-field">
-              <label for="f-email">E-mail</label>
-              <input id="f-email" name="email" type="email" placeholder="vous@exemple.fr" required>
-            </div>
-            <div class="form-field">
-              <label for="f-wa">Numéro WhatsApp (optionnel)</label>
-              <input id="f-wa" name="whatsapp" type="tel" placeholder="06 00 00 00 00">
-            </div>
-            <div class="form-field">
-              <label for="f-histoire">Racontez-nous votre histoire</label>
-              <textarea id="f-histoire" name="histoire" placeholder="Votre rencontre, votre demande, ce qui vous ressemble…"></textarea>
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="btn btn-solid">Commander</button>
-            </div>
-          </form>
+          </details>
 
-          <div class="form-confirm" id="form-confirm" tabindex="-1" role="status" aria-live="polite">
-            <h3>Votre histoire est entre nos mains</h3>
-            <p>Merci de votre confiance. Nous revenons vers vous très vite avec une proposition sur mesure.</p>
-            <div class="btn-row">
-              <a class="btn btn-solid" href="https://wa.me/33600000000?text=Bonjour%20FELICITI%2C%20je%20viens%20de%20remplir%20le%20formulaire%20de%20commande" target="_blank" rel="noopener">Poursuivre la conversation sur WhatsApp</a>
+          <details>
+            <summary>Structure du mini-site</summary>
+            <div class="acc-body">
+              <div class="acc-sub">
+                <span class="acc-sub-title">La vidéo</span>
+                <p>Première section immersive pour partager votre histoire. Conçue à partir des informations récoltées dans le formulaire.</p>
+              </div>
+              <div class="acc-sub">
+                <span class="acc-sub-title">Message des mariés</span>
+                <p>Quelques mots pour accueillir vos invités.</p>
+              </div>
+              <div class="acc-sub">
+                <span class="acc-sub-title">Programme du mariage</span>
+                <p>Le déroulé de la journée ou du week-end.</p>
+              </div>
+              <div class="acc-sub">
+                <span class="acc-sub-title">Lieux &amp; accès</span>
+                <p>Les différents lieux du mariage avec cartes et indications.</p>
+              </div>
+              <div class="acc-sub">
+                <span class="acc-sub-title">Informations pratiques</span>
+                <p>Hébergements, transport, recommandations pour vos invités.</p>
+              </div>
+              <div class="acc-sub">
+                <span class="acc-sub-title">Dress code</span>
+                <p>Les couleurs ou l'ambiance souhaitée pour votre mariage.</p>
+              </div>
+              <div class="acc-sub">
+                <span class="acc-sub-title">Liste ou urne</span>
+                <p>Un espace pour partager votre liste de mariage.</p>
+              </div>
+              <div class="acc-sub">
+                <span class="acc-sub-title">RSVP</span>
+                <p>Un bouton permettant à vos invités de confirmer leur présence.</p>
+              </div>
             </div>
-          </div>
+          </details>
+
+          <details>
+            <summary>RSVP &amp; gestion des réponses</summary>
+            <div class="acc-body">
+              <p>Un formulaire RSVP est intégré via Google Forms. Un compte Gmail est requis pour cette étape.</p>
+              <ul>
+                <li>vous recevez un modèle à personnaliser</li>
+                <li>vous choisissez vos questions</li>
+                <li>les réponses sont centralisées dans votre espace Google</li>
+                <li>le lien est ensuite intégré dans votre invitation</li>
+              </ul>
+            </div>
+          </details>
+
+          <details>
+            <summary>Livraison</summary>
+            <div class="acc-body">
+              <ul>
+                <li>lien prêt à être partagé</li>
+                <li>mise en ligne pendant 12 mois</li>
+              </ul>
+            </div>
+          </details>
         </div>
       </div>
     </section>

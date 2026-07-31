@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="only light">
+  <meta name="robots" content="noindex">
+  <title>Votre commande — FELICITI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css?v=39">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+  <!--
+    Formulaire déplacé de l'accueil (section « Ce que contient votre invitation »).
+    Étape post-achat : à afficher juste après le paiement (Stripe/PayPal),
+    une fois ce flux en place. Page non liée dans le menu pour l'instant.
+  -->
+  <header class="brand solid" id="brand" aria-label="FELICITI">
+    <a class="brand-mark wordmark" href="../">FELICIT<span class="wm-i">I</span></a>
+    <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="brand-nav" aria-label="Navigation principale">
+      <button class="menu-close" aria-label="Fermer le menu">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <path d="M5 5l14 14M19 5L5 19" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <a href="../">Accueil</a>
+      <a href="../prestations/">Faire part</a>
+      <a href="../notre-approche/">Notre approche</a>
+      <a href="../comment-ca-marche/">Comment ça marche</a>
+      <a href="../#contact">Contact</a>
+      <a class="nav-cta" href="../demo/">Voir un exemple</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="section section-lin" style="padding-top:clamp(8rem,16vh,12rem)" id="contact">
+      <div class="section-inner">
+        <div class="section-head">
+          <h2 class="sec-title">Racontez-nous <em>votre histoire</em></h2>
+          <p class="sec-lead">Chaque projet est unique. Confiez-nous quelques mots&nbsp;: nous revenons vers vous avec une proposition sur mesure.</p>
+        </div>
+
+        <div class="form-wrap">
+          <!-- Soumission gérée en JS → Supabase (table demandes_devis), voir js/site.js -->
+          <form id="devis-form">
+            <div class="form-field">
+              <label for="f-couple">Vos prénoms</label>
+              <input id="f-couple" name="prenoms" type="text" placeholder="Camille &amp; Thomas" required>
+            </div>
+            <div class="form-field">
+              <label for="f-date">Date envisagée</label>
+              <input id="f-date" name="date" type="text" placeholder="Printemps 2027, ou une date précise">
+            </div>
+            <div class="form-field">
+              <label for="f-lieu">Lieu</label>
+              <input id="f-lieu" name="lieu" type="text" placeholder="Ville ou domaine">
+            </div>
+            <div class="form-field">
+              <label for="f-invites">Nombre d'invités approximatif</label>
+              <input id="f-invites" name="invites" type="text" placeholder="Environ 120">
+            </div>
+            <div class="form-field">
+              <label for="f-presta">Prestation(s) souhaitée(s)</label>
+              <select id="f-presta" name="prestation">
+                <option value="">Choisissez une prestation</option>
+                <option>Le faire-part vidéo</option>
+                <option>Le save-the-date</option>
+                <option>Le site de mariage</option>
+                <option>La vidéo témoin</option>
+                <option>Le Livre d'Or vidéo</option>
+                <option>La capsule anniversaire</option>
+                <option>Formule Le Grand Jour</option>
+                <option>Je ne sais pas encore</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="f-email">E-mail</label>
+              <input id="f-email" name="email" type="email" placeholder="vous@exemple.fr" required>
+            </div>
+            <div class="form-field">
+              <label for="f-wa">Numéro WhatsApp (optionnel)</label>
+              <input id="f-wa" name="whatsapp" type="tel" placeholder="06 00 00 00 00">
+            </div>
+            <div class="form-field">
+              <label for="f-histoire">Racontez-nous votre histoire</label>
+              <textarea id="f-histoire" name="histoire" placeholder="Votre rencontre, votre demande, ce qui vous ressemble…"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-solid">Commander</button>
+            </div>
+          </form>
+
+          <div class="form-confirm" id="form-confirm" tabindex="-1" role="status" aria-live="polite">
+            <h3>Votre histoire est entre nos mains</h3>
+            <p>Merci de votre confiance. Nous revenons vers vous très vite avec une proposition sur mesure.</p>
+            <div class="btn-row">
+              <a class="btn btn-solid" href="https://wa.me/33600000000?text=Bonjour%20FELICITI%2C%20je%20viens%20de%20remplir%20le%20formulaire%20de%20commande" target="_blank" rel="noopener">Poursuivre la conversation sur WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p class="footer-mark wordmark">FELICIT<span class="wm-i">I</span></p>
+    <p class="footer-base">France</p>
+    <nav class="footer-links" aria-label="Liens de pied de page">
+      <a href="../">Accueil</a>
+      <a href="../prestations/">Faire part</a>
+      <a href="../notre-approche/">Notre approche</a>
+      <a href="../comment-ca-marche/">Comment ça marche</a>
+      <a href="../#contact">Contact</a>
+      <a href="../mentions-legales/">Mentions légales</a>
+      <a href="../confidentialite/">Confidentialité</a>
+      <a href="../cgv/">CGV</a>
+      <a href="https://www.instagram.com/feliciti" target="_blank" rel="noopener">Instagram</a>
+    </nav>
+    <p class="footer-fine">La félicité qui relie ceux qui doivent s'aimer.</p>
+  </footer>
+  <script src="../js/site.js?v=29" defer></script>
+</body>
+</html>
