@@ -1373,25 +1373,6 @@ body.hero-video-mode .scrub-canvas { display: none; }
   z-index: 1;
 }
 .divider::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--taupe); }
-.acc { border-top: 1px solid var(--taupe); margin-top: 10px; }
-.acc-item { border-bottom: 1px solid var(--taupe); }
-.acc-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px 4px;
-  font-family: var(--display);
-  font-weight: 600;
-  font-size: 1.05rem;
-  color: var(--encre);
-  cursor: pointer;
-  list-style: none;
-}
-.acc-head::-webkit-details-marker { display: none; }
-.acc-head span { color: var(--bronze); font-size: 0; font-weight: 300; flex-shrink: 0; margin-left: 1rem; }
-.acc-head span::before { content: "+"; font-size: 1.3rem; }
-.acc-item[open] .acc-head span::before { content: "–"; }
-.acc-body { padding: 0 4px 18px; color: var(--brun-gris); font-size: .88rem; line-height: 1.65; }
 
 /* ---------- Section « duo d'appareils » (accueil, Le site de mariage) ---------- */
 .b-sec {
