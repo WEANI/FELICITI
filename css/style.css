@@ -1472,6 +1472,8 @@ body.hero-video-mode .scrub-canvas { display: none; }
 .hbtn.fill:hover { background: var(--encre); }
 .hbtn.ghost { border: 1px solid var(--creme); color: var(--creme); }
 .hbtn.ghost:hover { background: var(--creme); color: var(--encre); }
+.hbtn.ghost-dark { border: 1px solid var(--bronze); color: var(--bronze); }
+.hbtn.ghost-dark:hover { background: var(--bronze); color: var(--creme); }
 
 .feat-sec { max-width: 1000px; margin: 0 auto; padding: 70px 24px; }
 .feat-sec h2 { font-family: var(--display); font-weight: 500; font-size: clamp(1.7rem, 4vw, 2.3rem); text-align: center; margin-bottom: 10px; color: var(--encre); }
