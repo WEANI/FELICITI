@@ -169,6 +169,13 @@ html,body{margin:0;background:var(--lin);color:var(--encre);
 .btn-solid{background:var(--bronze);color:var(--creme)}
 .btn-solid:hover{background:var(--encre);border-color:var(--encre)}
 
+/* Bouton retour à l'accueil : fixe, au-dessus du scrub */
+.demo-back{position:fixed;top:18px;left:18px;z-index:50;display:inline-flex;align-items:center;gap:6px;
+  background:rgba(46,38,32,.55);backdrop-filter:blur(4px);color:var(--creme);
+  padding:.55rem 1rem;border-radius:999px;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  text-decoration:none;transition:background .3s ease}
+.demo-back:hover{background:rgba(46,38,32,.85)}
+
 /* Reduced-motion : défilement normal, aucune superposition */
 @media (prefers-reduced-motion: reduce){
   .fs-scrub{height:100vh;height:100svh}
@@ -178,6 +185,8 @@ html,body{margin:0;background:var(--lin);color:var(--encre);
 </style>
 </head>
 <body>
+
+<a class="demo-back" href="/">← Retour à l'accueil</a>
 
 <!-- ============================================================
      SECTION 1 — HERO SCRUB SCROLL

@@ -28,7 +28,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=45">
+  <link rel="stylesheet" href="css/style.css?v=46">
   <link rel="preload" as="image" href="public/hero/poster.webp">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
 
@@ -59,7 +59,7 @@
       <a href="/">Accueil</a>
       <a href="prestations/">Faire part</a>
       <a href="notre-approche/">Notre approche</a>
-      <a href="comment-ca-marche/">Comment ça marche</a>
+      <a href="site-de-mariage/">Site de mariage</a>
       <a href="#contact">Contact</a>
       <a class="nav-cta" href="demo/">Voir un exemple</a>
     </nav>
@@ -154,6 +154,7 @@
       <div class="section-inner">
         <div class="btn-row" style="margin-top:clamp(2.5rem,6vw,3.8rem)">
           <a class="btn" href="prestations/">Voir nos prestations</a>
+          <a class="btn btn-solid" href="faire-part-video/">Faire-Part Digital</a>
         </div>
       </div>
     </section>
@@ -295,25 +296,26 @@
           <p>Votre lien est prêt à partager.</p>
         </div>
       </div>
-      <div class="cta"><a href="comment-ca-marche/">En savoir plus</a></div>
+      <div class="cta hero-btns" style="justify-content:center">
+        <a class="hbtn fill" href="prestations/">Commander</a>
+        <a class="hbtn ghost" href="demo/">Voir un exemple</a>
+      </div>
     </section>
 
     <!-- SECTION 6 — LE SITE DE MARIAGE (duo d'appareils) -->
-    <section class="b-sec" id="site-mariage">
-      <div class="b-devices">
-        <div class="b-laptop"><img src="public/img/prestations/site-de-mariage.webp" alt="Le site de mariage" loading="lazy" width="900" height="562"></div>
-        <div class="b-phone"><img src="public/img/prestations/site-de-mariage.webp" alt="Le site de mariage sur mobile" loading="lazy" width="320" height="569"></div>
+    <section class="b-sec-wrap" id="site-mariage">
+      <h2 class="b-title">Site de mariage</h2>
+      <div class="b-sec">
+        <div class="b-devices">
+          <div class="b-laptop"><img src="public/img/prestations/site-de-mariage.webp" alt="Le site de mariage" loading="lazy" width="900" height="562"></div>
+          <div class="b-phone"><img src="public/img/prestations/site-de-mariage.webp" alt="Le site de mariage sur mobile" loading="lazy" width="320" height="569"></div>
+        </div>
+        <div class="b-text">
+          <p>Une adresse rien qu'à vous. Vos invités y trouvent tout ce qu'ils doivent savoir — le message que vous souhaitez, le programme, le plan d'accès, le dress code, les hébergements — et vous y suivez leurs réponses, collectées élégamment et sans effort. Un seul lien, pensé pour durer jusqu'au dernier merci.</p>
+        </div>
       </div>
-      <div class="b-text">
-        <span>Prestation phare</span>
-        <h2>Le site de Mariage</h2>
-        <ul class="b-feat">
-          <li>Votre histoire <span>racontée à votre façon</span></li>
-          <li>Programme &amp; lieux <span>tout au même endroit</span></li>
-          <li>RSVP <span>réponses centralisées</span></li>
-          <li>Liste de cadeaux <span>vos envies partagées</span></li>
-        </ul>
-        <a class="b-cta" href="site-de-mariage/">Découvrir le site de mariage</a>
+      <div class="b-cta-wrap">
+        <a class="b-cta-fill" href="site-de-mariage/">Découvrir le site de mariage</a>
       </div>
     </section>
 
@@ -347,7 +349,7 @@
 
     <!-- SECTION 9 — TÉMOIGNAGES -->
     <section class="p3" id="temoignages">
-      <h2>Mariés et invités</h2>
+      <h2>Ils en parlent mieux que nous</h2>
 
       <div class="t-row">
         <div class="t-avatar">L</div>
@@ -386,7 +388,7 @@
       <a href="/">Accueil</a>
       <a href="prestations/">Faire part</a>
       <a href="notre-approche/">Notre approche</a>
-      <a href="comment-ca-marche/">Comment ça marche</a>
+      <a href="site-de-mariage/">Site de mariage</a>
       <a href="#contact">Contact</a>
       <a href="mentions-legales/">Mentions légales</a>
       <a href="confidentialite/">Confidentialité</a>
@@ -395,12 +397,6 @@
     </nav>
     <p class="footer-fine">La félicité qui relie ceux qui doivent s'aimer.</p>
   </footer>
-
-  <!-- CTA sticky mobile : reste accessible pendant tout le scroll de l'accueil -->
-  <div class="sticky-cta">
-    <a href="demo/">Voir un exemple</a>
-    <a href="prestations/">Découvrir nos créations</a>
-  </div>
 
   <noscript>
     <style>.acte-canvas,.loader{display:none!important}.acte-poster{opacity:1!important}.caption,.hero{opacity:1!important;visibility:visible!important}.brand-nav{position:static!important;transform:none!important;flex-direction:row!important;background:none!important;width:auto!important;border:none!important}</style>
