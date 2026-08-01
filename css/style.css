@@ -802,7 +802,7 @@ body.hero-video-mode .scrub-canvas { display: none; }
   font-size: 0.86rem;
   line-height: 1.6;
 }
-.comment-accueil .cta { margin-top: 44px; }
+.comment-accueil .cta { display: block; text-align: center; margin-top: 44px; }
 
 /* ---------- Témoignages ---------- */
 .temoignages { display: grid; gap: clamp(3rem, 7vh, 5rem); max-width: 860px; margin: 0 auto; }
@@ -1384,8 +1384,13 @@ body.hero-video-mode .scrub-canvas { display: none; }
   font-weight: 600;
   font-size: 1.05rem;
   color: var(--encre);
+  cursor: pointer;
+  list-style: none;
 }
-.acc-head span { color: var(--bronze); font-size: 1.3rem; font-weight: 300; flex-shrink: 0; margin-left: 1rem; }
+.acc-head::-webkit-details-marker { display: none; }
+.acc-head span { color: var(--bronze); font-size: 0; font-weight: 300; flex-shrink: 0; margin-left: 1rem; }
+.acc-head span::before { content: "+"; font-size: 1.3rem; }
+.acc-item[open] .acc-head span::before { content: "–"; }
 .acc-body { padding: 0 4px 18px; color: var(--brun-gris); font-size: .88rem; line-height: 1.65; }
 
 /* ---------- Section « duo d'appareils » (accueil, Le site de mariage) ---------- */
