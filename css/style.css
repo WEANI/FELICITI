@@ -1357,3 +1357,74 @@ body.hero-video-mode .scrub-canvas { display: none; }
   position: relative;
 }
 
+
+/* ---------- Section « duo d'appareils » (accueil, Le site de mariage) ---------- */
+.b-sec {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 80px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: center;
+}
+@media (max-width: 760px) {
+  .b-sec { grid-template-columns: 1fr; gap: 34px; }
+}
+.b-devices { position: relative; padding: 20px; }
+.b-laptop {
+  border: 1px solid var(--taupe);
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--lin);
+}
+.b-laptop img { width: 100%; height: 100%; object-fit: cover; }
+.b-phone {
+  position: absolute;
+  bottom: -24px; right: -10px;
+  width: 34%;
+  aspect-ratio: 9 / 16;
+  border: 1px solid var(--taupe);
+  overflow: hidden;
+  background: var(--creme);
+  box-shadow: 0 20px 40px -18px rgba(46, 38, 32, .4);
+}
+.b-phone img { width: 100%; height: 100%; object-fit: cover; }
+.b-text span {
+  font-size: .72rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--bronze);
+}
+.b-text h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.8rem, 4vw, 2.3rem);
+  margin: 12px 0 16px;
+  color: var(--encre);
+}
+.b-feat { list-style: none; margin-bottom: 26px; }
+.b-feat li {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--taupe);
+  font-size: .88rem;
+  color: var(--encre);
+  display: flex;
+  justify-content: space-between;
+}
+.b-feat li span { color: var(--brun-gris); font-size: .8rem; }
+.b-cta {
+  display: inline-block;
+  border: 1px solid var(--bronze);
+  color: var(--encre);
+  padding: 13px 26px;
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  transition: .4s;
+}
+.b-cta:hover { background: var(--bronze); color: var(--creme); }
+@media (max-width: 360px) {
+  .b-phone { width: 38%; right: -6px; bottom: -18px; }
+}
