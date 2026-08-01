@@ -28,7 +28,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=42">
+  <link rel="stylesheet" href="css/style.css?v=43">
   <link rel="preload" as="image" href="public/hero/poster.webp">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
 
@@ -186,108 +186,7 @@
       </div>
     </section>
 
-    <!-- SECTION 4BIS — LE SITE DE MARIAGE (duo d'appareils) -->
-    <section class="b-sec" id="site-mariage">
-      <div class="b-devices">
-        <div class="b-laptop"><img src="public/img/prestations/site-de-mariage.webp" alt="Le site de mariage" loading="lazy" width="900" height="562"></div>
-        <div class="b-phone"><img src="public/img/prestations/site-de-mariage.webp" alt="Le site de mariage sur mobile" loading="lazy" width="320" height="569"></div>
-      </div>
-      <div class="b-text">
-        <span>Prestation phare</span>
-        <h2>Le site de Mariage</h2>
-        <ul class="b-feat">
-          <li>Votre histoire <span>racontée à votre façon</span></li>
-          <li>Programme &amp; lieux <span>tout au même endroit</span></li>
-          <li>RSVP <span>réponses centralisées</span></li>
-          <li>Liste de cadeaux <span>vos envies partagées</span></li>
-        </ul>
-        <a class="b-cta" href="site-de-mariage/">Découvrir le site de mariage</a>
-      </div>
-    </section>
-
-    <!-- SECTION 5 — L'EXPÉRIENCE INVITÉ -->
-    <section class="section section-lin" id="experience-invite">
-      <div class="section-inner">
-        <div class="section-head">
-          <h2 class="sec-title">Vos invités ne reçoivent pas qu'une information, <em>ils reçoivent un moment</em></h2>
-        </div>
-        <p class="experience-texte">La surprise, le sourire, les larmes parfois, bien avant le grand jour.</p>
-      </div>
-    </section>
-
-    <!-- SECTION 6 — SCRUB « SOUS LE POUCE » : le faire-part vécu, au rythme du scroll -->
-    <section class="scrub slp" id="sous-le-pouce" aria-label="Un faire-part se déroule sous le pouce">
-      <div class="scrub-sticky">
-        <canvas class="scrub-canvas" id="slp-canvas" aria-hidden="true"></canvas>
-        <img class="scrub-poster" id="slp-poster" src="public/sous-le-pouce/poster.webp"
-             alt="Un faire-part vidéo se déroule sous le pouce sur un téléphone" width="1280" height="720" loading="lazy">
-        <video class="scrub-video" id="slp-video" src="public/sous-le-pouce/sous-le-pouce.mp4"
-               poster="public/sous-le-pouce/poster.webp" muted playsinline loop preload="none"
-               aria-label="Un faire-part vidéo se déroule sous le pouce sur un téléphone"></video>
-        <div class="slp-vignette" aria-hidden="true"></div>
-        <div class="slp-tint" aria-hidden="true"></div>
-
-        <p class="chapitre slp-chap" data-at="0.15">Un lien arrive.</p>
-        <p class="chapitre slp-chap" data-at="0.45">Une histoire se déroule.</p>
-        <p class="chapitre slp-chap" data-at="0.75">Un cœur répond.</p>
-      </div>
-    </section>
-
-    <!-- SECTION 7 — COMMENT ÇA MARCHE (frise) -->
-    <section class="comment-accueil" id="comment-ca-marche-accueil">
-      <h2>Comment ça marche&nbsp;?</h2>
-      <div class="hframe">
-        <div class="hf">
-          <div class="hf-dot">I</div>
-          <h3>Commande</h3>
-          <p>Vous commandez en ligne.</p>
-        </div>
-        <div class="hf">
-          <div class="hf-dot">II</div>
-          <h3>Transmission</h3>
-          <p>Vous nous racontez votre histoire.</p>
-        </div>
-        <div class="hf">
-          <div class="hf-dot">III</div>
-          <h3>Création</h3>
-          <p>Nous réalisons votre film.</p>
-        </div>
-        <div class="hf">
-          <div class="hf-dot">IV</div>
-          <h3>Mise en ligne</h3>
-          <p>Votre lien est prêt à partager.</p>
-        </div>
-      </div>
-      <div class="cta"><a href="comment-ca-marche/">En savoir plus</a></div>
-    </section>
-
-    <!-- SECTION 8 — TÉMOIGNAGES -->
-    <section class="section section-lin" id="temoignages">
-      <div class="section-inner">
-        <div class="temoignages">
-          <figure class="temoignage">
-            <blockquote>J'ai reçu le faire-part de ma sœur par un simple message. J'ai cliqué, et leur histoire s'est déroulée sous mes doigts — leur rencontre, la demande, la date à la fin. J'ai pleuré avant même de savoir quoi répondre. Je n'avais jamais rien reçu de tel.</blockquote>
-            <cite>Léa — invitée, sœur de la mariée</cite>
-          </figure>
-          <figure class="temoignage">
-            <blockquote>Pendant que FELICITI orchestrait nos invités — les réponses, les menus, les relances — nous préparions notre mariage l'esprit tranquille. Et la première fois que nous avons vu notre histoire en film, nous avons compris pourquoi nous avions dit oui à ce format.</blockquote>
-            <cite>Camille &amp; Thomas — Provence</cite>
-          </figure>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 9 — LA DÉMO VÉCUE -->
-    <section class="section section-creme demo" id="demo">
-      <div class="section-inner">
-        <h2 class="sec-title">Vivez ce que vivront <em>vos invités</em></h2>
-        <div class="btn-row">
-          <a class="btn btn-solid btn-wa" href="https://wa.me/33600000000?text=Bonjour%20FELICITI%2C%20j%27aimerais%20recevoir%20un%20faire-part%20d%27exemple" target="_blank" rel="noopener">Recevoir un faire-part d'exemple sur WhatsApp</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 10 — CE QUE CONTIENT VOTRE INVITATION -->
+    <!-- SECTION 4BIS — CE QUE CONTIENT VOTRE INVITATION -->
     <section class="section section-lin" id="contact">
       <div class="section-inner">
         <div class="section-head">
@@ -367,6 +266,112 @@
               </ul>
             </div>
           </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5 — COMMENT ÇA MARCHE (frise) -->
+    <section class="comment-accueil" id="comment-ca-marche-accueil">
+      <h2>Comment ça marche&nbsp;?</h2>
+      <div class="hframe">
+        <div class="hf">
+          <div class="hf-dot">I</div>
+          <h3>Commande</h3>
+          <p>Vous commandez en ligne.</p>
+        </div>
+        <div class="hf">
+          <div class="hf-dot">II</div>
+          <h3>Transmission</h3>
+          <p>Vous nous racontez votre histoire.</p>
+        </div>
+        <div class="hf">
+          <div class="hf-dot">III</div>
+          <h3>Création</h3>
+          <p>Nous réalisons votre film.</p>
+        </div>
+        <div class="hf">
+          <div class="hf-dot">IV</div>
+          <h3>Mise en ligne</h3>
+          <p>Votre lien est prêt à partager.</p>
+        </div>
+      </div>
+      <div class="cta"><a href="comment-ca-marche/">En savoir plus</a></div>
+    </section>
+
+    <!-- SECTION 6 — LE SITE DE MARIAGE (duo d'appareils) -->
+    <section class="b-sec" id="site-mariage">
+      <div class="b-devices">
+        <div class="b-laptop"><img src="public/img/prestations/site-de-mariage.webp" alt="Le site de mariage" loading="lazy" width="900" height="562"></div>
+        <div class="b-phone"><img src="public/img/prestations/site-de-mariage.webp" alt="Le site de mariage sur mobile" loading="lazy" width="320" height="569"></div>
+      </div>
+      <div class="b-text">
+        <span>Prestation phare</span>
+        <h2>Le site de Mariage</h2>
+        <ul class="b-feat">
+          <li>Votre histoire <span>racontée à votre façon</span></li>
+          <li>Programme &amp; lieux <span>tout au même endroit</span></li>
+          <li>RSVP <span>réponses centralisées</span></li>
+          <li>Liste de cadeaux <span>vos envies partagées</span></li>
+        </ul>
+        <a class="b-cta" href="site-de-mariage/">Découvrir le site de mariage</a>
+      </div>
+    </section>
+
+    <!-- SECTION 7 — L'EXPÉRIENCE INVITÉ -->
+    <section class="section section-lin" id="experience-invite">
+      <div class="section-inner">
+        <div class="section-head">
+          <h2 class="sec-title">Vos invités ne reçoivent pas qu'une information, <em>ils reçoivent un moment</em></h2>
+        </div>
+        <p class="experience-texte">La surprise, le sourire, les larmes parfois, bien avant le grand jour.</p>
+      </div>
+    </section>
+
+    <!-- SECTION 8 — SCRUB « SOUS LE POUCE » : le faire-part vécu, au rythme du scroll -->
+    <section class="scrub slp" id="sous-le-pouce" aria-label="Un faire-part se déroule sous le pouce">
+      <div class="scrub-sticky">
+        <canvas class="scrub-canvas" id="slp-canvas" aria-hidden="true"></canvas>
+        <img class="scrub-poster" id="slp-poster" src="public/sous-le-pouce/poster.webp"
+             alt="Un faire-part vidéo se déroule sous le pouce sur un téléphone" width="1280" height="720" loading="lazy">
+        <video class="scrub-video" id="slp-video" src="public/sous-le-pouce/sous-le-pouce.mp4"
+               poster="public/sous-le-pouce/poster.webp" muted playsinline loop preload="none"
+               aria-label="Un faire-part vidéo se déroule sous le pouce sur un téléphone"></video>
+        <div class="slp-vignette" aria-hidden="true"></div>
+        <div class="slp-tint" aria-hidden="true"></div>
+
+        <p class="chapitre slp-chap" data-at="0.15">Un lien arrive.</p>
+        <p class="chapitre slp-chap" data-at="0.45">Une histoire se déroule.</p>
+        <p class="chapitre slp-chap" data-at="0.75">Un cœur répond.</p>
+      </div>
+    </section>
+
+    <!-- SECTION 9 — TÉMOIGNAGES -->
+    <section class="p3" id="temoignages">
+      <h2>Mariés et invités</h2>
+
+      <div class="t-row">
+        <div class="t-avatar">L</div>
+        <div class="t-row-text">
+          <p>« J'ai reçu le faire-part de ma sœur par un simple message. J'ai pleuré avant même de savoir quoi répondre. »</p>
+          <div class="t-name">Léa — invitée, sœur de la mariée</div>
+        </div>
+      </div>
+
+      <div class="t-row">
+        <div class="t-avatar">C&amp;T</div>
+        <div class="t-row-text">
+          <p>« Pendant que FELICITI orchestrait nos invités, nous préparions notre mariage l'esprit tranquille. »</p>
+          <div class="t-name">Camille &amp; Thomas — Provence</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 10 — LA DÉMO VÉCUE -->
+    <section class="section section-creme demo" id="demo">
+      <div class="section-inner">
+        <h2 class="sec-title">Vivez ce que vivront <em>vos invités</em></h2>
+        <div class="btn-row">
+          <a class="btn btn-solid btn-wa" href="https://wa.me/33600000000?text=Bonjour%20FELICITI%2C%20j%27aimerais%20recevoir%20un%20faire-part%20d%27exemple" target="_blank" rel="noopener">Recevoir un faire-part d'exemple sur WhatsApp</a>
         </div>
       </div>
     </section>

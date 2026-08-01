@@ -1428,3 +1428,42 @@ body.hero-video-mode .scrub-canvas { display: none; }
 @media (max-width: 360px) {
   .b-phone { width: 38%; right: -6px; bottom: -18px; }
 }
+
+/* ---------- Témoignages : format minimaliste en lignes ---------- */
+.p3 { max-width: 820px; margin: 0 auto; padding: 60px 24px; }
+.p3 h2 {
+  text-align: center;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(1.6rem, 4vw, 2.1rem);
+  margin-bottom: 34px;
+  color: var(--encre);
+}
+.t-row {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--taupe);
+}
+.t-row:first-of-type { border-top: 1px solid var(--taupe); }
+.t-avatar {
+  flex: 0 0 auto;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--bronze);
+  color: var(--creme);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--display);
+  font-size: 1.1rem;
+}
+.t-row-text p {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--encre);
+}
+.t-row-text .t-name { margin-top: 8px; font-size: .76rem; color: var(--brun-gris); }
