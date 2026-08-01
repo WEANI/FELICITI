@@ -28,7 +28,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=39">
+  <link rel="stylesheet" href="css/style.css?v=41">
   <link rel="preload" as="image" href="public/hero/poster.webp">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
 
@@ -125,43 +125,36 @@
 
       </div>
 
-      <!-- Carrousel coverflow : la carte centrée devient active (nette, agrandie) -->
-      <div class="cover" id="prestaCover" aria-label="Nos prestations">
-        <a class="card" href="faire-part-video/">
-          <figure><img src="public/img/prestations/faire-part.webp" alt="Le faire-part vidéo" loading="lazy" width="900" height="1206"></figure>
-          <div class="lab">Le Faire-Part</div>
-          <div class="price">dès 299 €</div>
-        </a>
-        <a class="card" href="site-de-mariage/">
-          <figure><img src="public/img/prestations/site-de-mariage.webp" alt="Le site de mariage" loading="lazy" width="900" height="1206"></figure>
-          <div class="lab">Le site de mariage</div>
-          <div class="price">dès 699 €</div>
-        </a>
-        <a class="card" href="video-temoin/">
-          <figure><img src="public/img/prestations/video-temoin.webp" alt="La vidéo témoin" loading="lazy" width="900" height="1206"></figure>
-          <div class="lab">La vidéo témoin</div>
-          <div class="price">dès 99 €</div>
-        </a>
-        <a class="card" href="save-the-date/">
-          <figure><span class="ph">Save-the-Date</span></figure>
-          <div class="lab">Le save-the-date</div>
-          <div class="price">dès 149 €</div>
-        </a>
-        <a class="card" href="livre-d-or-video/">
-          <figure><span class="ph">Livre d'Or</span></figure>
-          <div class="lab">Le Livre d'Or</div>
-          <div class="price">dès 290 €</div>
-        </a>
-        <a class="card" href="naissance/">
-          <figure><img src="public/img/prestations/babyshower.webp" alt="Naissance" loading="lazy" width="900" height="1206"></figure>
-          <div class="lab">Naissance</div>
-          <div class="price">dès 150 €</div>
-        </a>
-        <a class="card" href="le-grand-jour/">
-          <figure><img src="public/img/prestations/le-grand-jour.webp" alt="Formule Le Grand Jour" loading="lazy" width="900" height="1206"></figure>
-          <div class="lab">Le Grand Jour</div>
-          <div class="price">dès 1 099 €</div>
-        </a>
+      <div class="section-inner">
+        <div class="mag-list">
+          <a class="mag-row" href="faire-part-video/">
+            <div class="mag-img"><img src="public/img/prestations/faire-part.webp" alt="Le faire-part vidéo" loading="lazy" width="900" height="675"></div>
+            <div class="mag-txt">
+              <span>Prestation</span>
+              <h3>Le Faire-Part</h3>
+              <p>Le film qui raconte votre histoire, sous forme d'un lien que vos invités font défiler.</p>
+              <div class="mp">Prix 299 €</div>
+            </div>
+          </a>
+          <a class="mag-row" href="site-de-mariage/">
+            <div class="mag-img"><img src="public/img/prestations/site-de-mariage.webp" alt="Le site de mariage" loading="lazy" width="900" height="675"></div>
+            <div class="mag-txt">
+              <span>Prestation</span>
+              <h3>Le site de mariage</h3>
+              <p>Une adresse rien qu'à vous pour tout votre mariage.</p>
+              <div class="mp">Prix 699 €</div>
+            </div>
+          </a>
+          <a class="mag-row" href="video-temoin/">
+            <div class="mag-img"><img src="public/img/prestations/video-temoin.webp" alt="La vidéo témoin" loading="lazy" width="900" height="675"></div>
+            <div class="mag-txt">
+              <span>Prestation</span>
+              <h3>«&nbsp;Veux-tu être mon témoin&nbsp;?&nbsp;»</h3>
+              <p>La demande la plus émouvante, en vidéo.</p>
+              <div class="mp">Prix 99 €</div>
+            </div>
+          </a>
+        </div>
       </div>
 
       <div class="section-inner">
@@ -393,6 +386,6 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js" defer></script>
   <script src="js/main.js?v=27" defer></script>
-  <script src="js/site.js?v=29" defer></script>
+  <script src="js/site.js?v=30" defer></script>
 </body>
 </html>

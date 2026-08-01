@@ -413,76 +413,79 @@ body.hero-video-mode .scrub-canvas { display: none; }
   .presta-photos { grid-template-columns: 1fr; max-width: 440px; }
 }
 
-/* ---------- Carrousel coverflow (accueil, prestations) ---------- */
-.cover {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  padding: 30px 40vw 40px;              /* padding latéral en vw : centre 1re & dernière carte */
-  margin-top: clamp(1.2rem, 4vw, 2.4rem);
-  cursor: grab;
-  scrollbar-width: none;
-}
-.cover.dragging { cursor: grabbing; scroll-behavior: auto; }
-.cover::-webkit-scrollbar { display: none; }
-.cover .card {
-  flex: 0 0 auto;
-  width: min(64vw, 230px);
-  scroll-snap-align: center;
-  transition: transform .5s var(--ease), opacity .5s var(--ease);
-  opacity: .5;
-  transform: scale(.86);
+/* ---------- Rangées magazine (accueil, prestations) ---------- */
+.mag-list { max-width: 1000px; margin: 0 auto; }
+.mag-row:not(:last-child) { border-bottom: 1px solid var(--taupe); }
+.mag-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  min-height: 340px;
   text-decoration: none;
   color: inherit;
 }
-.cover .card.active { opacity: 1; transform: scale(1.08); z-index: 2; }
-.cover .card.active figure { box-shadow: 0 22px 50px -22px rgba(46, 38, 32, .5); }
-.cover .card figure {
-  margin: 0;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  border: 1px solid var(--taupe);
-  background: var(--lin);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@media (max-width: 760px) {
+  .mag-row { grid-template-columns: 1fr; }
+  .mag-txt { min-width: 0; }
+  .mag-row .mag-txt h3 { white-space: normal; }
 }
-.cover .card img {
+.mag-row:nth-child(even) .mag-img { order: 2; }
+.mag-img { aspect-ratio: 4 / 3; overflow: hidden; background: var(--lin); }
+.mag-img img { width: 100%; height: 100%; object-fit: cover; }
+.mag-img .ph {                         /* carte sans photo (aperçu à venir) */
   width: 100%; height: 100%;
-  object-fit: cover;
-  transition: transform 1s var(--ease);
-  pointer-events: none;               /* le drag n'attrape pas l'image */
-}
-.cover .card.active img { transform: scale(1.03); }
-.cover .card .ph {                     /* carte sans photo (aperçu à venir) */
-  font-family: 'Cormorant Garamond', serif;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--display);
   font-style: italic;
   font-size: clamp(1.3rem, 4vw, 1.7rem);
   color: var(--brun-gris);
   text-align: center;
   padding: 1.2rem;
 }
-.cover .card .lab {
-  text-align: center;
-  margin-top: 12px;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.15rem;
-  color: var(--encre);
-  white-space: nowrap;
-}
-.cover .card .price {
-  text-align: center;
-  font-size: .72rem;
+.mag-txt { padding: 40px; }
+.mag-txt span {
+  font-size: .7rem;
   letter-spacing: .2em;
   text-transform: uppercase;
   color: var(--bronze);
-  margin-top: 4px;
+}
+.mag-txt h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.8rem;
+  margin: 10px 0 14px;
+  white-space: nowrap;
+}
+.mag-txt p {
+  color: var(--encre);
+  font-size: .92rem;
+  line-height: 1.7;
+  max-width: 38ch;
+}
+.mag-txt .mp {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--bronze);
+  margin-top: 16px;
+}
+/* Formule Le Grand Jour : mise en avant distincte, fond sombre */
+.mag-row.mag-feature { background: var(--encre); }
+.mag-row.mag-feature .mag-txt h3,
+.mag-row.mag-feature .mag-txt p { color: var(--creme); }
+
+/* Animation d'entrée au scroll, alternée gauche/droite (une seule fois, cf. js/site.js) */
+.mag-row { opacity: 0; transition: opacity .8s ease, transform .8s ease; }
+.mag-row.from-left { transform: translateX(-60px); }
+.mag-row.from-right { transform: translateX(60px); }
+.mag-row.in { opacity: 1; transform: translateX(0); }
+@media (max-width: 760px) {
+  /* sur mobile, en une colonne : un simple fondu vers le haut, plus adapté qu'un glissement latéral */
+  .mag-row.from-left, .mag-row.from-right { transform: translateY(30px); }
+  .mag-row.in { transform: translateY(0); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cover { scroll-behavior: auto; }
-  .cover .card, .cover .card img { transition: none; }
+  .mag-row { opacity: 1; transform: none; transition: none; }
 }
 .presta-photo {
   display: block;
@@ -1354,74 +1357,3 @@ body.hero-video-mode .scrub-canvas { display: none; }
   position: relative;
 }
 
-/* ---------- Page « Prestations » : liste éditoriale ---------- */
-.ed-list {
-  max-width: 800px;
-  margin: 0 auto;
-  border-top: 1px solid var(--taupe);
-}
-.ed-row {
-  display: grid;
-  grid-template-columns: 140px 1fr auto;
-  gap: 24px;
-  align-items: center;
-  padding: 24px 0;
-  border-bottom: 1px solid var(--taupe);
-  text-decoration: none;
-  color: inherit;
-  transition: 0.4s;
-}
-.ed-row:hover { background: var(--lin); }
-@media (max-width: 640px) {
-  .ed-row {
-    grid-template-columns: 100px 1fr;
-    grid-template-areas: "img title" "img price";
-    column-gap: 16px;
-  }
-  .ed-thumb { grid-area: img; }
-  .ed-row .ed-thumb { width: 100px; }
-  .ed-text { grid-area: title; min-width: 0; }
-  .ed-row .ed-text h3 { white-space: normal; }
-  .ed-price { grid-area: price; }
-}
-.ed-thumb {
-  width: 140px;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  border: 1px solid var(--taupe);
-  background: var(--lin);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.ed-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.ed-thumb .ph {
-  font-family: var(--display);
-  font-style: italic;
-  font-size: 0.75rem;
-  line-height: 1.3;
-  color: var(--brun-gris);
-  text-align: center;
-  padding: 0.3rem;
-}
-.ed-text h3 {
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 1.25rem;
-  color: var(--encre);
-  margin-bottom: 4px;
-  white-space: nowrap;
-}
-.ed-text p {
-  color: var(--brun-gris);
-  font-size: 0.85rem;
-  font-weight: 300;
-}
-.ed-price {
-  font-weight: 700;
-  font-size: 0.78rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--bronze);
-  white-space: nowrap;
-}
