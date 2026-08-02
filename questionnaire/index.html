@@ -10,20 +10,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400&display=swap">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css?v=52">
+  <link rel="stylesheet" href="../css/style.css?v=53">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
 </head>
 <body>
   <!--
     Page envoyée par e-mail après validation de commande (onboarding post-achat).
     Volontairement hors menu principal : pas de header/nav complet, juste un
-    lien de retour discret. Voir feliciti-questionnaire-onboarding-page.md.
+    lien de retour discret. Voir feliciti-questionnaire-onboarding-page-v2.md.
   -->
   <a class="q-back" href="../">← Retour à l'accueil</a>
 
   <header class="q-head">
     <span class="q-wordmark">FELICITI</span>
-    <h1>Votre faire-part scrub-scroll</h1>
+    <h1>Votre Faire-part Digital</h1>
     <p class="q-sub">Questionnaire d'onboarding · à remplir après commande</p>
     <p class="q-intro">Merci de nous confier votre invitation. Ce questionnaire nous donne toute la matière pour composer votre faire-part&nbsp;: le petit film que vos invités feront défiler sous leur pouce, jusqu'aux informations de votre mariage.</p>
     <p class="q-intro">Répondez simplement, avec vos mots. Il n'y a pas de bonne ou de mauvaise réponse — plus c'est sincère, plus le résultat vous ressemblera. Comptez une vingtaine de minutes.</p>
@@ -33,71 +33,49 @@
   <form class="q-form" id="onboardingForm" action="FORMSPREE_ENDPOINT_A_REMPLACER" method="POST" enctype="multipart/form-data">
 
     <fieldset class="q-section">
-      <legend>1 · Les faits</legend>
+      <legend>1 · Vous</legend>
       <label>Vos deux prénoms
         <span class="q-help">Dans l'ordre que vous préférez voir apparaître.</span>
         <input type="text" name="prenoms" required>
       </label>
-      <label>La date et le lieu de votre mariage
-        <span class="q-help">Date, nom du lieu, ville ou région.</span>
-        <input type="text" name="date_lieu" required>
-      </label>
-      <label>La ville où vous vivez aujourd'hui
-        <input type="text" name="ville_actuelle">
-      </label>
     </fieldset>
 
     <fieldset class="q-section">
-      <legend>2 · Votre histoire</legend>
-      <label>Comment vous êtes-vous rencontrés ?
-        <span class="q-help">Racontez le moment, l'endroit, ce qui s'est passé. Les détails concrets sont précieux (un objet, une saison, une phrase échangée).</span>
-        <textarea name="rencontre" rows="5" required></textarea>
-      </label>
-      <label>Un moment qui vous représente à deux
-        <span class="q-help">Une habitude, un lieu, un rituel — même tout simple. Ce que vous aimez faire quand vous êtes juste tous les deux.</span>
-        <textarea name="moment_representatif" rows="4"></textarea>
-      </label>
-      <label>Trois mots pour décrire votre couple
-        <input type="text" name="trois_mots">
-      </label>
-      <label>Ce que vous voulez que vos invités ressentent
-        <span class="q-help">En découvrant votre faire-part, quelle émotion aimeriez-vous qu'ils gardent ?</span>
-        <textarea name="emotion_souhaitee" rows="3"></textarea>
-      </label>
-    </fieldset>
+      <legend>2 · Votre mariage</legend>
+      <p class="q-section-intro">Le texte à afficher sous la vidéo&nbsp;: c'est votre invitation à proprement parler, telle que vous voulez la lire à l'écran. Écrivez chaque élément exactement comme vous souhaitez qu'il apparaisse — nous le mettrons en forme dans votre charte, sans en changer les mots.</p>
 
-    <fieldset class="q-section">
-      <legend>3 · Votre objet symbolique</legend>
-      <label>Y a-t-il un objet qui vous représente ?
-        <span class="q-help">Un livre, un billet, un foulard, une clé, une lettre — n'importe quel objet qui a une place dans votre histoire. Il peut devenir le fil conducteur de votre faire-part&nbsp;: l'élément qu'on suit tout au long du film, jusqu'à ce qu'il se transforme en votre invitation. Si rien ne vous vient, laissez vide, nous trouverons ensemble.</span>
-        <textarea name="objet_symbolique" rows="4"></textarea>
+      <label>La date
+        <input type="text" name="date" required>
       </label>
-    </fieldset>
-
-    <section class="q-voice">
-      <h2>Votre note vocale</h2>
-      <p>C'est souvent ici que sort la plus belle matière. Racontez-nous votre histoire à voix haute, comme si vous la racontiez à un ami&nbsp;: votre rencontre, ce qui vous lie, une anecdote qui vous fait sourire. Une à trois minutes suffisent. Parlez à deux si vous le souhaitez.</p>
-      <p class="q-voice-note">Envoyez-nous votre message vocal directement sur WhatsApp&nbsp;:</p>
-      <a class="q-whatsapp-btn" href="https://wa.me/33600000000?text=Bonjour%20FELICITI%2C%20voici%20notre%20note%20vocale%20pour%20notre%20faire-part" target="_blank" rel="noopener">
-        Envoyer sur WhatsApp
-      </a>
-    </section>
-
-    <fieldset class="q-section">
-      <legend>4 · Vos photos</legend>
-      <label>Ajoutez vos photos
-        <span class="q-help">Photos uniquement (pas de vidéo). Choisissez des images qui comptent&nbsp;: vous deux, vos lieux, votre objet symbolique, votre décor de mariage. La qualité prime sur la quantité — quelques belles photos valent mieux qu'un grand nombre.</span>
-        <input type="file" name="photos" accept="image/*" multiple>
+      <label>Le lieu
+        <input type="text" name="lieu" required>
       </label>
-      <label class="q-checkbox">
-        <input type="checkbox" name="photo_finale_souhaitee" value="oui">
-        <span>Nous souhaitons qu'une photo de nous en couple apparaisse à la toute fin de la vidéo.
-        <span class="q-help">Si vous cochez cette case, pensez à inclure au moins une photo de vous deux nette et bien cadrée parmi les fichiers téléchargés ci-dessus — c'est elle que nous utiliserons pour le plan final.</span></span>
+      <label>Les horaires
+        <input type="text" name="horaires">
       </label>
-    </fieldset>
+      <label>Le déroulé
+        <textarea name="deroule" rows="4"></textarea>
+      </label>
+      <label>Le texte de l'invitation
+        <span class="q-help">La formule d'invitation elle-même, telle qu'elle doit apparaître à l'écran.</span>
+        <textarea name="texte_invitation" rows="4" required></textarea>
+      </label>
+      <label>Dress code
+        <input type="text" name="dress_code">
+      </label>
+      <label>Hébergement et autres informations pratiques
+        <textarea name="hebergement_infos" rows="4"></textarea>
+      </label>
+      <label>Vos indications pour répondre (RSVP)
+        <textarea name="rsvp" rows="3"></textarea>
+      </label>
+      <label>Un champ libre pour toute autre information spécifique
+        <span class="q-help">Une précision qui ne rentre dans aucune case ci-dessus&nbsp;: un mariage sur plusieurs jours avec un déroulé différent chaque jour, une contrainte particulière, ou tout autre détail que vous jugez utile.</span>
+        <textarea name="infos_specifiques" rows="4"></textarea>
+      </label>
 
-    <fieldset class="q-section">
-      <legend>5 · Le ton</legend>
+      <p class="q-subdivider">Informations supplémentaires</p>
+
       <label>L'ambiance que vous recherchez
         <span class="q-help">En quelques mots ou adjectifs&nbsp;: feutrée, lumineuse, joyeuse, épurée, chaleureuse… Décrivez la lumière et l'atmosphère qui vous ressemblent.</span>
         <textarea name="ambiance" rows="3"></textarea>
@@ -106,13 +84,39 @@
         <span class="q-help">Une expression qui est la vôtre, une phrase qui vous relie, un mot signature. Elle pourra ponctuer votre faire-part.</span>
         <input type="text" name="phrase_signature">
       </label>
+      <label>Un cadre pour exprimer vos spécificités
+        <span class="q-help">Par exemple un mariage sur 3 jours avec plusieurs informations par jour, ou toute autre particularité de votre événement.</span>
+        <textarea name="specificites_evenement" rows="4"></textarea>
+      </label>
     </fieldset>
 
     <fieldset class="q-section">
-      <legend>6 · Le texte de votre faire-part</legend>
-      <label>Le texte à afficher sous la vidéo
-        <span class="q-help">C'est votre invitation à proprement parler, telle que vous voulez la lire à l'écran&nbsp;: vos prénoms, la date, le lieu, les horaires, la formule d'invitation, et vos indications pour répondre (RSVP). Écrivez-le exactement comme vous souhaitez qu'il apparaisse — nous le mettrons en forme dans votre charte, sans en changer les mots.</span>
-        <textarea name="texte_faire_part" rows="8" required></textarea>
+      <legend>3 · Votre histoire</legend>
+      <p class="q-section-intro">C'est souvent à l'oral que sort la plus belle matière. Racontez-nous votre histoire à voix haute, comme si vous la racontiez à un ami&nbsp;: votre rencontre, ce qui vous lie, une anecdote qui vous fait sourire, un objet qui vous symbolise. Une à trois minutes suffisent. Parlez à deux si vous le souhaitez.</p>
+
+      <div class="q-voice-inline">
+        <p>Envoyez-nous votre message vocal directement sur WhatsApp&nbsp;:</p>
+        <a class="q-whatsapp-btn" href="https://wa.me/33600000000?text=Bonjour%20FELICITI%2C%20voici%20notre%20note%20vocale%20pour%20notre%20faire-part" target="_blank" rel="noopener">
+          Envoyer sur WhatsApp
+        </a>
+      </div>
+
+      <label class="q-fallback">Vous préférez écrire plutôt qu'enregistrer ?
+        <span class="q-help">Ce champ est facultatif si vous nous envoyez une note vocale. Si vous préférez, vous pouvez aussi nous raconter votre histoire ici&nbsp;: votre rencontre, ce qui vous lie, une anecdote, un objet qui vous symbolise.</span>
+        <textarea name="histoire_texte" rows="6"></textarea>
+      </label>
+    </fieldset>
+
+    <fieldset class="q-section">
+      <legend>4 · Vos photos <span class="q-optional">(optionnel)</span></legend>
+      <label>Ajoutez vos photos
+        <span class="q-help">Photos uniquement (pas de vidéo). Choisissez des images qui comptent&nbsp;: vous deux, vos lieux, votre objet symbolique, votre décor de mariage. La qualité prime sur la quantité — quelques belles photos valent mieux qu'un grand nombre.</span>
+        <input type="file" name="photos" accept="image/*" multiple>
+      </label>
+      <label class="q-checkbox">
+        <input type="checkbox" name="photo_finale_souhaitee" value="oui">
+        <span>Nous souhaitons qu'une photo de nous en couple apparaisse à la toute fin de la vidéo.
+        <span class="q-help">Si vous cochez cette case, pensez à inclure au moins une photo de vous deux nette et bien cadrée parmi les fichiers téléchargés ci-dessus — c'est elle que nous utiliserons pour le plan final.</span></span>
       </label>
     </fieldset>
 
