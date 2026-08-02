@@ -44,6 +44,9 @@ html,body{margin:0;background:var(--lin);color:var(--encre);
   box-shadow:0 30px 80px -30px rgba(46,38,32,.5)}
 .fs-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;
   will-change:transform;transform-origin:center;pointer-events:none}
+/* fallback prefers-reduced-motion : vidéo simple à la place du scrub canvas */
+.fs-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.fs-video.on{display:block}
 /* effets ciné dosés */
 .fs-vign{position:absolute;inset:0;z-index:3;pointer-events:none;
   background:radial-gradient(120% 100% at 50% 42%,rgba(0,0,0,0) 55%,rgba(20,15,10,.26) 100%)}
@@ -190,12 +193,13 @@ html,body{margin:0;background:var(--lin);color:var(--encre);
 
 <!-- ============================================================
      SECTION 1 — HERO SCRUB SCROLL
-     (moteur autonome ; frames réutilisées du projet : 181 frames 9:16)
+     (moteur autonome ; 240 frames 9:16, fallback vidéo si reduced-motion)
      ============================================================ -->
 <section class="fs-scrub" id="feliciti-scrub" aria-label="Hero scrub — faire-part FELICITI">
   <div class="fs-stage">
     <div class="fs-viewport">
       <canvas class="fs-canvas" aria-hidden="true"></canvas>
+      <video class="fs-video" muted playsinline preload="none" aria-hidden="true"></video>
       <div class="fs-vign"></div>
       <div class="fs-grain"></div>
 
@@ -307,12 +311,13 @@ html,body{margin:0;background:var(--lin);color:var(--encre);
 <script>
 const CFG = {
   framePath:  '/public/demo/frames/', // frames de la vidéo de démo
-  framePrefix:'frame_',
+  framePrefix:'demo_',
   frameExt:   'webp',
-  framePad:   3,             // frame_001 => padding 3
+  framePad:   3,             // demo_001 => padding 3
   frameStart: 1,
-  frameCount: 181,           // nombre réel de frames (New project 4)
-  posterUrl:  '/public/demo/frames/frame_001.webp',
+  frameCount: 240,           // nombre réel de frames
+  posterUrl:  '/public/demo/frames/demo_001.webp',
+  videoUrl:   '/public/demo/demo-scrub.mp4', // fallback prefers-reduced-motion
 
   scrollLength: '320%',      // distance d'épinglage
   scrub: 0.6,
@@ -326,6 +331,7 @@ const CFG = {
   const viewport = section.querySelector('.fs-viewport');
   const canvas   = section.querySelector('.fs-canvas');
   const ctx      = canvas.getContext('2d');
+  const video    = section.querySelector('.fs-video');
   const caps     = Array.from(section.querySelectorAll('.fs-cap'));
   const hint     = section.querySelector('.fs-hint');
   const bar      = section.querySelector('.fs-loader-bar');
@@ -403,7 +409,12 @@ const CFG = {
   function start(){
     size();
     if(reduce){
-      render(Math.round((N-1)*0.5));
+      canvas.style.display = 'none';
+      video.src = CFG.videoUrl;
+      video.preload = 'auto';
+      video.classList.add('on');
+      video.load();
+      video.play().catch(()=>{});
       caps.forEach((c,idx)=>{ c.style.transition='opacity .6s ease'; c.style.opacity = idx===caps.length-1 ? 1 : 0; });
       hint.style.display='none';
       section.classList.add('is-ready');
@@ -442,7 +453,7 @@ const CFG = {
       if(!reduce && window.ScrollTrigger) ScrollTrigger.refresh(); });
   });
 
-  preload().then(start);
+  if(reduce){ start(); } else { preload().then(start); }
 })();
 </script>
 </body>
