@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="only light">
+  <title>Contact — FELICITI</title>
+  <meta name="description" content="Une question avant de commander, le suivi d'une commande en cours, ou une envie de nous écrire simplement : contactez FELICITI sur WhatsApp ou par formulaire.">
+  <link rel="canonical" href="https://feliciti.fr/contact/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="FELICITI">
+  <meta property="og:title" content="Contact — FELICITI">
+  <meta property="og:description" content="Une question avant de commander, le suivi d'une commande en cours, ou une envie de nous écrire simplement : contactez FELICITI sur WhatsApp ou par formulaire.">
+  <meta property="og:url" content="https://feliciti.fr/contact/">
+  <meta property="og:locale" content="fr_FR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Contact — FELICITI">
+  <meta name="twitter:description" content="Une question avant de commander, le suivi d'une commande en cours, ou une envie de nous écrire simplement : contactez FELICITI sur WhatsApp ou par formulaire.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css?v=54">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="brand solid" id="brand" aria-label="FELICITI">
+    <a class="brand-mark wordmark" href="../">FELICIT<span class="wm-i">I</span></a>
+    <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="brand-nav" aria-label="Navigation principale">
+      <button class="menu-close" aria-label="Fermer le menu">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <path d="M5 5l14 14M19 5L5 19" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <a href="../">Accueil</a>
+      <a href="../prestations/">Faire part</a>
+      <a href="../notre-approche/">Notre approche</a>
+      <a href="../site-de-mariage/">Site de mariage</a>
+      <a href="../contact/">Contact</a>
+      <a class="nav-cta" href="../demo/">Voir un exemple</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <header class="c-head" style="padding-top:clamp(8rem,16vh,12rem)">
+      <h1>Contact</h1>
+      <p class="c-intro">Une question avant de commander, un mariage déjà en préparation, ou une envie de nous écrire simplement&nbsp;? Nous vous répondons avec plaisir.</p>
+    </header>
+
+    <section class="c-whatsapp">
+      <h2>Le plus rapide</h2>
+      <p>Écrivez-nous directement sur WhatsApp — c'est souvent le moyen le plus simple d'avoir une réponse rapide.</p>
+      <a class="q-whatsapp-btn" href="https://wa.me/33600000000?text=Bonjour%20FELICITI%2C%20j%27ai%20une%20question" target="_blank" rel="noopener">
+        Écrire sur WhatsApp
+      </a>
+    </section>
+
+    <section class="c-form-sec">
+      <h2>Ou par écrit</h2>
+      <!-- Remplacer FORMSPREE_ENDPOINT_A_REMPLACER par le vrai endpoint Formspree (ou équivalent) une fois le compte créé. -->
+      <form class="c-form" id="contactForm" action="FORMSPREE_ENDPOINT_A_REMPLACER" method="POST">
+        <label>Votre nom
+          <input type="text" name="nom" required>
+        </label>
+        <label>Votre e-mail
+          <input type="email" name="email" required>
+        </label>
+        <label>Le motif de votre message
+          <select name="motif" required>
+            <option value="">Choisissez un motif</option>
+            <option value="avant-commande">Une question avant de commander</option>
+            <option value="commande-existante">Le suivi d'une commande en cours</option>
+            <option value="ambassadeur">Devenir un mariage ambassadeur</option>
+            <option value="presse">Presse &amp; partenariats</option>
+            <option value="autre">Autre</option>
+          </select>
+        </label>
+        <label>Votre message
+          <textarea name="message" rows="6" required></textarea>
+        </label>
+        <p class="q-error" id="contactError" hidden>Une erreur est survenue lors de l'envoi. Vérifiez votre connexion et réessayez, ou écrivez-nous directement sur WhatsApp.</p>
+        <button type="submit" class="q-submit" id="contactSubmit">Envoyer</button>
+      </form>
+      <p class="c-delay" id="contactDelay">Nous répondons sous 24 heures, en semaine.</p>
+      <div class="q-confirm" id="contactConfirm" hidden tabindex="-1" role="status" aria-live="polite">
+        <h2>Merci, nous revenons vers vous sous 24 heures.</h2>
+      </div>
+    </section>
+
+    <section class="c-ambassadeur">
+      <h2>Vous vous mariez bientôt&nbsp;?</h2>
+      <p>Nous constituons notre première galerie de créations réelles. Si votre mariage approche et que l'idée de devenir l'un de nos premiers couples vous inspire, écrivez-nous — nous en discutons avec plaisir, à des conditions pensées pour l'occasion.</p>
+    </section>
+
+    <section class="c-links">
+      <p>Avant de nous écrire, ces pages répondent peut-être déjà à votre question&nbsp;:</p>
+      <div class="c-links-grid">
+        <a href="../notre-approche/">Notre approche &amp; le processus</a>
+        <a href="../prestations/">Toutes nos créations et leurs prix</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p class="footer-mark wordmark">FELICIT<span class="wm-i">I</span></p>
+    <p class="footer-base">France</p>
+    <nav class="footer-links" aria-label="Liens de pied de page">
+      <a href="../">Accueil</a>
+      <a href="../prestations/">Faire part</a>
+      <a href="../notre-approche/">Notre approche</a>
+      <a href="../site-de-mariage/">Site de mariage</a>
+      <a href="../contact/">Contact</a>
+      <a href="../mentions-legales/">Mentions légales</a>
+      <a href="../confidentialite/">Confidentialité</a>
+      <a href="../cgv/">CGV</a>
+      <a href="https://www.instagram.com/feliciti" target="_blank" rel="noopener">Instagram</a>
+    </nav>
+    <p class="footer-fine">La félicité qui relie ceux qui doivent s'aimer.</p>
+  </footer>
+  <script src="../js/site.js?v=30" defer></script>
+  <script>
+  (function () {
+    var form = document.getElementById('contactForm');
+    var submitBtn = document.getElementById('contactSubmit');
+    var errorMsg = document.getElementById('contactError');
+    var delay = document.getElementById('contactDelay');
+    var confirmBlock = document.getElementById('contactConfirm');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      errorMsg.hidden = true;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Envoi en cours…';
+
+      fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' }
+      }).then(function (res) {
+        if (!res.ok) throw new Error('submit failed');
+        form.hidden = true;
+        delay.hidden = true;
+        confirmBlock.hidden = false;
+        confirmBlock.focus();
+      }).catch(function () {
+        errorMsg.hidden = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Envoyer';
+      });
+    });
+  })();
+  </script>
+</body>
+</html>
