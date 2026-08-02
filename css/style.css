@@ -1556,3 +1556,105 @@ body.hero-video-mode .scrub-canvas { display: none; }
 .comp-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--taupe); font-size: .85rem; }
 .comp-item span:last-child { color: var(--bronze); font-weight: 700; }
 
+/* ---------- Page « Questionnaire d'onboarding » (post-commande, hors nav) ---------- */
+.q-back { position: fixed; top: 18px; left: 18px; z-index: 50; display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(46, 38, 32, .55); backdrop-filter: blur(4px); color: var(--creme);
+  padding: .55rem 1rem; border-radius: 999px; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
+  text-decoration: none; transition: background .3s ease; }
+.q-back:hover { background: rgba(46, 38, 32, .85); }
+
+.q-head { max-width: 640px; margin: 0 auto; padding: 90px 24px 40px; text-align: center; }
+.q-wordmark { font-family: var(--display); letter-spacing: .28em; font-size: 1rem; color: var(--encre); }
+.q-head h1 { font-family: var(--display); font-weight: 500; font-size: clamp(1.8rem, 4.5vw, 2.4rem); margin: 20px 0 8px; }
+.q-sub { color: var(--bronze); font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 26px; }
+.q-intro { color: var(--encre); font-size: .92rem; line-height: 1.75; max-width: 52ch; margin: 0 auto 14px; }
+
+.q-form { max-width: 640px; margin: 0 auto; padding: 0 24px 60px; }
+.q-section { border: none; border-top: 1px solid var(--taupe); padding: 34px 0; margin: 0; }
+.q-section legend { font-family: var(--display); font-weight: 600; font-size: 1.3rem; color: var(--encre); padding: 0; margin-bottom: 20px; }
+.q-section label { display: block; margin-bottom: 22px; font-family: var(--corps); font-size: .92rem; color: var(--encre); }
+.q-help { display: block; color: var(--brun-gris); font-size: .8rem; font-weight: 300; line-height: 1.5; margin: 4px 0 10px; }
+.q-section input[type="text"],
+.q-section textarea {
+  width: 100%;
+  border: 1px solid var(--taupe);
+  background: var(--lin);
+  padding: 12px 14px;
+  font-family: var(--corps);
+  font-size: .92rem;
+  color: var(--encre);
+  resize: vertical;
+}
+.q-section input[type="text"]:focus,
+.q-section textarea:focus {
+  outline: none;
+  border-color: var(--bronze);
+}
+.q-section input[type="file"] {
+  width: 100%;
+  padding: 14px;
+  border: 1px dashed var(--taupe);
+  background: var(--lin);
+  font-size: .85rem;
+  color: var(--brun-gris);
+}
+.q-checkbox {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--lin);
+  border: 1px solid var(--taupe);
+  padding: 16px;
+  margin-top: 14px;
+  font-size: .88rem;
+  line-height: 1.6;
+}
+.q-checkbox input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--bronze);
+  flex: 0 0 auto;
+}
+.q-checkbox .q-help { margin-top: 8px; }
+
+.q-submit {
+  display: block;
+  width: 100%;
+  margin-top: 30px;
+  background: var(--bronze);
+  color: var(--creme);
+  border: none;
+  padding: 16px;
+  font-family: var(--corps);
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: .4s;
+}
+.q-submit:hover { background: var(--encre); }
+.q-submit:disabled { opacity: .6; cursor: not-allowed; }
+
+.q-voice { max-width: 640px; margin: 0 auto; padding: 40px 24px; background: var(--lin); text-align: center; border: 1px solid var(--taupe); }
+.q-voice h2 { font-family: var(--display); font-weight: 600; font-size: 1.3rem; margin-bottom: 14px; }
+.q-voice p { color: var(--encre); font-size: .9rem; line-height: 1.7; max-width: 48ch; margin: 0 auto 10px; }
+.q-voice-note { color: var(--brun-gris); font-size: .85rem; margin-top: 16px; }
+.q-whatsapp-btn {
+  display: inline-block;
+  margin-top: 14px;
+  background: var(--bronze);
+  color: var(--creme);
+  padding: 14px 30px;
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  transition: .4s;
+}
+.q-whatsapp-btn:hover { background: var(--encre); }
+
+.q-closing { max-width: 52ch; margin: 40px auto 70px; text-align: center; color: var(--brun-gris); font-size: .9rem; line-height: 1.75; padding: 0 24px; }
+
+.q-error { max-width: 640px; margin: 0 auto; padding: 0 24px; text-align: center; color: var(--fil); font-size: .85rem; }
+.q-confirm { max-width: 52ch; margin: 90px auto; padding: 0 24px; text-align: center; }
+.q-confirm h2 { font-family: var(--display); font-weight: 500; font-size: clamp(1.6rem, 4vw, 2.1rem); color: var(--encre); margin-bottom: 18px; }
+
