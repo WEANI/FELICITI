@@ -1711,3 +1711,57 @@ body.hero-video-mode .scrub-canvas { display: none; }
 .c-links-grid { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
 .c-links-grid a { color: var(--encre); font-size: .85rem; text-decoration: underline; }
 
+/* ---------- Accueil : bandeau de réassurance ---------- */
+.reassure {
+  display: flex;
+  justify-content: center;
+  gap: clamp(20px, 6vw, 70px);
+  flex-wrap: wrap;
+  text-align: center;
+  padding: 40px 24px;
+  border-top: 1px solid var(--taupe);
+  border-bottom: 1px solid var(--taupe);
+  background: var(--lin);
+}
+.reassure-item { max-width: 190px; }
+.reassure-item strong {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  display: block;
+  color: var(--bronze);
+  margin-bottom: 4px;
+}
+.reassure-item span {
+  font-size: .78rem;
+  letter-spacing: .05em;
+  color: var(--encre);
+}
+
+/* ---------- Accueil : disponibilité limitée ---------- */
+.dispo { padding: 70px 24px; text-align: center; }
+.dispo-inner {
+  max-width: 560px;
+  margin: 0 auto;
+  border: 1px solid var(--bronze);
+  padding: 40px 32px;
+  background: var(--creme);
+}
+.dispo-inner h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--encre);
+}
+.dispo-filet {
+  width: 48px;
+  height: 1px;
+  background: var(--bronze);
+  margin: 20px auto;
+}
+.dispo-inner p {
+  color: var(--brun-gris);
+  font-size: .9rem;
+  line-height: 1.75;
+}
+
