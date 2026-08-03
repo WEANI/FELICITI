@@ -1374,78 +1374,61 @@ body.hero-video-mode .scrub-canvas { display: none; }
 }
 .divider::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--taupe); }
 
-/* ---------- Section « duo d'appareils » (accueil, Le site de mariage) ---------- */
-.b-sec {
+/* ---------- Section « Le Faire-Part » (avant/après, accueil) ---------- */
+.pF {
   max-width: 1000px;
   margin: 0 auto;
   padding: 80px 24px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 50px;
-  align-items: center;
-}
-@media (max-width: 760px) {
-  .b-sec { grid-template-columns: 1fr; gap: 34px; }
-}
-.b-devices { position: relative; padding: 20px; }
-.b-laptop {
-  border: 1px solid var(--taupe);
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  background: var(--lin);
-}
-.b-laptop img { width: 100%; height: 100%; object-fit: cover; }
-.b-phone {
-  position: absolute;
-  bottom: -24px; right: -10px;
-  width: 34%;
-  aspect-ratio: 9 / 16;
-  border: 1px solid var(--taupe);
-  overflow: hidden;
-  background: var(--creme);
-  box-shadow: 0 20px 40px -18px rgba(46, 38, 32, .4);
-}
-.b-phone img { width: 100%; height: 100%; object-fit: cover; }
-.devices-phone-only {
-  max-width: 220px;
-  margin: 0 auto;
-  aspect-ratio: 9 / 16;
-  border: 1px solid var(--taupe);
-  overflow: hidden;
-  background: var(--creme);
-  box-shadow: 0 20px 40px -18px rgba(46, 38, 32, .4);
-}
-.devices-phone-only img { width: 100%; height: 100%; object-fit: cover; }
-.b-text p {
-  color: var(--encre);
-  font-size: 1rem;
-  line-height: 1.85;
-}
-.b-sec-wrap { padding: 80px 24px; }
-.b-sec-wrap .b-sec { padding: 0; }
-.b-title {
   text-align: center;
+}
+.pF > span {
+  font-size: .72rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--bronze);
+}
+.pF h2 {
   font-family: var(--display);
   font-weight: 600;
-  font-size: clamp(1.8rem, 4vw, 2.3rem);
+  font-size: clamp(1.9rem, 4.5vw, 2.5rem);
   color: var(--encre);
-  margin-bottom: 40px;
+  margin: 12px 0 40px;
 }
-.b-cta-wrap { text-align: center; margin-top: 34px; }
-.b-cta-fill {
-  display: inline-block;
-  background: var(--bronze);
+.pF-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-width: 640px;
+  margin: 0 auto 34px;
+  border: 1px solid var(--taupe);
+}
+@media (max-width: 560px) {
+  .pF-split { grid-template-columns: 1fr; }
+}
+.pF-side { aspect-ratio: 4 / 5; position: relative; overflow: hidden; }
+.pF-side img,
+.pF-side video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pF-side.old img { filter: grayscale(.65) brightness(.82); }
+.pF-side .lbl {
+  position: absolute;
+  bottom: 14px; left: 14px;
+  background: rgba(46, 38, 32, .75);
   color: var(--creme);
-  padding: 14px 30px;
-  text-decoration: none;
-  font-size: 11px;
-  letter-spacing: .2em;
+  font-size: .68rem;
+  letter-spacing: .12em;
   text-transform: uppercase;
-  transition: .4s;
+  padding: 6px 12px;
+  z-index: 2;
 }
-.b-cta-fill:hover { background: var(--encre); }
-@media (max-width: 360px) {
-  .b-phone { width: 38%; right: -6px; bottom: -18px; }
+.pF p {
+  color: var(--encre);
+  font-size: .92rem;
+  max-width: 44ch;
+  margin: 0 auto 26px;
+  line-height: 1.7;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pF-side.live video { display: none; }
+  .pF-side.live::after { content: ""; position: absolute; inset: 0; background: var(--lin); }
 }
 
 /* ---------- Page « Site de mariage » : hero produit, fonctionnalités, aperçu, RSVP, livraison, FAQ, CTA final ---------- */
