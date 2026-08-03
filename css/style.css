@@ -924,120 +924,6 @@ body.hero-video-mode .scrub-canvas { display: none; }
 
 /* ---------- Pages produit ---------- */
 .page { padding-top: 0; }
-.product {
-  padding: clamp(7rem, 14vh, 11rem) 1.5rem clamp(4rem, 9vh, 7rem);
-  background: var(--creme);
-}
-.product-inner {
-  max-width: 1080px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(2.5rem, 5vw, 5rem);
-  align-items: start;
-}
-.product-media {
-  aspect-ratio: 9 / 16;
-  max-height: 78vh;
-  background: linear-gradient(155deg, var(--lin), var(--taupe));
-  border: 1px solid var(--taupe);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--brun-gris);
-  font-size: 0.6rem;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  overflow: hidden;
-}
-.product-media img,
-.product-media video { width: 100%; height: 100%; object-fit: cover; }
-/* Pages produit avec vrai visuel : ratio 4:5 natif de l'image (pas de rognage) */
-.product-media--photo { aspect-ratio: 4 / 5; }
-.product-eyebrow { display: block; margin-bottom: 1.2rem; }
-.product h1 {
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: clamp(2.4rem, 5.5vw, 4rem);
-  line-height: 1.05;
-  color: var(--encre);
-}
-.product-text {
-  margin-top: 1.8rem;
-  color: var(--brun-gris);
-  font-size: 1.05rem;
-  line-height: 1.85;
-}
-.product-includes {
-  margin-top: 2.2rem;
-  list-style: none;
-}
-.product-includes li {
-  position: relative;
-  padding-left: 1.4rem;
-  margin-bottom: 0.7rem;
-  color: var(--encre);
-  font-size: 0.98rem;
-}
-.product-includes li::before {
-  content: "";
-  position: absolute;
-  left: 0; top: 0.72em;
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--bronze);
-}
-.product-includes-title {
-  font-size: 0.64rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--brun-gris);
-  margin: 2.4rem 0 1.1rem;
-}
-/* Prix — sobre, petites capitales, filet bronze, jamais criard */
-.product-price {
-  margin-top: 2.4rem;
-  padding-top: 1.4rem;
-  border-top: 1px solid var(--bronze-clr);
-  display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-}
-.product-price .price-label {
-  font-size: 0.6rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--brun-gris);
-}
-.product-price .price-value {
-  font-family: var(--display);
-  font-weight: 500;
-  font-style: italic;
-  font-size: 1.35rem;
-  color: var(--encre);
-  letter-spacing: 0.02em;
-}
-.product-delay {
-  margin-top: 1.2rem;
-  font-size: 0.86rem;
-  color: var(--brun-gris);
-}
-.product-delay span { color: var(--bronze); }
-.product-cta {
-  margin-top: 2.6rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-}
-
-/* Autres prestations en bas de page produit */
-.product-more {
-  padding: clamp(4rem, 9vh, 7rem) 1.5rem;
-  background: var(--lin);
-  text-align: center;
-}
 
 /* ---------- Pages légales / placeholder ---------- */
 .legal {
@@ -1491,16 +1377,6 @@ body.hero-video-mode .scrub-canvas { display: none; }
 .laptop img { width: 100%; height: 100%; object-fit: cover; }
 .phone { position: absolute; bottom: -30px; right: 0; width: 26%; aspect-ratio: 9/16; border: 1px solid var(--taupe); overflow: hidden; background: var(--creme); box-shadow: 0 22px 44px -20px rgba(46,38,32,.4); }
 .phone img { width: 100%; height: 100%; object-fit: cover; }
-
-.rsvp-sec { max-width: 760px; margin: 0 auto; padding: 80px 24px 60px; display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: flex-start; }
-@media (max-width: 560px) { .rsvp-sec { grid-template-columns: 1fr; } }
-.rsvp-ico { width: 44px; height: 44px; display: block; }
-.rsvp-ico svg { width: 100%; height: 100%; fill: none; stroke: var(--bronze); stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
-.rsvp-sec h2 { font-family: var(--display); font-weight: 600; font-size: 1.5rem; margin-bottom: 10px; color: var(--encre); }
-.rsvp-sec p { color: var(--encre); font-size: .92rem; line-height: 1.75; margin-bottom: 14px; }
-.rsvp-list { list-style: none; font-size: .86rem; color: var(--brun-gris); }
-.rsvp-list li { padding: 5px 0; }
-.rsvp-list li::before { content: "— "; }
 
 .deliv { max-width: 760px; margin: 0 auto; padding: 0 24px 70px; display: flex; gap: 40px; flex-wrap: wrap; }
 .deliv-item { flex: 1; min-width: 220px; }

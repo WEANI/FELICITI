@@ -39,3 +39,15 @@
   from = "/creations/*"
   to = "/prestations/"
   status = 301
+
+# Livre d'Or vidéo n'est plus vendu séparément, exclusif à la formule Le Grand Jour
+[[redirects]]
+  from = "/livre-d-or-video/*"
+  to = "/le-grand-jour/"
+  status = 301
+
+# Capsule anniversaire retirée (page inachevée, jamais commercialisée)
+[[redirects]]
+  from = "/capsule-anniversaire/*"
+  to = "/prestations/"
+  status = 301
