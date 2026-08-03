@@ -21,3 +21,9 @@
   from = "/comment-ca-marche/*"
   to = "/notre-approche/"
   status = 301
+
+# Site de mariage supprimé, Le Faire-Part devient le produit phare tout-en-un
+[[redirects]]
+  from = "/site-de-mariage/*"
+  to = "/faire-part-video/"
+  status = 301
