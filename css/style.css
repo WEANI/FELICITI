@@ -1443,6 +1443,13 @@ body.hero-video-mode .scrub-canvas { display: none; }
 .hero-p-content h1 { font-family: var(--display); font-weight: 600; font-size: clamp(2.2rem, 5vw, 3.2rem); margin: 16px 0; }
 .hero-p-content p { font-size: 1rem; line-height: 1.75; opacity: .92; margin-bottom: 26px; max-width: 42ch; }
 .hero-p-price { font-family: var(--display); font-size: 1.6rem; margin-bottom: 24px; }
+.price-avant-features {
+  text-align: center;
+  font-family: var(--display);
+  font-size: 1.5rem;
+  color: var(--bronze);
+  margin: 50px 0 -20px;
+}
 .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
 .hbtn { padding: 14px 28px; text-decoration: none; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; transition: .4s; }
 .hbtn.fill { background: var(--bronze); color: var(--creme); }
@@ -1455,6 +1462,16 @@ body.hero-video-mode .scrub-canvas { display: none; }
 .feat-sec { max-width: 1000px; margin: 0 auto; padding: 70px 24px; }
 .feat-sec h2 { font-family: var(--display); font-weight: 500; font-size: clamp(1.7rem, 4vw, 2.3rem); text-align: center; margin-bottom: 10px; color: var(--encre); }
 .feat-sec .sub { text-align: center; color: var(--brun-gris); max-width: 52ch; margin: 0 auto 44px; font-size: .9rem; }
+.pre-features-text {
+  max-width: 56ch;
+  margin: 0 auto 40px;
+  text-align: center;
+  color: var(--encre);
+  font-size: .95rem;
+  line-height: 1.8;
+}
+.pre-features-text p { margin-bottom: 12px; }
+.pre-features-text p:last-child { margin-bottom: 0; }
 .feat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
 @media (max-width: 900px) { .feat-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 500px) { .feat-grid { grid-template-columns: 1fr; } }
