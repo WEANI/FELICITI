@@ -590,14 +590,14 @@ body.hero-video-mode .scrub-canvas { display: none; }
 
 /* Section manifeste : titre « FELICITI » en wordmark, sous-titre italique, accroche en gras */
 .manifeste-mark { letter-spacing: 0.2em; color: var(--encre); }
-.manifeste-sub {
+.manifeste-baseline {
   margin-top: 1rem;
   font-family: var(--display);
   font-style: italic;
   font-size: clamp(1.1rem, 2.8vw, 1.7rem);
   color: var(--bronze);
 }
-.manifeste-hook {
+.manifeste-accroche {
   margin-top: 1.6rem;
   font-weight: 600;
   font-size: clamp(1.02rem, 2.1vw, 1.22rem);

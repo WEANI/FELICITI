@@ -27,3 +27,9 @@
   from = "/site-de-mariage/*"
   to = "/faire-part-video/"
   status = 301
+
+# Produit Naissance supprimé, contenu repris sous forme informative dans Autres occasions
+[[redirects]]
+  from = "/naissance/*"
+  to = "/autres-occasions/"
+  status = 301
