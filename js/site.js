@@ -179,4 +179,15 @@
       magObserver.observe(row);
     });
   }
+
+  /* ---------- Bandeau CTA sticky (pages produit, mobile) ----------
+     Apparaît une fois le hero dépassé, reste collé au bas de l'écran. */
+  var stickyBar = document.getElementById('stickyCtaProduit');
+  var stickyHero = document.querySelector('.hero-p');
+  if (stickyBar && stickyHero) {
+    var stickyObserver = new IntersectionObserver(function (entries) {
+      stickyBar.classList.toggle('visible', !entries[0].isIntersecting);
+    }, { threshold: 0 });
+    stickyObserver.observe(stickyHero);
+  }
 })();

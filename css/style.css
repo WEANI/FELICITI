@@ -1331,10 +1331,44 @@ body.hero-video-mode .scrub-canvas { display: none; }
 .hero-p-price { font-family: var(--display); font-size: 1.6rem; margin-bottom: 24px; }
 .price-avant-features {
   text-align: center;
+  padding: 20px 24px 40px;
+  border-bottom: 1px dashed var(--taupe);
+  margin: 50px 0 30px;
+}
+.price-avant-features .price-num {
   font-family: var(--display);
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   color: var(--bronze);
-  margin: 50px 0 -20px;
+  margin-bottom: 18px;
+}
+.price-avant-features .price-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ---------- Bandeau CTA sticky (pages produit, mobile uniquement) ---------- */
+.sticky-cta-produit {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  display: none;
+  gap: 10px;
+  padding: 14px 20px;
+  background: var(--creme);
+  border-top: 1px solid var(--taupe);
+  box-shadow: 0 -6px 20px -12px rgba(46, 38, 32, .2);
+  z-index: 50;
+}
+.sticky-cta-produit.visible { display: flex; }
+.sticky-cta-produit .hbtn {
+  flex: 1;
+  text-align: center;
+  padding: 13px 10px;
+  font-size: 10px;
+}
+@media (min-width: 761px) {
+  .sticky-cta-produit { display: none !important; }
 }
 .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
 .hbtn { padding: 14px 28px; text-decoration: none; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; transition: .4s; }
