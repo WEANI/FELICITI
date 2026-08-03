@@ -33,3 +33,9 @@
   from = "/naissance/*"
   to = "/autres-occasions/"
   status = 301
+
+# /creations était un doublon obsolète du catalogue, remplacé par /prestations
+[[redirects]]
+  from = "/creations/*"
+  to = "/prestations/"
+  status = 301
