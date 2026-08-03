@@ -227,14 +227,17 @@ select:focus-visible,
   height: 100vh;
   height: 100svh;
   overflow: hidden;
+  contain: paint;                 /* empêche canvas/vidéo/dust de peindre au-delà de ce bloc */
 }
 
 /* ---- Recouvrement : la section 2 (#manifeste) remonte PAR-DESSUS le hero
-   resté épinglé, à la fin du scrub. Pas de z-index : l'ordre DOM suffit
-   (les .section sont position:relative, donc chaque section plus bas se
-   peint au-dessus du hero). Actif seulement en mode scrub. */
+   resté épinglé, à la fin du scrub. Le z-index rend l'empilement explicite
+   (au lieu de dépendre uniquement de l'ordre DOM) pour garantir qu'aucune
+   frame du hero ne reste visible sous le recouvrement. Actif seulement en
+   mode scrub. */
 body:not(.hero-video-mode) #manifeste {
   position: relative;
+  z-index: 1;
   margin-top: -100vh;            /* glisse sur la zone de recouvrement (100vh) */
   border-radius: 28px 28px 0 0;
   box-shadow: 0 -26px 60px -12px rgba(46, 38, 32, 0.30);
@@ -1706,6 +1709,8 @@ body.hero-video-mode .scrub-canvas { display: none; }
 
 /* ---------- Accueil : bandeau de réassurance ---------- */
 .reassure {
+  position: relative;
+  z-index: 1;                     /* garantit la peinture au-dessus du hero (recouvrement) */
   display: flex;
   justify-content: center;
   gap: clamp(20px, 6vw, 70px);
