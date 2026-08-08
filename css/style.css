@@ -1470,6 +1470,23 @@ body.hero-video-mode .scrub-canvas { display: none; }
 .q-sub { color: var(--bronze); font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 26px; }
 .q-intro { color: var(--encre); font-size: .92rem; line-height: 1.75; max-width: 52ch; margin: 0 auto 14px; }
 
+/* ---------- /commander : récapitulatif + lien de paiement ---------- */
+.cmd-price { font-family: var(--display); font-size: 1.6rem; color: var(--bronze); margin-top: 10px; }
+.cmd-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 480px;
+  margin: 0 auto 24px;
+  padding: 0 24px;
+}
+.cmd-actions .hbtn { flex: 1; text-align: center; }
+.cmd-disabled { opacity: .45; pointer-events: none; cursor: not-allowed; }
+.cmd-note { max-width: 46ch; margin: 0 auto 60px; padding: 0 24px; text-align: center; color: var(--brun-gris); font-size: .85rem; line-height: 1.7; }
+.cmd-error { max-width: 480px; margin: 0 auto 60px; padding: 0 24px; text-align: center; color: var(--encre); font-size: .9rem; }
+.cmd-error a { color: var(--bronze); text-decoration: underline; }
+
 .q-form { max-width: 640px; margin: 0 auto; padding: 0 24px 60px; }
 .q-section { border: none; border-top: 1px solid var(--taupe); padding: 34px 0; margin: 0; }
 .q-section legend { font-family: var(--display); font-weight: 600; font-size: 1.3rem; color: var(--encre); padding: 0; margin-bottom: 12px; }

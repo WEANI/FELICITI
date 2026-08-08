@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="only light">
+  <meta name="robots" content="noindex">
+  <title>Commander — FELICITI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css?v=65">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+  <!--
+    Page transactionnelle : volontairement hors menu principal, pas de
+    header/nav complet — juste un lien de retour discret, comme /demo
+    et /questionnaire. Affiche la prestation + le lien Stripe correspondant
+    à partir du paramètre ?prestation=SLUG, lu dans prestations-config.js.
+  -->
+  <a class="q-back" href="../prestations/">← Retour aux prestations</a>
+
+  <main>
+    <header class="q-head">
+      <span class="q-wordmark">FELICITI</span>
+      <h1 id="cmdNom">Votre prestation</h1>
+      <div class="cmd-price" id="cmdPrix"></div>
+    </header>
+
+    <div class="cmd-actions" id="cmdActions">
+      <a class="hbtn fill" id="cmdStripe" href="#" target="_blank" rel="noopener">Payer avec Stripe</a>
+      <span class="hbtn ghost-dark cmd-disabled" aria-disabled="true">PayPal — bientôt disponible</span>
+    </div>
+
+    <p class="cmd-note" id="cmdNote">Paiement sécurisé par Stripe. Vous recevrez un e-mail de confirmation, puis un questionnaire pour nous transmettre les informations de votre création.</p>
+
+    <div class="cmd-error" id="cmdError" hidden>
+      <p>Nous n'avons pas reconnu cette prestation. <a href="../prestations/">Voir toutes nos prestations</a>.</p>
+    </div>
+  </main>
+
+  <script src="../js/prestations-config.js"></script>
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var slug = params.get('prestation');
+      var data = (typeof PRESTATIONS !== 'undefined' && slug) ? PRESTATIONS[slug] : null;
+
+      var head = document.querySelector('.q-head');
+      var actions = document.getElementById('cmdActions');
+      var note = document.getElementById('cmdNote');
+      var error = document.getElementById('cmdError');
+
+      if (data) {
+        document.getElementById('cmdNom').textContent = data.nom;
+        document.getElementById('cmdPrix').textContent = 'Prix ' + data.prix;
+        document.getElementById('cmdStripe').href = data.stripeLink;
+        document.title = 'Commander — ' + data.nom + ' — FELICITI';
+      } else {
+        head.style.display = 'none';
+        actions.style.display = 'none';
+        note.style.display = 'none';
+        error.hidden = false;
+      }
+    })();
+  </script>
+</body>
+</html>
