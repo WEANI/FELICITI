@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="only light">
+  <meta name="robots" content="noindex">
+  <title>Merci — FELICITI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css?v=65">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+  <!--
+    Page de confirmation après paiement : Stripe redirige ici une fois la
+    commande réglée (?prestation=SLUG). Hors menu principal, noindex, sur
+    le modèle de /commander, /demo et /questionnaire.
+  -->
+  <a class="q-back" href="../">← Retour à l'accueil</a>
+
+  <main>
+    <header class="q-head">
+      <span class="q-wordmark">FELICITI</span>
+      <h1>Merci pour votre commande&nbsp;!</h1>
+      <p class="q-intro" id="merciIntro">Votre paiement a bien été confirmé.</p>
+    </header>
+
+    <p class="cmd-note">Vous allez recevoir un e-mail de confirmation. La prochaine étape&nbsp;: remplissez votre questionnaire d'onboarding pour que nous puissions composer votre création.</p>
+
+    <div class="cmd-actions">
+      <a class="hbtn fill" href="../questionnaire/">Remplir mon questionnaire</a>
+      <a class="hbtn ghost-dark" href="https://wa.me/33600000000?text=Bonjour%20FELICITI%2C%20je%20viens%20de%20commander" target="_blank" rel="noopener">Nous écrire</a>
+    </div>
+  </main>
+
+  <script src="../js/prestations-config.js"></script>
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var slug = params.get('prestation');
+      var data = (typeof PRESTATIONS !== 'undefined' && slug) ? PRESTATIONS[slug] : null;
+
+      if (data) {
+        document.getElementById('merciIntro').textContent =
+          'Votre commande — ' + data.nom + ' (' + data.prix + ') — a bien été confirmée.';
+        document.title = 'Merci — ' + data.nom + ' — FELICITI';
+      }
+    })();
+  </script>
+</body>
+</html>
