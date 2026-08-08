@@ -1487,6 +1487,41 @@ body.hero-video-mode .scrub-canvas { display: none; }
 .cmd-error { max-width: 480px; margin: 0 auto 60px; padding: 0 24px; text-align: center; color: var(--encre); font-size: .9rem; }
 .cmd-error a { color: var(--bronze); text-decoration: underline; }
 
+/* ---------- /merci : confirmation après paiement ---------- */
+.merci-page { max-width: 640px; margin: 0 auto; padding: 110px 24px 60px; text-align: center; }
+.merci-wordmark { display: block; font-family: var(--display); letter-spacing: .28em; font-size: 1rem; color: var(--encre); margin-bottom: 20px; }
+.merci-page h1 { font-family: var(--display); font-weight: 500; font-size: clamp(1.8rem, 4.5vw, 2.4rem); margin: 0 0 20px; color: var(--encre); }
+.merci-page p { color: var(--encre); font-size: .92rem; line-height: 1.75; max-width: 52ch; margin: 0 auto 14px; }
+.merci-btns {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.merci-cta {
+  background: var(--bronze);
+  color: var(--creme);
+  padding: 16px 32px;
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  transition: .4s;
+}
+.merci-cta:hover { background: var(--encre); }
+.merci-whatsapp {
+  border: 1px solid var(--bronze);
+  color: var(--encre);
+  padding: 15px 32px;
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  transition: .4s;
+}
+.merci-whatsapp:hover { background: var(--bronze); color: var(--creme); }
+
 .q-form { max-width: 640px; margin: 0 auto; padding: 0 24px 60px; }
 .q-section { border: none; border-top: 1px solid var(--taupe); padding: 34px 0; margin: 0; }
 .q-section legend { font-family: var(--display); font-weight: 600; font-size: 1.3rem; color: var(--encre); padding: 0; margin-bottom: 12px; }
