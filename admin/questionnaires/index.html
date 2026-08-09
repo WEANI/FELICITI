@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
+<meta name="robots" content="noindex, nofollow">
+<title>Questionnaires — Admin FELICITI</title>
+<link rel="stylesheet" href="../css/admin.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" id="admin-sidebar-slot"></aside>
+    <main class="admin-main">
+      <div class="admin-header"><h1>Questionnaires</h1></div>
+
+      <div class="admin-toolbar">
+        <select id="f-traite">
+          <option value="">Tous</option>
+          <option value="0">Non traités</option>
+          <option value="1">Traités</option>
+        </select>
+      </div>
+
+      <div id="q-loading" class="admin-loading">Chargement…</div>
+      <div class="admin-table-wrap" id="q-table-wrap" hidden>
+        <table class="admin-table">
+          <thead><tr><th>Reçu le</th><th>Client</th><th>Commande</th><th>Traité</th></tr></thead>
+          <tbody id="q-tbody"></tbody>
+        </table>
+      </div>
+      <p class="admin-empty" id="q-empty" hidden>Aucun questionnaire reçu pour l’instant.</p>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>window.ADMIN_BASE = '../'; window.ADMIN_NAV_ID = 'questionnaires';</script>
+  <script src="../js/admin-shared.js"></script>
+  <script>
+    (function () {
+      var allRows = [];
+
+      function render() {
+        var filter = document.getElementById('f-traite').value;
+        var rows = allRows.filter(function (q) {
+          if (filter === '0') return !q.traite;
+          if (filter === '1') return q.traite;
+          return true;
+        });
+
+        if (!rows.length) {
+          document.getElementById('q-table-wrap').hidden = true;
+          document.getElementById('q-empty').hidden = false;
+          return;
+        }
+        document.getElementById('q-table-wrap').hidden = false;
+        document.getElementById('q-empty').hidden = true;
+
+        document.getElementById('q-tbody').innerHTML = rows.map(function (q) {
+          var cp = q.commandes && q.commandes.couples;
+          var clientLabel = cp ? ([cp.prenom_1, cp.prenom_2].filter(Boolean).join(' & ') || cp.email) : (q.couple_id ? '—' : '—');
+          var cmdLink = q.commande_id ? '<a href="../commandes/detail.html?id=' + q.commande_id + '">Voir la commande</a>' : '—';
+          return '<tr data-id="' + q.id + '">' +
+            '<td>' + new Date(q.created_at).toLocaleString('fr-FR') + '</td>' +
+            '<td>' + clientLabel + '</td>' +
+            '<td>' + cmdLink + '</td>' +
+            '<td></td>' +
+          '</tr>';
+        }).join('');
+
+        Array.prototype.forEach.call(document.querySelectorAll('#q-tbody tr'), function (tr) {
+          var id = tr.getAttribute('data-id');
+          var q = rows.filter(function (r) { return r.id === id; })[0];
+          var td = tr.children[3];
+          td.innerHTML = '<label style="cursor:pointer;display:flex;align-items:center;gap:.4rem"><input type="checkbox" class="q-traite-cb" data-id="' + id + '"' + (q.traite ? ' checked' : '') + '> traité</label>';
+        });
+
+        Array.prototype.forEach.call(document.querySelectorAll('.q-traite-cb'), function (cb) {
+          cb.addEventListener('click', function (e) { e.stopPropagation(); });
+          cb.addEventListener('change', function () {
+            var id = cb.getAttribute('data-id');
+            cb.disabled = true;
+            FeliAdmin.sb.from('questionnaires').update({ traite: cb.checked }).eq('id', id).then(function (res) {
+              cb.disabled = false;
+              if (res.error) { alert('Échec : ' + res.error.message); return; }
+              var row = allRows.filter(function (r) { return r.id === id; })[0];
+              if (row) row.traite = cb.checked;
+            });
+          });
+        });
+      }
+
+      FeliAdmin.requireSession().then(function (auth) {
+        if (!auth) return;
+        var sb = FeliAdmin.sb;
+        sb.from('questionnaires')
+          .select('id,commande_id,couple_id,traite,created_at,commandes(couples(prenom_1,prenom_2,email))')
+          .order('created_at', { ascending: false })
+          .then(function (res) {
+            allRows = res.data || [];
+            document.getElementById('q-loading').hidden = true;
+            render();
+            document.getElementById('f-traite').addEventListener('change', render);
+          });
+      });
+    })();
+  </script>
+</body>
+</html>

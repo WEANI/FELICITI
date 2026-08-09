@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
+<meta name="robots" content="noindex, nofollow">
+<title>Paiements — Admin FELICITI</title>
+<link rel="stylesheet" href="../css/admin.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" id="admin-sidebar-slot"></aside>
+    <main class="admin-main">
+      <div class="admin-header"><h1>Paiements</h1></div>
+
+      <div class="admin-toolbar">
+        <select id="f-periode">
+          <option value="mois">Ce mois-ci</option>
+          <option value="mois-dernier">Mois dernier</option>
+          <option value="tout">Toute la période</option>
+        </select>
+      </div>
+
+      <div id="p-loading" class="admin-loading">Chargement…</div>
+      <div id="p-content" hidden>
+        <div class="admin-cards">
+          <div class="admin-card"><div class="admin-card-label">Encaissé</div><div class="admin-card-value bronze" id="p-encaisse">0 €</div></div>
+          <div class="admin-card"><div class="admin-card-label">Échoué</div><div class="admin-card-value" id="p-echoue">0 €</div></div>
+          <div class="admin-card"><div class="admin-card-label">Remboursé</div><div class="admin-card-value" id="p-rembourse">0 €</div></div>
+        </div>
+
+        <div class="admin-table-wrap" id="p-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Date</th><th>Client</th><th>Prestation</th><th>Montant</th><th>Statut</th><th>Réf. Stripe</th></tr></thead>
+            <tbody id="p-tbody"></tbody>
+          </table>
+        </div>
+        <p class="admin-empty" id="p-empty" hidden>Aucune transaction sur cette période.</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>window.ADMIN_BASE = '../'; window.ADMIN_NAV_ID = 'paiements';</script>
+  <script src="../js/admin-shared.js"></script>
+  <script>
+    (function () {
+      var PAYMENT_LABELS = { en_attente: 'En attente', paye: 'Payé', echoue: 'Échoué', rembourse: 'Remboursé' };
+      var allRows = [];
+
+      function eur(v) { return (v || 0).toLocaleString('fr-FR') + ' €'; }
+
+      function periodeBounds(key) {
+        var now = new Date();
+        if (key === 'mois') {
+          return [new Date(now.getFullYear(), now.getMonth(), 1), new Date(now.getFullYear(), now.getMonth() + 1, 1)];
+        }
+        if (key === 'mois-dernier') {
+          return [new Date(now.getFullYear(), now.getMonth() - 1, 1), new Date(now.getFullYear(), now.getMonth(), 1)];
+        }
+        return [new Date(0), new Date(8640000000000000)];
+      }
+
+      function render() {
+        var bounds = periodeBounds(document.getElementById('f-periode').value);
+        var rows = allRows.filter(function (c) {
+          var d = new Date(c.created_at);
+          return d >= bounds[0] && d < bounds[1];
+        });
+
+        var encaisse = 0, echoue = 0, rembourse = 0;
+        rows.forEach(function (c) {
+          if (c.payment_statut === 'paye') encaisse += (c.montant_total || 0);
+          if (c.payment_statut === 'echoue') echoue += (c.montant_total || 0);
+          if (c.payment_statut === 'rembourse') rembourse += (c.montant_total || 0);
+        });
+        document.getElementById('p-encaisse').textContent = eur(encaisse);
+        document.getElementById('p-echoue').textContent = eur(echoue);
+        document.getElementById('p-rembourse').textContent = eur(rembourse);
+
+        if (!rows.length) {
+          document.getElementById('p-table-wrap').hidden = true;
+          document.getElementById('p-empty').hidden = false;
+          return;
+        }
+        document.getElementById('p-table-wrap').hidden = false;
+        document.getElementById('p-empty').hidden = true;
+
+        document.getElementById('p-tbody').innerHTML = rows.map(function (c) {
+          var cp = c.couples;
+          var clientLabel = cp ? ([cp.prenom_1, cp.prenom_2].filter(Boolean).join(' & ') || cp.email) : '—';
+          var items = c.commande_items || [];
+          var presta = items.length ? items.map(function (it) { return it.prestations ? it.prestations.nom : '?'; }).join(', ') : '—';
+          return '<tr>' +
+            '<td>' + new Date(c.created_at).toLocaleDateString('fr-FR') + '</td>' +
+            '<td>' + clientLabel + '</td>' +
+            '<td>' + presta + '</td>' +
+            '<td>' + eur(c.montant_total) + '</td>' +
+            '<td><span class="admin-badge ' + c.payment_statut + '">' + (PAYMENT_LABELS[c.payment_statut] || c.payment_statut) + '</span></td>' +
+            '<td>' + (c.stripe_reference || '—') + '</td>' +
+          '</tr>';
+        }).join('');
+      }
+
+      FeliAdmin.requireSession().then(function (auth) {
+        if (!auth) return;
+        var sb = FeliAdmin.sb;
+        sb.from('commandes')
+          .select('id,payment_statut,montant_total,stripe_reference,created_at,couples(prenom_1,prenom_2,email),commande_items(prestations(nom))')
+          .order('created_at', { ascending: false })
+          .then(function (res) {
+            allRows = res.data || [];
+            document.getElementById('p-loading').hidden = true;
+            document.getElementById('p-content').hidden = false;
+            render();
+            document.getElementById('f-periode').addEventListener('change', render);
+          });
+      });
+    })();
+  </script>
+</body>
+</html>

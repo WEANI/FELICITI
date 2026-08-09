@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
+<meta name="robots" content="noindex, nofollow">
+<title>Paramètres — Admin FELICITI</title>
+<link rel="stylesheet" href="../css/admin.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" id="admin-sidebar-slot"></aside>
+    <main class="admin-main" style="max-width:560px">
+      <div class="admin-header"><h1>Paramètres</h1></div>
+
+      <div class="admin-section">
+        <h2>WhatsApp (whapi)</h2>
+        <p style="font-size:.85rem;color:var(--gris);margin-top:0">
+          Aucune intégration active pour l'instant — ce champ ne fait que
+          stocker le token en base pour le jour où l'envoi/réception sera
+          branché.
+        </p>
+        <form id="whapi-form">
+          <div class="admin-field">
+            <label for="whapi-token">Token whapi</label>
+            <input id="whapi-token" type="text" placeholder="Non configuré" autocomplete="off">
+          </div>
+          <button class="admin-btn secondary" type="submit" id="whapi-btn">Enregistrer</button>
+        </form>
+        <div id="whapi-msg"></div>
+      </div>
+
+      <div class="admin-section">
+        <h2>Mot de passe</h2>
+        <form id="pw-form">
+          <div class="admin-field">
+            <label for="pw-new">Nouveau mot de passe (8 caractères minimum)</label>
+            <input id="pw-new" type="password" minlength="8" autocomplete="new-password" required>
+          </div>
+          <button class="admin-btn secondary" type="submit" id="pw-btn">Changer le mot de passe</button>
+        </form>
+        <div id="pw-msg"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>window.ADMIN_BASE = '../'; window.ADMIN_NAV_ID = 'parametres';</script>
+  <script src="../js/admin-shared.js"></script>
+  <script>
+    (function () {
+      function msg(el, text, kind) { el.innerHTML = text ? '<p class="admin-msg ' + kind + '">' + text + '</p>' : ''; }
+
+      FeliAdmin.requireSession().then(function (auth) {
+        if (!auth) return;
+        var sb = FeliAdmin.sb;
+
+        sb.from('reglages').select('valeur').eq('cle', 'whapi_token').maybeSingle().then(function (res) {
+          if (res.data) document.getElementById('whapi-token').value = res.data.valeur || '';
+        });
+
+        document.getElementById('whapi-form').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var btn = document.getElementById('whapi-btn');
+          var msgEl = document.getElementById('whapi-msg');
+          btn.disabled = true; btn.textContent = 'Enregistrement…';
+          sb.from('reglages').upsert({ cle: 'whapi_token', valeur: document.getElementById('whapi-token').value.trim() }, { onConflict: 'cle' })
+            .then(function (res) {
+              btn.disabled = false; btn.textContent = 'Enregistrer';
+              msg(msgEl, res.error ? res.error.message : 'Enregistré.', res.error ? 'error' : 'ok');
+            });
+        });
+
+        document.getElementById('pw-form').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var btn = document.getElementById('pw-btn');
+          var msgEl = document.getElementById('pw-msg');
+          var pwInput = document.getElementById('pw-new');
+          btn.disabled = true; btn.textContent = 'Changement…';
+          sb.auth.updateUser({ password: pwInput.value }).then(function (res) {
+            btn.disabled = false; btn.textContent = 'Changer le mot de passe';
+            if (res.error) { msg(msgEl, res.error.message, 'error'); return; }
+            pwInput.value = '';
+            msg(msgEl, 'Mot de passe changé.', 'ok');
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
+<meta name="robots" content="noindex, nofollow">
+<title>Clients — Admin FELICITI</title>
+<link rel="stylesheet" href="../css/admin.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" id="admin-sidebar-slot"></aside>
+    <main class="admin-main">
+      <div class="admin-header"><h1>Clients</h1></div>
+
+      <div class="admin-toolbar">
+        <input type="search" id="f-search" placeholder="Recherche (prénoms, e-mail)">
+      </div>
+
+      <div id="cl-loading" class="admin-loading">Chargement…</div>
+      <div class="admin-table-wrap" id="cl-table-wrap" hidden>
+        <table class="admin-table">
+          <thead><tr><th>Client</th><th>E-mail</th><th>Commandes</th><th>Dernière activité</th></tr></thead>
+          <tbody id="cl-tbody"></tbody>
+        </table>
+      </div>
+      <p class="admin-empty" id="cl-empty" hidden>Aucun client pour l’instant.</p>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>window.ADMIN_BASE = '../'; window.ADMIN_NAV_ID = 'clients';</script>
+  <script src="../js/admin-shared.js"></script>
+  <script>
+    (function () {
+      var allRows = [];
+
+      function label(c) {
+        return [c.prenom_1, c.prenom_2].filter(Boolean).join(' & ') || c.email || '—';
+      }
+
+      function render() {
+        var search = document.getElementById('f-search').value.trim().toLowerCase();
+        var rows = allRows.filter(function (c) {
+          if (!search) return true;
+          var hay = (label(c) + ' ' + (c.email || '')).toLowerCase();
+          return hay.indexOf(search) !== -1;
+        });
+
+        if (!rows.length) {
+          document.getElementById('cl-table-wrap').hidden = true;
+          document.getElementById('cl-empty').hidden = false;
+          return;
+        }
+        document.getElementById('cl-table-wrap').hidden = false;
+        document.getElementById('cl-empty').hidden = true;
+
+        document.getElementById('cl-tbody').innerHTML = rows.map(function (c) {
+          var derniere = c._derniere ? new Date(c._derniere).toLocaleDateString('fr-FR') : '—';
+          return '<tr data-id="' + c.id + '">' +
+            '<td>' + label(c) + '</td>' +
+            '<td>' + (c.email || '—') + '</td>' +
+            '<td>' + c._nbCommandes + '</td>' +
+            '<td>' + derniere + '</td>' +
+          '</tr>';
+        }).join('');
+
+        Array.prototype.forEach.call(document.querySelectorAll('#cl-tbody tr'), function (tr) {
+          tr.addEventListener('click', function () {
+            window.location.href = 'detail.html?id=' + tr.getAttribute('data-id');
+          });
+        });
+      }
+
+      FeliAdmin.requireSession().then(function (auth) {
+        if (!auth) return;
+        var sb = FeliAdmin.sb;
+
+        Promise.all([
+          sb.from('couples').select('*'),
+          sb.from('commandes').select('id,couple_id,created_at')
+        ]).then(function (results) {
+          var couples = results[0].data || [];
+          var commandes = results[1].data || [];
+
+          couples.forEach(function (c) {
+            var mine = commandes.filter(function (o) { return o.couple_id === c.id; });
+            c._nbCommandes = mine.length;
+            var latest = mine.reduce(function (max, o) { return !max || o.created_at > max ? o.created_at : max; }, c.created_at);
+            c._derniere = latest;
+          });
+
+          allRows = couples.sort(function (a, b) { return (b._derniere || '').localeCompare(a._derniere || ''); });
+
+          document.getElementById('cl-loading').hidden = true;
+          render();
+          document.getElementById('f-search').addEventListener('input', render);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

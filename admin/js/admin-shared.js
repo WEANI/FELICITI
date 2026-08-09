@@ -16,9 +16,12 @@
 
   var NAV_ITEMS = [
     { id: 'dashboard', label: 'Tableau de bord', href: base },
-    { id: 'commandes', label: 'Commandes', href: base + 'commandes/' }
-    /* Questionnaires / Clients / Paiements / WhatsApp / Paramètres arrivent
-       dans une phase suivante — voir README admin. */
+    { id: 'commandes', label: 'Commandes', href: base + 'commandes/' },
+    { id: 'clients', label: 'Clients', href: base + 'clients/' },
+    { id: 'questionnaires', label: 'Questionnaires', href: base + 'questionnaires/' },
+    { id: 'paiements', label: 'Paiements', href: base + 'paiements/' },
+    { id: 'whatsapp', label: 'WhatsApp', href: base + 'whatsapp/' },
+    { id: 'parametres', label: 'Paramètres', href: base + 'parametres/' }
   ];
 
   function renderShell(activeId, email) {

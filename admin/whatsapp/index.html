@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
+<meta name="robots" content="noindex, nofollow">
+<title>WhatsApp — Admin FELICITI</title>
+<link rel="stylesheet" href="../css/admin.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" id="admin-sidebar-slot"></aside>
+    <main class="admin-main">
+      <div class="admin-header"><h1>WhatsApp</h1></div>
+
+      <div id="wa-loading" class="admin-loading">Chargement…</div>
+      <div id="wa-content" hidden>
+        <div id="wa-list"></div>
+        <p class="admin-empty" id="wa-empty" hidden>
+          Aucun message — connexion whapi à configurer dans <a href="../parametres/">Paramètres</a>.
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>window.ADMIN_BASE = '../'; window.ADMIN_NAV_ID = 'whatsapp';</script>
+  <script src="../js/admin-shared.js"></script>
+  <script>
+    (function () {
+      function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+
+      FeliAdmin.requireSession().then(function (auth) {
+        if (!auth) return;
+        var sb = FeliAdmin.sb;
+        sb.from('messages')
+          .select('id,commande_id,direction,type,contenu,created_at,commandes(couples(prenom_1,prenom_2,email))')
+          .order('created_at', { ascending: false })
+          .then(function (res) {
+            var rows = res.data || [];
+            document.getElementById('wa-loading').hidden = true;
+            document.getElementById('wa-content').hidden = false;
+
+            if (!rows.length) {
+              document.getElementById('wa-empty').hidden = false;
+              return;
+            }
+
+            document.getElementById('wa-list').innerHTML = rows.map(function (m) {
+              var cp = m.commandes && m.commandes.couples;
+              var clientLabel = cp ? ([cp.prenom_1, cp.prenom_2].filter(Boolean).join(' & ') || cp.email) : '—';
+              var cmdLink = m.commande_id ? ' · <a href="../commandes/detail.html?id=' + m.commande_id + '">voir la commande</a>' : '';
+              return '<div class="admin-section" style="padding:.9rem 1.1rem">' +
+                '<p style="margin:0 0 .3rem;font-size:.78rem;color:var(--gris)">' +
+                  (m.direction === 'in' ? 'Reçu' : 'Envoyé') + ' · ' + esc(clientLabel) + ' · ' +
+                  new Date(m.created_at).toLocaleString('fr-FR') + cmdLink +
+                '</p>' +
+                '<p style="margin:0;font-size:.9rem">' + esc(m.contenu || '(' + m.type + ')') + '</p>' +
+              '</div>';
+            }).join('');
+          });
+      });
+    })();
+  </script>
+</body>
+</html>
