@@ -19,6 +19,11 @@
     commande réglée (?prestation=SLUG). Hors menu principal, noindex.
     v2 : texte sans prix, second bouton WhatsApp, transmet ?prestation=
     au questionnaire. Voir feliciti-page-merci-v2.md.
+    v3 : crée automatiquement la commande côté Supabase à l'arrivée sur
+    cette page et transmet son id au questionnaire (?commande=). Auto-
+    déclaré côté client — pas de webhook Stripe sur ce projet statique,
+    voir le commentaire sur payment_statut en base pour le détail de cette
+    limite (déjà documentée pour /post-achat).
   -->
   <a class="q-back" href="../">← Retour à l'accueil</a>
 
@@ -37,15 +42,79 @@
   <script src="../js/prestations-config.js"></script>
   <script>
     (function () {
+      var SUPABASE_URL      = 'https://wrpiggqshnoykqtmuprx.supabase.co';
+      var SUPABASE_ANON_KEY = 'sb_publishable_TT-qEm5ADIWQEE0e_qO2NQ_gx3pyZ1O';
+
       var params = new URLSearchParams(window.location.search);
       var slug = params.get('prestation');
+      var ctaEl = document.getElementById('merciCta');
+
+      function sbHeaders(extra) {
+        var h = { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY };
+        for (var k in extra) h[k] = extra[k];
+        return h;
+      }
+
+      function setCta(commandeId) {
+        var url = '../questionnaire/?prestation=' + encodeURIComponent(slug);
+        if (commandeId) url += '&commande=' + encodeURIComponent(commandeId);
+        ctaEl.href = url;
+      }
+
+      /* Crée la commande + son item côté Supabase, une seule fois par visite
+         (sessionStorage évite les doublons si la page est rechargée). Ne
+         bloque jamais l'affichage de la confirmation en cas d'échec réseau. */
+      function creerCommande(prestationId, prixEuros) {
+        var storageKey = 'felicitiCommande:' + slug;
+        var existing = sessionStorage.getItem(storageKey);
+        if (existing) { setCta(existing); return; }
+
+        var commandeId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : null;
+        if (!commandeId) { setCta(null); return; }
+
+        fetch(SUPABASE_URL + '/rest/v1/commandes', {
+          method: 'POST',
+          headers: sbHeaders({ 'Content-Type': 'application/json', 'Prefer': 'return=minimal' }),
+          body: JSON.stringify({
+            id: commandeId,
+            statut: 'onboarding_envoye',
+            payment_statut: 'paye',
+            montant_total: prixEuros
+          })
+        }).then(function (res) {
+          if (!res.ok) throw new Error('commande HTTP ' + res.status);
+          return fetch(SUPABASE_URL + '/rest/v1/commande_items', {
+            method: 'POST',
+            headers: sbHeaders({ 'Content-Type': 'application/json', 'Prefer': 'return=minimal' }),
+            body: JSON.stringify({ commande_id: commandeId, prestation_id: prestationId, prix: prixEuros, quantite: 1 })
+          });
+        }).then(function (res) {
+          if (!res.ok) throw new Error('commande_items HTTP ' + res.status);
+          sessionStorage.setItem(storageKey, commandeId);
+          setCta(commandeId);
+        }).catch(function (err) {
+          console.warn('FELICITI · création commande impossible', err);
+          setCta(null);
+        });
+      }
 
       if (slug && typeof PRESTATIONS !== 'undefined' && PRESTATIONS[slug]) {
         var p = PRESTATIONS[slug];
         document.getElementById('merciLigne1').textContent =
           'Votre commande — ' + p.nom + ' — a bien été validée.';
-        document.getElementById('merciCta').href = '../questionnaire/?prestation=' + slug;
         document.title = 'Merci — ' + p.nom + ' — FELICITI';
+        setCta(null);
+
+        fetch(SUPABASE_URL + '/rest/v1/prestations?slug=eq.' + encodeURIComponent(slug) + '&select=id', {
+          headers: sbHeaders({})
+        }).then(function (res) { return res.ok ? res.json() : []; })
+          .then(function (rows) {
+            if (rows && rows[0]) {
+              creerCommande(rows[0].id, parseInt(p.prix, 10) || 0);
+            }
+          }).catch(function (err) {
+            console.warn('FELICITI · lecture prestation impossible', err);
+          });
       }
     })();
   </script>

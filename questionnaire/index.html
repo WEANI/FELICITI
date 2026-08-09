@@ -135,9 +135,10 @@
     /* Envoi direct vers Supabase (table questionnaires), même mécanisme que
        le formulaire de devis sur /post-achat — voir js/site.js. Les photos
        (facultatives) sont déposées dans le bucket "medias" puis référencées
-       par leur chemin dans le JSON enregistré ; pas encore de liaison à une
-       commande précise (aucun identifiant fiable n'est transmis à ce stade
-       du parcours — voir le commentaire sur la colonne commande_id en base). */
+       par leur chemin dans le JSON enregistré. Si l'URL porte ?commande=
+       (transmis par /merci, qui crée la commande au retour de paiement), le
+       questionnaire y est rattaché ; sinon commande_id reste vide — cas d'un
+       accès direct à cette page sans être passé par /merci. */
     var SUPABASE_URL      = 'https://wrpiggqshnoykqtmuprx.supabase.co';
     var SUPABASE_ANON_KEY = 'sb_publishable_TT-qEm5ADIWQEE0e_qO2NQ_gx3pyZ1O';
 
@@ -182,7 +183,9 @@
         if (v) data[name] = v;
       });
       data.photo_finale_souhaitee = fd.get('photo_finale_souhaitee') === 'oui';
-      var prestation = new URLSearchParams(window.location.search).get('prestation');
+      var qs = new URLSearchParams(window.location.search);
+      var prestation = qs.get('prestation');
+      var commandeId = qs.get('commande');
       if (prestation) data.prestation = prestation;
 
       var photoFiles = Array.prototype.filter.call(
@@ -200,7 +203,7 @@
             'Content-Type': 'application/json',
             'Prefer': 'return=minimal'
           },
-          body: JSON.stringify({ data: data })
+          body: JSON.stringify(commandeId ? { data: data, commande_id: commandeId } : { data: data })
         });
       }).then(function (res) {
         if (!res.ok) throw new Error('submit failed (HTTP ' + res.status + ')');
