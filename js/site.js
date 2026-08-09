@@ -107,7 +107,7 @@
        API Keys → « anon / publishable »). Sans elle, le formulaire affiche la
        confirmation + WhatsApp mais n'enregistre rien.                        */
   var SUPABASE_URL      = 'https://wrpiggqshnoykqtmuprx.supabase.co';
-  var SUPABASE_ANON_KEY = ''; /* ← colle ta clé publishable (anon) ici */
+  var SUPABASE_ANON_KEY = 'sb_publishable_TT-qEm5ADIWQEE0e_qO2NQ_gx3pyZ1O';
 
   var form = document.getElementById('devis-form');
   if (form) {

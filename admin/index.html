@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
+<meta name="robots" content="noindex, nofollow">
+<title>Tableau de bord — Admin FELICITI</title>
+<link rel="stylesheet" href="css/admin.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" id="admin-sidebar-slot"></aside>
+    <main class="admin-main">
+      <div class="admin-header">
+        <h1>Tableau de bord</h1>
+      </div>
+
+      <div id="dash-loading" class="admin-loading">Chargement…</div>
+
+      <div id="dash-content" hidden>
+        <div class="admin-cards" id="dash-cards"></div>
+
+        <div class="admin-section">
+          <h2>Alertes</h2>
+          <div id="dash-alerts"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>window.ADMIN_BASE = './'; window.ADMIN_NAV_ID = 'dashboard';</script>
+  <script src="js/admin-shared.js"></script>
+  <script>
+    (function () {
+      var WORKFLOW_LABELS = {
+        nouveau: 'Nouveau', onboarding_envoye: 'Onboarding envoyé',
+        questionnaire_recu: 'Questionnaire reçu', en_creation: 'En création',
+        a_valider: 'À valider', video_livree: 'Vidéo livrée', termine: 'Terminé',
+        annulee: 'Annulée', devis: 'Devis', en_cours: 'En cours', livree: 'Livrée'
+      };
+      var ACTIVE_STAGES = ['nouveau','onboarding_envoye','questionnaire_recu','en_creation','a_valider','video_livree','termine'];
+
+      function eur(cents_or_units) {
+        return (cents_or_units || 0).toLocaleString('fr-FR') + ' €';
+      }
+
+      FeliAdmin.requireSession().then(function (auth) {
+        if (!auth) return;
+        var sb = FeliAdmin.sb;
+
+        Promise.all([
+          sb.from('commandes').select('id,statut,payment_statut,montant_total,created_at,updated_at'),
+          sb.from('questionnaires').select('commande_id')
+        ]).then(function (results) {
+          var commandes = (results[0].data) || [];
+          var questionnaires = (results[1].data) || [];
+          var questCommandeIds = {};
+          questionnaires.forEach(function (q) { if (q.commande_id) questCommandeIds[q.commande_id] = true; });
+
+          /* --- Cards --- */
+          var now = new Date();
+          var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+          var caDuMois = 0;
+          var countsByStatut = {};
+
+          commandes.forEach(function (c) {
+            countsByStatut[c.statut] = (countsByStatut[c.statut] || 0) + 1;
+            if (c.payment_statut === 'paye' && new Date(c.created_at) >= monthStart) {
+              caDuMois += (c.montant_total || 0);
+            }
+          });
+
+          var cardsHtml = '';
+          cardsHtml += '<div class="admin-card"><div class="admin-card-label">Commandes totales</div><div class="admin-card-value">' + commandes.length + '</div></div>';
+          cardsHtml += '<div class="admin-card"><div class="admin-card-label">CA du mois (payé)</div><div class="admin-card-value bronze">' + eur(caDuMois) + '</div></div>';
+          ACTIVE_STAGES.forEach(function (s) {
+            if (!countsByStatut[s]) return;
+            cardsHtml += '<div class="admin-card"><div class="admin-card-label">' + (WORKFLOW_LABELS[s] || s) + '</div><div class="admin-card-value">' + countsByStatut[s] + '</div></div>';
+          });
+          document.getElementById('dash-cards').innerHTML = cardsHtml || '<p class="admin-empty">Aucune commande enregistrée pour l’instant.</p>';
+
+          /* --- Alertes --- */
+          var alerts = [];
+          var fiveDaysAgo = new Date(now.getTime() - 5 * 24 * 3600 * 1000);
+
+          commandes.forEach(function (c) {
+            if (c.statut === 'onboarding_envoye' && new Date(c.updated_at) < fiveDaysAgo && !questCommandeIds[c.id]) {
+              alerts.push('Commande <code>' + c.id.slice(0, 8) + '…</code> : onboarding envoyé depuis plus de 5 jours, questionnaire toujours pas reçu.');
+            }
+            if (c.payment_statut === 'echoue') {
+              alerts.push('Commande <code>' + c.id.slice(0, 8) + '…</code> : paiement en échec, à traiter.');
+            }
+          });
+
+          var alertsEl = document.getElementById('dash-alerts');
+          alertsEl.innerHTML = alerts.length
+            ? alerts.map(function (a) { return '<div class="admin-alert">' + a + '</div>'; }).join('')
+            : '<p class="admin-empty">Aucune alerte pour l’instant.</p>';
+
+          document.getElementById('dash-loading').hidden = true;
+          document.getElementById('dash-content').hidden = false;
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

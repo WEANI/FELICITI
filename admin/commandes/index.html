@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
+<meta name="robots" content="noindex, nofollow">
+<title>Commandes — Admin FELICITI</title>
+<link rel="stylesheet" href="../css/admin.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" id="admin-sidebar-slot"></aside>
+    <main class="admin-main">
+      <div class="admin-header">
+        <h1>Commandes</h1>
+      </div>
+
+      <div class="admin-toolbar">
+        <input type="search" id="f-search" placeholder="Recherche (prénoms, e-mail)">
+        <select id="f-prestation"><option value="">Toutes les prestations</option></select>
+        <select id="f-payment">
+          <option value="">Tout paiement</option>
+          <option value="en_attente">En attente</option>
+          <option value="paye">Payé</option>
+          <option value="echoue">Échoué</option>
+          <option value="rembourse">Remboursé</option>
+        </select>
+        <select id="f-statut">
+          <option value="">Tout statut</option>
+          <option value="nouveau">Nouveau</option>
+          <option value="onboarding_envoye">Onboarding envoyé</option>
+          <option value="questionnaire_recu">Questionnaire reçu</option>
+          <option value="en_creation">En création</option>
+          <option value="a_valider">À valider</option>
+          <option value="video_livree">Vidéo livrée</option>
+          <option value="termine">Terminé</option>
+          <option value="annulee">Annulée</option>
+        </select>
+      </div>
+
+      <div id="cmd-loading" class="admin-loading">Chargement…</div>
+      <div class="admin-table-wrap" id="cmd-table-wrap" hidden>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Client</th><th>Prestation</th><th>Montant</th>
+              <th>Paiement</th><th>Statut</th><th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="cmd-tbody"></tbody>
+        </table>
+      </div>
+      <p class="admin-empty" id="cmd-empty" hidden>Aucune commande ne correspond à ces filtres.</p>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>window.ADMIN_BASE = '../'; window.ADMIN_NAV_ID = 'commandes';</script>
+  <script src="../js/admin-shared.js"></script>
+  <script>
+    (function () {
+      var WORKFLOW_LABELS = {
+        nouveau: 'Nouveau', onboarding_envoye: 'Onboarding envoyé',
+        questionnaire_recu: 'Questionnaire reçu', en_creation: 'En création',
+        a_valider: 'À valider', video_livree: 'Vidéo livrée', termine: 'Terminé',
+        annulee: 'Annulée', devis: 'Devis', en_cours: 'En cours', livree: 'Livrée'
+      };
+      var STATUT_OPTIONS = ['nouveau','onboarding_envoye','questionnaire_recu','en_creation','a_valider','video_livree','termine','annulee'];
+      var PAYMENT_LABELS = { en_attente: 'En attente', paye: 'Payé', echoue: 'Échoué', rembourse: 'Remboursé' };
+
+      var allRows = [];
+
+      function eur(v) { return (v || 0).toLocaleString('fr-FR') + ' €'; }
+
+      function clientLabel(c) {
+        var cp = c.couples;
+        if (cp && (cp.prenom_1 || cp.prenom_2)) {
+          return [cp.prenom_1, cp.prenom_2].filter(Boolean).join(' & ');
+        }
+        return (cp && cp.email) || '—';
+      }
+
+      function prestationLabel(c) {
+        var items = c.commande_items || [];
+        if (!items.length) return '—';
+        return items.map(function (it) { return it.prestations ? it.prestations.nom : '?'; }).join(', ');
+      }
+
+      function statutSelect(c) {
+        var opts = STATUT_OPTIONS.map(function (s) {
+          return '<option value="' + s + '"' + (s === c.statut ? ' selected' : '') + '>' + (WORKFLOW_LABELS[s] || s) + '</option>';
+        }).join('');
+        return '<select data-id="' + c.id + '" class="cmd-statut-select">' + opts + '</select>';
+      }
+
+      function render() {
+        var search = document.getElementById('f-search').value.trim().toLowerCase();
+        var prestaFilter = document.getElementById('f-prestation').value;
+        var paymentFilter = document.getElementById('f-payment').value;
+        var statutFilter = document.getElementById('f-statut').value;
+
+        var rows = allRows.filter(function (c) {
+          if (paymentFilter && c.payment_statut !== paymentFilter) return false;
+          if (statutFilter && c.statut !== statutFilter) return false;
+          if (prestaFilter && prestationLabel(c).indexOf(prestaFilter) === -1) return false;
+          if (search) {
+            var hay = (clientLabel(c) + ' ' + ((c.couples && c.couples.email) || '')).toLowerCase();
+            if (hay.indexOf(search) === -1) return false;
+          }
+          return true;
+        });
+
+        var tbody = document.getElementById('cmd-tbody');
+        if (!rows.length) {
+          document.getElementById('cmd-table-wrap').hidden = true;
+          document.getElementById('cmd-empty').hidden = false;
+          return;
+        }
+        document.getElementById('cmd-table-wrap').hidden = false;
+        document.getElementById('cmd-empty').hidden = true;
+
+        tbody.innerHTML = rows.map(function (c) {
+          var date = new Date(c.created_at).toLocaleDateString('fr-FR');
+          return '<tr data-id="' + c.id + '">' +
+            '<td>' + clientLabel(c) + '</td>' +
+            '<td>' + prestationLabel(c) + '</td>' +
+            '<td>' + eur(c.montant_total) + '</td>' +
+            '<td><span class="admin-badge ' + c.payment_statut + '">' + (PAYMENT_LABELS[c.payment_statut] || c.payment_statut) + '</span></td>' +
+            '<td></td>' +
+            '<td>' + date + '</td>' +
+          '</tr>';
+        }).join('');
+
+        /* Cellule statut insérée à part pour brancher le <select> sans
+           casser l'échappement HTML du reste de la ligne. */
+        Array.prototype.forEach.call(tbody.querySelectorAll('tr'), function (tr) {
+          var id = tr.getAttribute('data-id');
+          var c = rows.filter(function (r) { return r.id === id; })[0];
+          tr.children[4].innerHTML = statutSelect(c);
+        });
+
+        Array.prototype.forEach.call(tbody.querySelectorAll('.cmd-statut-select'), function (sel) {
+          sel.addEventListener('click', function (e) { e.stopPropagation(); });
+          sel.addEventListener('change', function () {
+            var id = sel.getAttribute('data-id');
+            sel.disabled = true;
+            FeliAdmin.sb.from('commandes').update({ statut: sel.value }).eq('id', id).then(function (res) {
+              sel.disabled = false;
+              if (res.error) { alert('Échec de la mise à jour : ' + res.error.message); return; }
+              var row = allRows.filter(function (r) { return r.id === id; })[0];
+              if (row) row.statut = sel.value;
+            });
+          });
+        });
+
+        Array.prototype.forEach.call(tbody.querySelectorAll('tr'), function (tr) {
+          tr.addEventListener('click', function () {
+            window.location.href = 'detail.html?id=' + tr.getAttribute('data-id');
+          });
+        });
+      }
+
+      FeliAdmin.requireSession().then(function (auth) {
+        if (!auth) return;
+        var sb = FeliAdmin.sb;
+
+        Promise.all([
+          sb.from('commandes').select('id,statut,payment_statut,montant_total,created_at,couples(prenom_1,prenom_2,email),commande_items(prix,quantite,prestations(nom,slug))').order('created_at', { ascending: false }),
+          sb.from('prestations').select('nom').order('ordre')
+        ]).then(function (results) {
+          allRows = results[0].data || [];
+          var prestations = results[1].data || [];
+          var presSel = document.getElementById('f-prestation');
+          prestations.forEach(function (p) {
+            var opt = document.createElement('option');
+            opt.value = p.nom; opt.textContent = p.nom;
+            presSel.appendChild(opt);
+          });
+
+          document.getElementById('cmd-loading').hidden = true;
+          render();
+
+          ['f-search', 'f-prestation', 'f-payment', 'f-statut'].forEach(function (id) {
+            document.getElementById(id).addEventListener('input', render);
+            document.getElementById(id).addEventListener('change', render);
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

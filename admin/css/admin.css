@@ -1,0 +1,149 @@
+/* ==========================================================================
+   FELICITI — Admin (outil interne)
+   Volontairement sobre : pas de webfonts, pas de dépendance à css/style.css
+   du site public. Reprend juste les couleurs de la charte.
+   ========================================================================== */
+
+:root{
+  --lin:#F3EDE4; --creme:#FAF6EF; --taupe:#D8CBB8; --encre:#2E2620;
+  --bronze:#A6845C; --filet:#E4DCCB;
+  --vert:#4C7A57; --rouge:#B4483C; --gris:#8A8378;
+  --sidebar-w:220px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  background:var(--lin); color:var(--encre); font-size:14px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0 0 .3em}
+
+/* ---------- Connexion ---------- */
+.admin-auth{
+  min-height:100svh; display:flex; align-items:center; justify-content:center;
+  padding:1.5rem;
+}
+.admin-auth-box{
+  width:100%; max-width:360px; background:var(--creme); border:1px solid var(--filet);
+  border-radius:10px; padding:2rem;
+}
+.admin-auth-mark{font-family:Georgia,serif; font-weight:700; font-size:1.3rem; letter-spacing:.02em; margin-bottom:.2rem}
+.admin-auth-mark span{color:var(--bronze)}
+.admin-auth-sub{color:var(--gris); font-size:.85rem; margin-bottom:1.5rem}
+.admin-field{margin-bottom:1rem}
+.admin-field label{display:block; font-size:.78rem; color:var(--gris); margin-bottom:.3rem}
+.admin-field input{
+  width:100%; padding:.6rem .7rem; border:1px solid var(--taupe); border-radius:6px;
+  background:#fff; font-size:.92rem; color:var(--encre);
+}
+.admin-field input:focus{outline:2px solid var(--bronze); outline-offset:1px}
+.admin-btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:.4rem;
+  width:100%; padding:.7rem 1rem; border:none; border-radius:6px; cursor:pointer;
+  background:var(--encre); color:#fff; font-size:.9rem; font-weight:600;
+  transition:opacity .15s;
+}
+.admin-btn:hover{opacity:.88}
+.admin-btn:disabled{opacity:.5; cursor:default}
+.admin-btn.secondary{background:transparent; color:var(--encre); border:1px solid var(--taupe)}
+.admin-msg{font-size:.82rem; margin:.8rem 0 0; padding:.6rem .7rem; border-radius:6px}
+.admin-msg.error{background:#FBEAE7; color:var(--rouge)}
+.admin-msg.ok{background:#EAF2EC; color:var(--vert)}
+.admin-bootstrap{margin-top:1.6rem; padding-top:1.6rem; border-top:1px solid var(--filet)}
+.admin-bootstrap-label{font-size:.78rem; color:var(--gris); margin-bottom:.8rem}
+
+/* ---------- Layout protégé ---------- */
+.admin-shell{display:flex; min-height:100svh}
+.admin-sidebar{
+  width:var(--sidebar-w); flex:0 0 var(--sidebar-w); background:var(--encre); color:var(--lin);
+  padding:1.4rem 1rem; display:flex; flex-direction:column;
+}
+.admin-sidebar-mark{font-family:Georgia,serif; font-weight:700; font-size:1.15rem; color:#fff; margin-bottom:.1rem}
+.admin-sidebar-mark span{color:var(--bronze)}
+.admin-sidebar-sub{font-size:.72rem; color:#a8a095; margin-bottom:1.6rem}
+.admin-nav{display:flex; flex-direction:column; gap:.15rem; flex:1}
+.admin-nav a{
+  display:block; padding:.55rem .7rem; border-radius:6px; text-decoration:none;
+  color:#d8d2c6; font-size:.87rem;
+}
+.admin-nav a:hover{background:rgba(255,255,255,.06); color:#fff}
+.admin-nav a.active{background:var(--bronze); color:#fff}
+.admin-sidebar-foot{padding-top:1rem; border-top:1px solid rgba(255,255,255,.12)}
+.admin-sidebar-email{font-size:.72rem; color:#a8a095; margin-bottom:.5rem; word-break:break-all}
+.admin-signout{
+  background:none; border:1px solid rgba(255,255,255,.25); color:#d8d2c6;
+  font-size:.78rem; padding:.4rem .6rem; border-radius:6px; cursor:pointer; width:100%;
+}
+.admin-signout:hover{background:rgba(255,255,255,.08)}
+
+.admin-main{flex:1; min-width:0; padding:2rem 2.2rem; max-width:1180px}
+.admin-header{display:flex; align-items:baseline; justify-content:space-between; gap:1rem; margin-bottom:1.6rem; flex-wrap:wrap}
+.admin-header h1{font-size:1.5rem}
+.admin-header-actions{display:flex; gap:.6rem}
+
+/* ---------- Cards / dashboard ---------- */
+.admin-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:2rem}
+.admin-card{background:var(--creme); border:1px solid var(--filet); border-radius:10px; padding:1.2rem}
+.admin-card-label{font-size:.75rem; color:var(--gris); text-transform:uppercase; letter-spacing:.04em; margin-bottom:.4rem}
+.admin-card-value{font-size:1.7rem; font-weight:700; font-family:Georgia,serif}
+.admin-card-value.bronze{color:var(--bronze)}
+
+.admin-section{background:var(--creme); border:1px solid var(--filet); border-radius:10px; padding:1.4rem; margin-bottom:1.5rem}
+.admin-section h2{font-size:1.05rem; margin-bottom:.9rem}
+.admin-alert{display:flex; gap:.6rem; align-items:flex-start; padding:.7rem .8rem; border-radius:7px; background:#FBEAE7; color:var(--rouge); font-size:.85rem; margin-bottom:.5rem}
+.admin-alert:last-child{margin-bottom:0}
+.admin-empty{color:var(--gris); font-size:.87rem; font-style:italic}
+
+/* ---------- Tables ---------- */
+.admin-toolbar{display:flex; gap:.6rem; flex-wrap:wrap; margin-bottom:1rem; align-items:center}
+.admin-toolbar input,.admin-toolbar select{
+  padding:.5rem .6rem; border:1px solid var(--taupe); border-radius:6px; background:#fff;
+  font-size:.85rem; color:var(--encre);
+}
+.admin-table-wrap{overflow-x:auto; background:var(--creme); border:1px solid var(--filet); border-radius:10px}
+table.admin-table{width:100%; border-collapse:collapse; font-size:.86rem; min-width:640px}
+.admin-table th{
+  text-align:left; padding:.7rem .9rem; font-size:.72rem; text-transform:uppercase;
+  letter-spacing:.03em; color:var(--gris); border-bottom:1px solid var(--filet); white-space:nowrap;
+}
+.admin-table td{padding:.7rem .9rem; border-bottom:1px solid var(--filet); vertical-align:middle}
+.admin-table tbody tr:last-child td{border-bottom:none}
+.admin-table tbody tr{cursor:pointer}
+.admin-table tbody tr:hover{background:#F5EFE4}
+.admin-table select{padding:.35rem .5rem; border:1px solid var(--taupe); border-radius:5px; font-size:.8rem; background:#fff}
+.admin-table select:hover{border-color:var(--bronze)}
+
+.admin-badge{display:inline-block; padding:.2rem .55rem; border-radius:99px; font-size:.72rem; font-weight:600}
+.admin-badge.paye{background:#EAF2EC; color:var(--vert)}
+.admin-badge.en_attente{background:#F1ECE3; color:var(--gris)}
+.admin-badge.echoue{background:#FBEAE7; color:var(--rouge)}
+.admin-badge.rembourse{background:#EDEAF5; color:#6B5B95}
+
+/* ---------- Détail commande ---------- */
+.admin-back{display:inline-block; margin-bottom:1rem; font-size:.85rem; color:var(--gris); text-decoration:none}
+.admin-back:hover{color:var(--encre)}
+.admin-grid-2{display:grid; grid-template-columns:2fr 1fr; gap:1.5rem}
+@media (max-width:860px){.admin-grid-2{grid-template-columns:1fr}}
+.admin-kv{display:grid; grid-template-columns:auto 1fr; gap:.4rem 1rem; font-size:.87rem}
+.admin-kv dt{color:var(--gris)}
+.admin-kv dd{margin:0}
+.admin-checklist{display:flex; flex-direction:column; gap:.5rem}
+.admin-checklist label{display:flex; align-items:center; gap:.6rem; font-size:.87rem; cursor:pointer}
+.admin-checklist input{width:16px; height:16px; accent-color:var(--bronze)}
+.admin-qdata dt{font-weight:600; color:var(--encre); margin-top:.8rem}
+.admin-qdata dt:first-child{margin-top:0}
+.admin-qdata dd{margin:.15rem 0 0; color:#4a423a; white-space:pre-wrap}
+
+.admin-loading{color:var(--gris); font-size:.87rem; padding:2rem 0; text-align:center}
+
+@media (max-width:760px){
+  .admin-shell{flex-direction:column}
+  .admin-sidebar{width:100%; flex:none; flex-direction:row; align-items:center; padding:.9rem 1rem; gap:1rem}
+  .admin-sidebar-sub{display:none}
+  .admin-nav{flex-direction:row; flex-wrap:wrap; flex:1}
+  .admin-sidebar-foot{display:none}
+  .admin-main{padding:1.4rem 1.2rem}
+}

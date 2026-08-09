@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
+<meta name="robots" content="noindex, nofollow">
+<title>Commande — Admin FELICITI</title>
+<link rel="stylesheet" href="../css/admin.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" id="admin-sidebar-slot"></aside>
+    <main class="admin-main">
+      <a class="admin-back" href="./">← Toutes les commandes</a>
+      <div id="det-loading" class="admin-loading">Chargement…</div>
+      <div id="det-content" hidden>
+        <div class="admin-header">
+          <h1 id="det-title">Commande</h1>
+        </div>
+
+        <div class="admin-grid-2">
+          <div>
+            <div class="admin-section">
+              <h2>Commande</h2>
+              <dl class="admin-kv" id="det-commande-kv"></dl>
+            </div>
+
+            <div class="admin-section">
+              <h2>Questionnaire</h2>
+              <div id="det-questionnaire"></div>
+            </div>
+
+            <div class="admin-section">
+              <h2>Messages WhatsApp</h2>
+              <div id="det-messages"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="admin-section">
+              <h2>Client</h2>
+              <dl class="admin-kv" id="det-client-kv"></dl>
+            </div>
+
+            <div class="admin-section">
+              <h2>Production</h2>
+              <div class="admin-checklist" id="det-stages"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="admin-empty" id="det-notfound" hidden>Commande introuvable.</p>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>window.ADMIN_BASE = '../'; window.ADMIN_NAV_ID = 'commandes';</script>
+  <script src="../js/admin-shared.js"></script>
+  <script>
+    (function () {
+      var WORKFLOW_LABELS = {
+        nouveau: 'Nouveau', onboarding_envoye: 'Onboarding envoyé',
+        questionnaire_recu: 'Questionnaire reçu', en_creation: 'En création',
+        a_valider: 'À valider', video_livree: 'Vidéo livrée', termine: 'Terminé',
+        annulee: 'Annulée', devis: 'Devis', en_cours: 'En cours', livree: 'Livrée'
+      };
+      var PAYMENT_LABELS = { en_attente: 'En attente', paye: 'Payé', echoue: 'Échoué', rembourse: 'Remboursé' };
+      var STAGE_FIELDS = [
+        ['fil_conducteur_valide', 'Fil conducteur validé'],
+        ['storyboard_genere', 'Storyboard généré'],
+        ['prompt_seedance_envoye', 'Prompt Seedance envoyé'],
+        ['clips_recus', 'Clips reçus'],
+        ['page_assemblee', 'Page assemblée'],
+        ['livree', 'Livrée']
+      ];
+
+      function eur(v) { return (v || 0).toLocaleString('fr-FR') + ' €'; }
+      function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+      function humanKey(k) {
+        var s = k.replace(/_/g, ' ');
+        return s.charAt(0).toUpperCase() + s.slice(1);
+      }
+
+      var id = new URLSearchParams(window.location.search).get('id');
+      if (!id) {
+        document.getElementById('det-loading').hidden = true;
+        document.getElementById('det-notfound').hidden = false;
+      } else {
+        FeliAdmin.requireSession().then(function (auth) {
+          if (!auth) return;
+          var sb = FeliAdmin.sb;
+
+          Promise.all([
+            sb.from('commandes').select('id,statut,payment_statut,montant_total,notes,stripe_reference,created_at,couple_id,couples(*),commande_items(prix,quantite,prestations(nom,slug))').eq('id', id).maybeSingle(),
+            sb.from('questionnaires').select('*').eq('commande_id', id).order('created_at', { ascending: false }),
+            sb.from('messages').select('*').eq('commande_id', id).order('created_at', { ascending: true }),
+            sb.from('production_stages').select('*').eq('commande_id', id).maybeSingle()
+          ]).then(function (results) {
+            var commande = results[0].data;
+            if (!commande) {
+              document.getElementById('det-loading').hidden = true;
+              document.getElementById('det-notfound').hidden = false;
+              return;
+            }
+            var questionnaires = results[1].data || [];
+            var messages = results[2].data || [];
+            var stages = results[3].data;
+
+            document.getElementById('det-title').textContent =
+              (commande.couples && (commande.couples.prenom_1 || commande.couples.prenom_2))
+                ? [commande.couples.prenom_1, commande.couples.prenom_2].filter(Boolean).join(' & ')
+                : 'Commande ' + id.slice(0, 8);
+
+            /* --- Commande --- */
+            var items = commande.commande_items || [];
+            var prestaTxt = items.length ? items.map(function (it) { return it.prestations ? it.prestations.nom : '?'; }).join(', ') : '—';
+            document.getElementById('det-commande-kv').innerHTML =
+              '<dt>Prestation</dt><dd>' + esc(prestaTxt) + '</dd>' +
+              '<dt>Montant</dt><dd>' + eur(commande.montant_total) + '</dd>' +
+              '<dt>Paiement</dt><dd><span class="admin-badge ' + commande.payment_statut + '">' + (PAYMENT_LABELS[commande.payment_statut] || commande.payment_statut) + '</span></dd>' +
+              '<dt>Statut</dt><dd>' + (WORKFLOW_LABELS[commande.statut] || commande.statut) + '</dd>' +
+              '<dt>Référence Stripe</dt><dd>' + esc(commande.stripe_reference || '—') + '</dd>' +
+              '<dt>Date</dt><dd>' + new Date(commande.created_at).toLocaleString('fr-FR') + '</dd>' +
+              (commande.notes ? '<dt>Notes</dt><dd>' + esc(commande.notes) + '</dd>' : '');
+
+            /* --- Client --- */
+            var cp = commande.couples;
+            document.getElementById('det-client-kv').innerHTML = cp
+              ? '<dt>Prénoms</dt><dd>' + esc([cp.prenom_1, cp.prenom_2].filter(Boolean).join(' & ') || '—') + '</dd>' +
+                '<dt>E-mail</dt><dd>' + esc(cp.email || '—') + '</dd>' +
+                '<dt>WhatsApp</dt><dd>' + esc(cp.whatsapp || '—') + '</dd>' +
+                '<dt>Date mariage</dt><dd>' + esc(cp.date_mariage || '—') + '</dd>' +
+                '<dt>Lieu</dt><dd>' + esc(cp.lieu || '—') + '</dd>' +
+                '<dt>Invités</dt><dd>' + esc(cp.nombre_invites != null ? cp.nombre_invites : '—') + '</dd>'
+              : '<dt>Client</dt><dd>Non renseigné</dd>';
+
+            /* --- Questionnaire --- */
+            var qEl = document.getElementById('det-questionnaire');
+            if (!questionnaires.length) {
+              qEl.innerHTML = '<p class="admin-empty">Aucun questionnaire reçu pour l’instant.</p>';
+            } else {
+              var q = questionnaires[0]; /* le plus récent */
+              var dl = '<dl class="admin-qdata">';
+              Object.keys(q.data || {}).forEach(function (k) {
+                var v = q.data[k];
+                if (v === '' || v == null) return;
+                dl += '<dt>' + esc(humanKey(k)) + '</dt><dd>' + esc(v) + '</dd>';
+              });
+              dl += '</dl>';
+              qEl.innerHTML =
+                '<p style="font-size:.8rem;color:var(--gris);margin:0 0 .6rem">Reçu le ' + new Date(q.created_at).toLocaleString('fr-FR') + (q.traite ? ' · traité' : ' · non traité') + '</p>' +
+                dl;
+            }
+
+            /* --- Messages --- */
+            var mEl = document.getElementById('det-messages');
+            mEl.innerHTML = messages.length
+              ? messages.map(function (m) {
+                  return '<p style="margin:.3rem 0;font-size:.85rem"><strong>' + (m.direction === 'in' ? 'Reçu' : 'Envoyé') + '</strong> · ' +
+                    new Date(m.created_at).toLocaleString('fr-FR') + ' — ' + esc(m.contenu || '(' + m.type + ')') + '</p>';
+                }).join('')
+              : '<p class="admin-empty">Aucun message — connexion whapi à configurer dans Paramètres.</p>';
+
+            /* --- Production --- */
+            var stageState = {};
+            STAGE_FIELDS.forEach(function (f) { stageState[f[0]] = stages ? !!stages[f[0]] : false; });
+
+            var stagesEl = document.getElementById('det-stages');
+            stagesEl.innerHTML = STAGE_FIELDS.map(function (f) {
+              return '<label><input type="checkbox" data-field="' + f[0] + '"' + (stageState[f[0]] ? ' checked' : '') + '> ' + f[1] + '</label>';
+            }).join('');
+
+            Array.prototype.forEach.call(stagesEl.querySelectorAll('input'), function (cb) {
+              cb.addEventListener('change', function () {
+                stageState[cb.getAttribute('data-field')] = cb.checked;
+                cb.disabled = true;
+                var payload = Object.assign({ commande_id: id }, stageState);
+                sb.from('production_stages').upsert(payload, { onConflict: 'commande_id' }).then(function (res) {
+                  cb.disabled = false;
+                  if (res.error) alert('Échec de la sauvegarde : ' + res.error.message);
+                });
+              });
+            });
+
+            document.getElementById('det-loading').hidden = true;
+            document.getElementById('det-content').hidden = false;
+          });
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

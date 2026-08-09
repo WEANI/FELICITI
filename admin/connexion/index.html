@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
+<meta name="robots" content="noindex, nofollow">
+<title>Connexion — Admin FELICITI</title>
+<link rel="stylesheet" href="../css/admin.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="admin-auth">
+    <div class="admin-auth-box">
+      <div class="admin-auth-mark">FELICIT<span>I</span></div>
+      <p class="admin-auth-sub">Espace admin</p>
+
+      <form id="login-form">
+        <div class="admin-field">
+          <label for="li-email">E-mail</label>
+          <input id="li-email" type="email" autocomplete="username" required>
+        </div>
+        <div class="admin-field">
+          <label for="li-pass">Mot de passe</label>
+          <input id="li-pass" type="password" autocomplete="current-password" required>
+        </div>
+        <button class="admin-btn" type="submit" id="login-btn">Se connecter</button>
+      </form>
+      <div id="login-msg"></div>
+
+      <div class="admin-bootstrap" id="bootstrap-block" hidden>
+        <p class="admin-bootstrap-label">Aucun compte admin n'existe encore sur ce projet — crée le premier ici.</p>
+        <form id="signup-form">
+          <div class="admin-field">
+            <label for="su-email">E-mail</label>
+            <input id="su-email" type="email" autocomplete="username" required>
+          </div>
+          <div class="admin-field">
+            <label for="su-pass">Mot de passe (8 caractères minimum)</label>
+            <input id="su-pass" type="password" autocomplete="new-password" minlength="8" required>
+          </div>
+          <button class="admin-btn secondary" type="submit" id="signup-btn">Créer le compte admin</button>
+        </form>
+        <div id="signup-msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+    (function () {
+      var SUPABASE_URL = 'https://wrpiggqshnoykqtmuprx.supabase.co';
+      var SUPABASE_ANON_KEY = 'sb_publishable_TT-qEm5ADIWQEE0e_qO2NQ_gx3pyZ1O';
+      var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      function msg(el, text, kind) {
+        el.innerHTML = text ? '<p class="admin-msg ' + kind + '">' + text + '</p>' : '';
+      }
+
+      /* Si un ?refuse=1 arrive depuis le garde de session (compte connecté
+         mais absent de la table admins), on l'explique clairement. */
+      if (/[?&]refuse=1/.test(window.location.search)) {
+        msg(document.getElementById('login-msg'),
+          'Ce compte existe mais n’a pas les droits admin.', 'error');
+      }
+
+      /* Si déjà connecté ET admin, on saute direct au tableau de bord. */
+      sb.auth.getSession().then(function (res) {
+        var session = res.data && res.data.session;
+        if (!session) return;
+        sb.rpc('is_admin').then(function (r) {
+          if (r.data === true) window.location.replace('../');
+        });
+      });
+
+      /* Le bloc de création du premier compte ne s'affiche que si la table
+         admins est vide (RPC dédiée, aucune donnée sensible exposée). */
+      sb.rpc('admin_bootstrap_needed').then(function (r) {
+        if (r.data === true) {
+          document.getElementById('bootstrap-block').hidden = false;
+        }
+      });
+
+      document.getElementById('login-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var btn = document.getElementById('login-btn');
+        var msgEl = document.getElementById('login-msg');
+        msg(msgEl, '', '');
+        btn.disabled = true; btn.textContent = 'Connexion…';
+
+        sb.auth.signInWithPassword({
+          email: document.getElementById('li-email').value.trim(),
+          password: document.getElementById('li-pass').value
+        }).then(function (res) {
+          if (res.error) {
+            msg(msgEl, 'Identifiants incorrects.', 'error');
+            btn.disabled = false; btn.textContent = 'Se connecter';
+            return;
+          }
+          return sb.rpc('is_admin').then(function (r) {
+            if (r.data !== true) {
+              sb.auth.signOut();
+              msg(msgEl, 'Ce compte n’a pas les droits admin.', 'error');
+              btn.disabled = false; btn.textContent = 'Se connecter';
+              return;
+            }
+            window.location.replace('../');
+          });
+        });
+      });
+
+      var signupForm = document.getElementById('signup-form');
+      if (signupForm) {
+        signupForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var btn = document.getElementById('signup-btn');
+          var msgEl = document.getElementById('signup-msg');
+          msg(msgEl, '', '');
+          btn.disabled = true; btn.textContent = 'Création…';
+
+          var email = document.getElementById('su-email').value.trim();
+          var password = document.getElementById('su-pass').value;
+
+          sb.auth.signUp({ email: email, password: password }).then(function (res) {
+            if (res.error) {
+              msg(msgEl, res.error.message, 'error');
+              btn.disabled = false; btn.textContent = 'Créer le compte admin';
+              return;
+            }
+            if (!res.data.session) {
+              /* Confirmation e-mail activée sur le projet : pas de session
+                 immédiate. On l'indique clairement plutôt que de laisser
+                 croire que ça a échoué. */
+              msg(msgEl,
+                'Compte créé — vérifie ta boîte mail pour confirmer, puis reviens te connecter. Signale-moi une fois fait pour que je t’accorde les droits admin.',
+                'ok');
+              btn.textContent = 'Compte créé';
+              return;
+            }
+            msg(msgEl,
+              'Compte créé. Signale-moi que c’est fait pour que je t’accorde les droits admin, puis reviens te connecter.',
+              'ok');
+            btn.textContent = 'Compte créé';
+          });
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
