@@ -139,6 +139,24 @@ table.admin-table{width:100%; border-collapse:collapse; font-size:.86rem; min-wi
 
 .admin-loading{color:var(--gris); font-size:.87rem; padding:2rem 0; text-align:center}
 
+/* ---------- Analytique ---------- */
+.admin-chart-box{position:relative; height:260px}
+.admin-list-simple{display:flex; flex-direction:column; gap:.5rem; font-size:.86rem}
+.admin-list-simple a{color:var(--encre)}
+.admin-list-simple .meta{color:var(--gris); font-size:.78rem}
+
+/* ---------- Kanban ---------- */
+.kanban-board{display:flex; gap:1rem; overflow-x:auto; padding-bottom:.5rem; align-items:flex-start}
+.kanban-col{flex:0 0 240px; background:var(--creme); border:1px solid var(--filet); border-radius:10px; padding:.8rem; min-height:120px}
+.kanban-col.drag-over{border-color:var(--bronze); background:#F5EFE4}
+.kanban-col-head{display:flex; justify-content:space-between; align-items:center; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--gris); margin-bottom:.7rem}
+.kanban-count{background:var(--taupe); color:var(--encre); border-radius:99px; padding:.05rem .5rem; font-size:.72rem}
+.kanban-card{background:#fff; border:1px solid var(--filet); border-radius:8px; padding:.6rem .7rem; margin-bottom:.6rem; cursor:grab; font-size:.82rem}
+.kanban-card:active{cursor:grabbing}
+.kanban-card.dragging{opacity:.4}
+.kanban-card-name{font-weight:600; margin-bottom:.15rem}
+.kanban-card-meta{color:var(--gris); font-size:.75rem}
+
 @media (max-width:760px){
   .admin-shell{flex-direction:column}
   .admin-sidebar{width:100%; flex:none; flex-direction:row; align-items:center; padding:.9rem 1rem; gap:1rem}

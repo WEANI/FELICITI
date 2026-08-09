@@ -16,7 +16,9 @@
 
   var NAV_ITEMS = [
     { id: 'dashboard', label: 'Tableau de bord', href: base },
+    { id: 'analytics', label: 'Analytique', href: base + 'analytics/' },
     { id: 'commandes', label: 'Commandes', href: base + 'commandes/' },
+    { id: 'projects', label: 'Projets', href: base + 'projects/' },
     { id: 'clients', label: 'Clients', href: base + 'clients/' },
     { id: 'questionnaires', label: 'Questionnaires', href: base + 'questionnaires/' },
     { id: 'paiements', label: 'Paiements', href: base + 'paiements/' },

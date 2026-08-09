@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
+<meta name="robots" content="noindex, nofollow">
+<title>Analytique — Admin FELICITI</title>
+<link rel="stylesheet" href="../css/admin.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" id="admin-sidebar-slot"></aside>
+    <main class="admin-main" style="max-width:1180px">
+      <div class="admin-header"><h1>Analytique</h1></div>
+
+      <div id="an-loading" class="admin-loading">Chargement…</div>
+      <div id="an-content" hidden>
+
+        <div class="admin-cards">
+          <div class="admin-card"><div class="admin-card-label">CA total (payé)</div><div class="admin-card-value bronze" id="an-ca-total">—</div></div>
+          <div class="admin-card"><div class="admin-card-label">Panier moyen</div><div class="admin-card-value" id="an-panier-moyen">—</div></div>
+          <div class="admin-card"><div class="admin-card-label">Délai paiement → questionnaire</div><div class="admin-card-value" id="an-delai-quest">—</div></div>
+          <div class="admin-card"><div class="admin-card-label">Délai commande → livraison</div><div class="admin-card-value" id="an-delai-livraison">—</div></div>
+        </div>
+
+        <div class="admin-grid-2">
+          <div class="admin-section">
+            <h2>CA par mois (payé)</h2>
+            <div class="admin-chart-box"><canvas id="chart-ca-mois"></canvas></div>
+          </div>
+          <div class="admin-section">
+            <h2>Répartition du CA par prestation</h2>
+            <div class="admin-chart-box"><canvas id="chart-ca-presta"></canvas></div>
+          </div>
+        </div>
+
+        <div class="admin-grid-2">
+          <div class="admin-section">
+            <h2>Funnel des statuts</h2>
+            <div class="admin-chart-box"><canvas id="chart-funnel"></canvas></div>
+          </div>
+          <div class="admin-section">
+            <h2>Conversion paiement</h2>
+            <div id="an-conversion" class="admin-cards" style="grid-template-columns:1fr 1fr"></div>
+          </div>
+        </div>
+
+        <div class="admin-grid-2">
+          <div class="admin-section">
+            <h2>Clients récurrents</h2>
+            <div id="an-recurrents" class="admin-list-simple"></div>
+          </div>
+          <div class="admin-section">
+            <h2>Questionnaires en attente</h2>
+            <div id="an-quest-attente" class="admin-list-simple"></div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <script>window.ADMIN_BASE = '../'; window.ADMIN_NAV_ID = 'analytics';</script>
+  <script src="../js/admin-shared.js"></script>
+  <script>
+    (function () {
+      var WORKFLOW_ORDER = ['nouveau','onboarding_envoye','questionnaire_recu','en_creation','a_valider','video_livree','termine','annulee'];
+      var WORKFLOW_LABELS = {
+        nouveau: 'Nouveau', onboarding_envoye: 'Onboarding envoyé',
+        questionnaire_recu: 'Questionnaire reçu', en_creation: 'En création',
+        a_valider: 'À valider', video_livree: 'Vidéo livrée', termine: 'Terminé', annulee: 'Annulée'
+      };
+      var PAYMENT_LABELS = { en_attente: 'En attente', paye: 'Payé', echoue: 'Échoué', rembourse: 'Remboursé' };
+      var BRONZE = '#A6845C', ENCRE = '#2E2620', TAUPE = '#D8CBB8';
+
+      function eur(v) { return Math.round(v || 0).toLocaleString('fr-FR') + ' €'; }
+      function jours(v) { return v == null || isNaN(v) ? '—' : Math.round(v * 10) / 10 + ' j'; }
+      function clientLabel(cp) {
+        if (!cp) return '—';
+        return [cp.prenom_1, cp.prenom_2].filter(Boolean).join(' & ') || cp.email || '—';
+      }
+
+      Chart.defaults.font.family = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif";
+      Chart.defaults.font.size = 12;
+      Chart.defaults.color = '#8A8378';
+
+      FeliAdmin.requireSession().then(function (auth) {
+        if (!auth) return;
+        var sb = FeliAdmin.sb;
+
+        Promise.all([
+          sb.from('commandes').select('id,statut,payment_statut,montant_total,created_at,updated_at,couple_id,couples(prenom_1,prenom_2,email),commande_items(prestations(nom,slug))'),
+          sb.from('questionnaires').select('id,commande_id,traite,created_at,commandes(created_at,couples(prenom_1,prenom_2,email))')
+        ]).then(function (results) {
+          var commandes = results[0].data || [];
+          var questionnaires = results[1].data || [];
+          var payees = commandes.filter(function (c) { return c.payment_statut === 'paye'; });
+
+          /* --- CA total + panier moyen --- */
+          var caTotal = payees.reduce(function (s, c) { return s + (c.montant_total || 0); }, 0);
+          document.getElementById('an-ca-total').textContent = eur(caTotal);
+          document.getElementById('an-panier-moyen').textContent = payees.length ? eur(caTotal / payees.length) : '—';
+
+          /* --- Délai paiement → questionnaire --- */
+          var delaisQuest = questionnaires
+            .filter(function (q) { return q.commandes; })
+            .map(function (q) { return (new Date(q.created_at) - new Date(q.commandes.created_at)) / 86400000; });
+          document.getElementById('an-delai-quest').textContent = delaisQuest.length
+            ? jours(delaisQuest.reduce(function (a, b) { return a + b; }, 0) / delaisQuest.length) : '—';
+
+          /* --- Délai commande → livraison --- */
+          var livrees = commandes.filter(function (c) { return c.statut === 'video_livree'; });
+          var delaisLivraison = livrees.map(function (c) { return (new Date(c.updated_at) - new Date(c.created_at)) / 86400000; });
+          document.getElementById('an-delai-livraison').textContent = delaisLivraison.length
+            ? jours(delaisLivraison.reduce(function (a, b) { return a + b; }, 0) / delaisLivraison.length) : '—';
+
+          /* --- CA par mois --- */
+          var parMois = {};
+          payees.forEach(function (c) {
+            var d = new Date(c.created_at);
+            var key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+            parMois[key] = (parMois[key] || 0) + (c.montant_total || 0);
+          });
+          var moisKeys = Object.keys(parMois).sort();
+          new Chart(document.getElementById('chart-ca-mois'), {
+            type: 'bar',
+            data: { labels: moisKeys, datasets: [{ data: moisKeys.map(function (k) { return parMois[k]; }), backgroundColor: BRONZE, borderRadius: 4 }] },
+            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#E4DCCB' } }, x: { grid: { display: false } } } }
+          });
+
+          /* --- CA par prestation --- */
+          var parPresta = {};
+          payees.forEach(function (c) {
+            var items = c.commande_items || [];
+            items.forEach(function (it) {
+              var nom = it.prestations ? it.prestations.nom : '?';
+              parPresta[nom] = (parPresta[nom] || 0) + (c.montant_total || 0) / items.length;
+            });
+          });
+          var prestaKeys = Object.keys(parPresta).sort(function (a, b) { return parPresta[b] - parPresta[a]; });
+          new Chart(document.getElementById('chart-ca-presta'), {
+            type: 'bar',
+            data: { labels: prestaKeys, datasets: [{ data: prestaKeys.map(function (k) { return parPresta[k]; }), backgroundColor: ENCRE, borderRadius: 4 }] },
+            options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: '#E4DCCB' } }, y: { grid: { display: false } } } }
+          });
+
+          /* --- Funnel des statuts --- */
+          var funnelCounts = {};
+          commandes.forEach(function (c) { funnelCounts[c.statut] = (funnelCounts[c.statut] || 0) + 1; });
+          var funnelKeys = WORKFLOW_ORDER.filter(function (s) { return funnelCounts[s]; });
+          new Chart(document.getElementById('chart-funnel'), {
+            type: 'bar',
+            data: { labels: funnelKeys.map(function (k) { return WORKFLOW_LABELS[k] || k; }), datasets: [{ data: funnelKeys.map(function (k) { return funnelCounts[k]; }), backgroundColor: TAUPE, borderRadius: 4 }] },
+            options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#E4DCCB' } }, y: { grid: { display: false } } } }
+          });
+
+          /* --- Conversion paiement --- */
+          var paymentCounts = {};
+          commandes.forEach(function (c) { paymentCounts[c.payment_statut] = (paymentCounts[c.payment_statut] || 0) + 1; });
+          document.getElementById('an-conversion').innerHTML = Object.keys(PAYMENT_LABELS).map(function (k) {
+            return '<div class="admin-card"><div class="admin-card-label">' + PAYMENT_LABELS[k] + '</div><div class="admin-card-value">' + (paymentCounts[k] || 0) + '</div></div>';
+          }).join('');
+
+          /* --- Clients récurrents --- */
+          var parCouple = {};
+          payees.forEach(function (c) {
+            if (!c.couple_id) return;
+            if (!parCouple[c.couple_id]) parCouple[c.couple_id] = { cp: c.couples, nb: 0, total: 0 };
+            parCouple[c.couple_id].nb++;
+            parCouple[c.couple_id].total += (c.montant_total || 0);
+          });
+          var recurrents = Object.values(parCouple).filter(function (r) { return r.nb > 1; }).sort(function (a, b) { return b.total - a.total; });
+          document.getElementById('an-recurrents').innerHTML = recurrents.length
+            ? recurrents.map(function (r) { return '<div>' + clientLabel(r.cp) + ' <span class="meta">— ' + r.nb + ' commandes, ' + eur(r.total) + '</span></div>'; }).join('')
+            : '<p class="admin-empty">Aucun client récurrent pour l’instant.</p>';
+
+          /* --- Questionnaires en attente --- */
+          var enAttente = questionnaires.filter(function (q) { return !q.traite; })
+            .sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
+          document.getElementById('an-quest-attente').innerHTML = enAttente.length
+            ? enAttente.map(function (q) {
+                var label = clientLabel(q.commandes && q.commandes.couples);
+                var link = q.commande_id ? '<a href="../commandes/detail.html?id=' + q.commande_id + '">' + label + '</a>' : label;
+                return '<div>' + link + ' <span class="meta">— reçu le ' + new Date(q.created_at).toLocaleDateString('fr-FR') + '</span></div>';
+              }).join('')
+            : '<p class="admin-empty">Tous les questionnaires sont traités.</p>';
+
+          document.getElementById('an-loading').hidden = true;
+          document.getElementById('an-content').hidden = false;
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

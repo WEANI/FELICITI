@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
+<meta name="robots" content="noindex, nofollow">
+<title>Projets — Admin FELICITI</title>
+<link rel="stylesheet" href="../css/admin.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" id="admin-sidebar-slot"></aside>
+    <main class="admin-main" style="max-width:none">
+      <div class="admin-header">
+        <h1>Projets</h1>
+      </div>
+      <p style="font-size:.82rem;color:var(--gris);margin:-1rem 0 1.2rem">
+        Une carte par commande payée. Glisser une carte vers une autre colonne change son statut immédiatement.
+        Les commandes annulées ou non payées n'apparaissent pas ici — voir <a href="../commandes/">Commandes</a>.
+      </p>
+
+      <div id="kb-loading" class="admin-loading">Chargement…</div>
+      <div class="kanban-board" id="kb-board" hidden></div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>window.ADMIN_BASE = '../'; window.ADMIN_NAV_ID = 'projects';</script>
+  <script src="../js/admin-shared.js"></script>
+  <script>
+    (function () {
+      /* "à valider" ajouté par rapport à la spec d'origine (6 colonnes) :
+         c'est un statut réel de notre workflow, l'omettre masquerait des
+         commandes bloquées à cette étape. "Annulée" volontairement absente
+         du tableau (archivée, pas du travail actif) — voir Commandes. */
+      var COLUMNS = ['nouveau','onboarding_envoye','questionnaire_recu','en_creation','a_valider','video_livree','termine'];
+      var LABELS = {
+        nouveau: 'Nouveau', onboarding_envoye: 'Onboarding envoyé',
+        questionnaire_recu: 'Questionnaire reçu', en_creation: 'En création',
+        a_valider: 'À valider', video_livree: 'Vidéo livrée', termine: 'Terminé'
+      };
+
+      function clientLabel(cp) {
+        if (!cp) return '—';
+        return [cp.prenom_1, cp.prenom_2].filter(Boolean).join(' & ') || cp.email || '—';
+      }
+      function joursDepuis(dateStr) {
+        var d = Math.floor((Date.now() - new Date(dateStr)) / 86400000);
+        return d <= 0 ? 'aujourd’hui' : d === 1 ? 'il y a 1 jour' : 'il y a ' + d + ' jours';
+      }
+
+      var sb, rows = [];
+
+      function cardHtml(c) {
+        var items = c.commande_items || [];
+        var presta = items.length ? items.map(function (it) { return it.prestations ? it.prestations.nom : '?'; }).join(', ') : '—';
+        return '<div class="kanban-card" draggable="true" data-id="' + c.id + '">' +
+          '<div class="kanban-card-name">' + clientLabel(c.couples) + '</div>' +
+          '<div class="kanban-card-meta">' + presta + ' · ' + joursDepuis(c.created_at) + '</div>' +
+        '</div>';
+      }
+
+      function render() {
+        var board = document.getElementById('kb-board');
+        board.innerHTML = COLUMNS.map(function (statut) {
+          var cards = rows.filter(function (c) { return c.statut === statut; });
+          return '<div class="kanban-col" data-statut="' + statut + '">' +
+            '<div class="kanban-col-head"><span>' + LABELS[statut] + '</span><span class="kanban-count">' + cards.length + '</span></div>' +
+            '<div class="kanban-col-body">' + cards.map(cardHtml).join('') + '</div>' +
+          '</div>';
+        }).join('');
+
+        Array.prototype.forEach.call(board.querySelectorAll('.kanban-card'), function (card) {
+          card.addEventListener('dragstart', function (e) {
+            e.dataTransfer.setData('text/plain', card.getAttribute('data-id'));
+            card.classList.add('dragging');
+          });
+          card.addEventListener('dragend', function () { card.classList.remove('dragging'); });
+          card.addEventListener('click', function () {
+            window.location.href = '../commandes/detail.html?id=' + card.getAttribute('data-id');
+          });
+        });
+
+        Array.prototype.forEach.call(board.querySelectorAll('.kanban-col'), function (col) {
+          col.addEventListener('dragover', function (e) { e.preventDefault(); col.classList.add('drag-over'); });
+          col.addEventListener('dragleave', function () { col.classList.remove('drag-over'); });
+          col.addEventListener('drop', function (e) {
+            e.preventDefault();
+            col.classList.remove('drag-over');
+            var id = e.dataTransfer.getData('text/plain');
+            var statut = col.getAttribute('data-statut');
+            var row = rows.filter(function (r) { return r.id === id; })[0];
+            if (!row || row.statut === statut) return;
+            var previous = row.statut;
+            row.statut = statut;
+            render();
+            sb.from('commandes').update({ statut: statut }).eq('id', id).then(function (res) {
+              if (res.error) {
+                alert('Échec de la mise à jour : ' + res.error.message);
+                row.statut = previous;
+                render();
+              }
+            });
+          });
+        });
+      }
+
+      FeliAdmin.requireSession().then(function (auth) {
+        if (!auth) return;
+        sb = FeliAdmin.sb;
+        sb.from('commandes')
+          .select('id,statut,created_at,couples(prenom_1,prenom_2,email),commande_items(prestations(nom))')
+          .eq('payment_statut', 'paye')
+          .order('created_at', { ascending: false })
+          .then(function (res) {
+            rows = res.data || [];
+            document.getElementById('kb-loading').hidden = true;
+            document.getElementById('kb-board').hidden = false;
+            render();
+          });
+      });
+    })();
+  </script>
+</body>
+</html>
