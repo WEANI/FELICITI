@@ -29,8 +29,7 @@
     <p class="q-intro">Répondez simplement, avec vos mots. Il n'y a pas de bonne ou de mauvaise réponse — plus c'est sincère, plus le résultat vous ressemblera. Comptez une vingtaine de minutes.</p>
   </header>
 
-  <!-- Remplacer FORMSPREE_ENDPOINT_A_REMPLACER par le vrai endpoint Formspree (ou équivalent) une fois le compte créé. -->
-  <form class="q-form" id="onboardingForm" action="FORMSPREE_ENDPOINT_A_REMPLACER" method="POST" enctype="multipart/form-data">
+  <form class="q-form" id="onboardingForm" method="POST" enctype="multipart/form-data">
 
     <fieldset class="q-section">
       <legend>1 · Vous</legend>
@@ -133,11 +132,42 @@
 
   <script>
   (function () {
+    /* Envoi direct vers Supabase (table questionnaires), même mécanisme que
+       le formulaire de devis sur /post-achat — voir js/site.js. Les photos
+       (facultatives) sont déposées dans le bucket "medias" puis référencées
+       par leur chemin dans le JSON enregistré ; pas encore de liaison à une
+       commande précise (aucun identifiant fiable n'est transmis à ce stade
+       du parcours — voir le commentaire sur la colonne commande_id en base). */
+    var SUPABASE_URL      = 'https://wrpiggqshnoykqtmuprx.supabase.co';
+    var SUPABASE_ANON_KEY = 'sb_publishable_TT-qEm5ADIWQEE0e_qO2NQ_gx3pyZ1O';
+
     var form = document.getElementById('onboardingForm');
     var submitBtn = document.getElementById('onboardingSubmit');
     var errorMsg = document.getElementById('onboardingError');
     var closingInline = document.getElementById('onboardingClosingInline');
     var confirmBlock = document.getElementById('onboardingConfirm');
+
+    var TEXT_FIELDS = [
+      'prenoms', 'date', 'lieu', 'horaires', 'deroule', 'texte_invitation',
+      'dress_code', 'hebergement_infos', 'rsvp', 'infos_specifiques',
+      'ambiance', 'phrase_signature', 'specificites_evenement', 'histoire_texte'
+    ];
+
+    function uploadPhoto(file) {
+      var path = 'questionnaire/' + Date.now() + '-' + Math.random().toString(36).slice(2) + '-' + file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      return fetch(SUPABASE_URL + '/storage/v1/object/medias/' + path, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': file.type || 'application/octet-stream'
+        },
+        body: file
+      }).then(function (res) {
+        if (!res.ok) throw new Error('upload photo échoué (HTTP ' + res.status + ')');
+        return path;
+      });
+    }
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -145,17 +175,41 @@
       submitBtn.disabled = true;
       submitBtn.textContent = 'Envoi en cours…';
 
-      fetch(form.action, {
-        method: 'POST',
-        body: new FormData(form),
-        headers: { Accept: 'application/json' }
+      var fd = new FormData(form);
+      var data = {};
+      TEXT_FIELDS.forEach(function (name) {
+        var v = (fd.get(name) || '').toString().trim();
+        if (v) data[name] = v;
+      });
+      data.photo_finale_souhaitee = fd.get('photo_finale_souhaitee') === 'oui';
+      var prestation = new URLSearchParams(window.location.search).get('prestation');
+      if (prestation) data.prestation = prestation;
+
+      var photoFiles = Array.prototype.filter.call(
+        (form.querySelector('input[name="photos"]').files || []),
+        function () { return true; }
+      );
+
+      Promise.all(photoFiles.map(uploadPhoto)).then(function (paths) {
+        if (paths.length) data.photos = paths;
+        return fetch(SUPABASE_URL + '/rest/v1/questionnaires', {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ data: data })
+        });
       }).then(function (res) {
-        if (!res.ok) throw new Error('submit failed');
+        if (!res.ok) throw new Error('submit failed (HTTP ' + res.status + ')');
         form.hidden = true;
         closingInline.hidden = true;
         confirmBlock.hidden = false;
         confirmBlock.focus();
-      }).catch(function () {
+      }).catch(function (err) {
+        console.warn('FELICITI · questionnaire : erreur d’envoi', err);
         errorMsg.hidden = false;
         submitBtn.disabled = false;
         submitBtn.textContent = 'Envoyer mes réponses';

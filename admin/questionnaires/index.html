@@ -59,7 +59,7 @@
 
         document.getElementById('q-tbody').innerHTML = rows.map(function (q) {
           var cp = q.commandes && q.commandes.couples;
-          var clientLabel = cp ? ([cp.prenom_1, cp.prenom_2].filter(Boolean).join(' & ') || cp.email) : (q.couple_id ? '—' : '—');
+          var clientLabel = cp ? ([cp.prenom_1, cp.prenom_2].filter(Boolean).join(' & ') || cp.email) : ((q.data && q.data.prenoms) || '—');
           var cmdLink = q.commande_id ? '<a href="../commandes/detail.html?id=' + q.commande_id + '">Voir la commande</a>' : '—';
           return '<tr data-id="' + q.id + '">' +
             '<td>' + new Date(q.created_at).toLocaleString('fr-FR') + '</td>' +
@@ -95,7 +95,7 @@
         if (!auth) return;
         var sb = FeliAdmin.sb;
         sb.from('questionnaires')
-          .select('id,commande_id,couple_id,traite,created_at,commandes(couples(prenom_1,prenom_2,email))')
+          .select('id,commande_id,couple_id,traite,created_at,data,commandes(couples(prenom_1,prenom_2,email))')
           .order('created_at', { ascending: false })
           .then(function (res) {
             allRows = res.data || [];

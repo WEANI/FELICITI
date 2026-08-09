@@ -94,7 +94,7 @@
 
         Promise.all([
           sb.from('commandes').select('id,statut,payment_statut,montant_total,created_at,updated_at,couple_id,couples(prenom_1,prenom_2,email),commande_items(prestations(nom,slug))'),
-          sb.from('questionnaires').select('id,commande_id,traite,created_at,commandes(created_at,couples(prenom_1,prenom_2,email))')
+          sb.from('questionnaires').select('id,commande_id,traite,created_at,data,commandes(created_at,couples(prenom_1,prenom_2,email))')
         ]).then(function (results) {
           var commandes = results[0].data || [];
           var questionnaires = results[1].data || [];
@@ -183,7 +183,7 @@
             .sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
           document.getElementById('an-quest-attente').innerHTML = enAttente.length
             ? enAttente.map(function (q) {
-                var label = clientLabel(q.commandes && q.commandes.couples);
+                var label = q.commandes && q.commandes.couples ? clientLabel(q.commandes.couples) : ((q.data && q.data.prenoms) || '—');
                 var link = q.commande_id ? '<a href="../commandes/detail.html?id=' + q.commande_id + '">' + label + '</a>' : label;
                 return '<div>' + link + ' <span class="meta">— reçu le ' + new Date(q.created_at).toLocaleDateString('fr-FR') + '</span></div>';
               }).join('')
