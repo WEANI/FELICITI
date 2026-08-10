@@ -15,7 +15,7 @@
 html,body{margin:0;padding:0}
 body{
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-  background:var(--lin); color:var(--encre); font-size:14px; line-height:1.5;
+  background:var(--creme); color:var(--encre); font-size:14px; line-height:1.5;
   -webkit-font-smoothing:antialiased;
 }
 a{color:inherit}
@@ -27,7 +27,7 @@ h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0 
   padding:1.5rem;
 }
 .admin-auth-box{
-  width:100%; max-width:360px; background:var(--creme); border:1px solid var(--filet);
+  width:100%; max-width:360px; background:#fff; border:1px solid var(--filet);
   border-radius:10px; padding:2rem;
 }
 .admin-auth-mark{font-family:Georgia,serif; font-weight:700; font-size:1.3rem; letter-spacing:.02em; margin-bottom:.2rem}
@@ -58,26 +58,26 @@ h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0 
 /* ---------- Layout protégé ---------- */
 .admin-shell{display:flex; min-height:100svh}
 .admin-sidebar{
-  width:var(--sidebar-w); flex:0 0 var(--sidebar-w); background:var(--encre); color:var(--lin);
+  width:var(--sidebar-w); flex:0 0 var(--sidebar-w); background:var(--bronze); color:var(--encre);
   padding:1.4rem 1rem; display:flex; flex-direction:column;
 }
 .admin-sidebar-mark{font-family:Georgia,serif; font-weight:700; font-size:1.15rem; color:#fff; margin-bottom:.1rem}
-.admin-sidebar-mark span{color:var(--bronze)}
-.admin-sidebar-sub{font-size:.72rem; color:#a8a095; margin-bottom:1.6rem}
+.admin-sidebar-mark span{color:var(--encre)}
+.admin-sidebar-sub{font-size:.72rem; color:rgba(46,38,32,.65); margin-bottom:1.6rem}
 .admin-nav{display:flex; flex-direction:column; gap:.15rem; flex:1}
 .admin-nav a{
   display:block; padding:.55rem .7rem; border-radius:6px; text-decoration:none;
-  color:#d8d2c6; font-size:.87rem;
+  color:rgba(46,38,32,.8); font-size:.87rem;
 }
-.admin-nav a:hover{background:rgba(255,255,255,.06); color:#fff}
-.admin-nav a.active{background:var(--bronze); color:#fff}
-.admin-sidebar-foot{padding-top:1rem; border-top:1px solid rgba(255,255,255,.12)}
-.admin-sidebar-email{font-size:.72rem; color:#a8a095; margin-bottom:.5rem; word-break:break-all}
+.admin-nav a:hover{background:rgba(46,38,32,.1); color:var(--encre)}
+.admin-nav a.active{background:var(--encre); color:#fff}
+.admin-sidebar-foot{padding-top:1rem; border-top:1px solid rgba(46,38,32,.18)}
+.admin-sidebar-email{font-size:.72rem; color:rgba(46,38,32,.65); margin-bottom:.5rem; word-break:break-all}
 .admin-signout{
-  background:none; border:1px solid rgba(255,255,255,.25); color:#d8d2c6;
+  background:none; border:1px solid rgba(46,38,32,.35); color:var(--encre);
   font-size:.78rem; padding:.4rem .6rem; border-radius:6px; cursor:pointer; width:100%;
 }
-.admin-signout:hover{background:rgba(255,255,255,.08)}
+.admin-signout:hover{background:rgba(46,38,32,.08)}
 
 .admin-main{flex:1; min-width:0; padding:2rem 2.2rem; max-width:1180px}
 .admin-header{display:flex; align-items:baseline; justify-content:space-between; gap:1rem; margin-bottom:1.6rem; flex-wrap:wrap}
@@ -86,12 +86,12 @@ h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0 
 
 /* ---------- Cards / dashboard ---------- */
 .admin-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:2rem}
-.admin-card{background:var(--creme); border:1px solid var(--filet); border-radius:10px; padding:1.2rem}
+.admin-card{background:#fff; border:1px solid var(--filet); border-radius:10px; padding:1.2rem}
 .admin-card-label{font-size:.75rem; color:var(--gris); text-transform:uppercase; letter-spacing:.04em; margin-bottom:.4rem}
 .admin-card-value{font-size:1.7rem; font-weight:700; font-family:Georgia,serif}
 .admin-card-value.bronze{color:var(--bronze)}
 
-.admin-section{background:var(--creme); border:1px solid var(--filet); border-radius:10px; padding:1.4rem; margin-bottom:1.5rem}
+.admin-section{background:#fff; border:1px solid var(--filet); border-radius:10px; padding:1.4rem; margin-bottom:1.5rem}
 .admin-section h2{font-size:1.05rem; margin-bottom:.9rem}
 .admin-alert{display:flex; gap:.6rem; align-items:flex-start; padding:.7rem .8rem; border-radius:7px; background:#FBEAE7; color:var(--rouge); font-size:.85rem; margin-bottom:.5rem}
 .admin-alert:last-child{margin-bottom:0}
@@ -103,7 +103,7 @@ h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0 
   padding:.5rem .6rem; border:1px solid var(--taupe); border-radius:6px; background:#fff;
   font-size:.85rem; color:var(--encre);
 }
-.admin-table-wrap{overflow-x:auto; background:var(--creme); border:1px solid var(--filet); border-radius:10px}
+.admin-table-wrap{overflow-x:auto; background:#fff; border:1px solid var(--filet); border-radius:10px}
 table.admin-table{width:100%; border-collapse:collapse; font-size:.86rem; min-width:640px}
 .admin-table th{
   text-align:left; padding:.7rem .9rem; font-size:.72rem; text-transform:uppercase;
@@ -147,7 +147,7 @@ table.admin-table{width:100%; border-collapse:collapse; font-size:.86rem; min-wi
 
 /* ---------- Kanban ---------- */
 .kanban-board{display:flex; gap:1rem; overflow-x:auto; padding-bottom:.5rem; align-items:flex-start}
-.kanban-col{flex:0 0 240px; background:var(--creme); border:1px solid var(--filet); border-radius:10px; padding:.8rem; min-height:120px}
+.kanban-col{flex:0 0 240px; background:#fff; border:1px solid var(--filet); border-radius:10px; padding:.8rem; min-height:120px}
 .kanban-col.drag-over{border-color:var(--bronze); background:#F5EFE4}
 .kanban-col-head{display:flex; justify-content:space-between; align-items:center; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--gris); margin-bottom:.7rem}
 .kanban-count{background:var(--taupe); color:var(--encre); border-radius:99px; padding:.05rem .5rem; font-size:.72rem}
