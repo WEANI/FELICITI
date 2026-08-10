@@ -93,6 +93,26 @@
       <legend>3 · Votre histoire</legend>
       <p class="q-section-intro">C'est souvent à l'oral que sort la plus belle matière. Racontez-nous votre histoire à voix haute, comme si vous la racontiez à un ami&nbsp;: votre rencontre, ce qui vous lie, une anecdote qui vous fait sourire, un objet qui vous symbolise. Une à trois minutes suffisent. Parlez à deux si vous le souhaitez.</p>
 
+      <p class="q-subdivider">Pour vous aider à raconter</p>
+
+      <label>Comment vous êtes-vous rencontrés&nbsp;?
+        <span class="q-help">Le point de départ de toute histoire.</span>
+        <textarea name="rencontre" rows="3"></textarea>
+      </label>
+      <label>Un moment tous les deux dont vous vous souvenez toujours
+        <textarea name="moment_a_deux" rows="3"></textarea>
+      </label>
+      <label>Qu'est-ce qui vous a fait dire «&nbsp;c'est lui / c'est elle&nbsp;»&nbsp;?
+        <textarea name="declic" rows="3"></textarea>
+      </label>
+      <label>Quelque chose que vous faites toujours ensemble
+        <span class="q-help">Un rituel, une manie…</span>
+        <textarea name="rituel" rows="3"></textarea>
+      </label>
+      <label>Pourquoi ce lieu pour votre mariage&nbsp;?
+        <textarea name="pourquoi_ce_lieu" rows="3"></textarea>
+      </label>
+
       <div class="q-voice-inline">
         <p>Envoyez-nous votre message vocal directement sur WhatsApp&nbsp;:</p>
         <a class="q-whatsapp-btn" href="https://wa.me/33600000000?text=Bonjour%20FELICITI%2C%20voici%20notre%20note%20vocale%20pour%20notre%20faire-part" target="_blank" rel="noopener">
@@ -151,7 +171,9 @@
     var TEXT_FIELDS = [
       'prenoms', 'date', 'lieu', 'horaires', 'deroule', 'texte_invitation',
       'dress_code', 'hebergement_infos', 'rsvp', 'infos_specifiques',
-      'ambiance', 'phrase_signature', 'specificites_evenement', 'histoire_texte'
+      'ambiance', 'phrase_signature', 'specificites_evenement',
+      'rencontre', 'moment_a_deux', 'declic', 'rituel', 'pourquoi_ce_lieu',
+      'histoire_texte'
     ];
 
     function uploadPhoto(file) {
