@@ -12,7 +12,7 @@
 <body>
   <div class="admin-shell">
     <aside class="admin-sidebar" id="admin-sidebar-slot"></aside>
-    <main class="admin-main">
+    <main class="admin-main" style="max-width:1180px">
       <div class="admin-header">
         <h1>Tableau de bord</h1>
       </div>
@@ -20,72 +20,264 @@
       <div id="dash-loading" class="admin-loading">Chargement…</div>
 
       <div id="dash-content" hidden>
-        <div class="admin-cards" id="dash-cards"></div>
 
-        <div class="admin-section">
-          <h2>Alertes</h2>
-          <div id="dash-alerts"></div>
+        <!-- KPI -->
+        <div class="db-stats">
+          <div class="db-stat-card">
+            <div class="db-stat-top">
+              <span class="db-icon-badge db-icon-bronze">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+              </span>
+            </div>
+            <div class="db-stat-value" id="kpi-commandes">—</div>
+            <div class="db-stat-label">Commandes totales</div>
+          </div>
+          <div class="db-stat-card">
+            <div class="db-stat-top">
+              <span class="db-icon-badge db-icon-vert">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5a4 4 0 100 7"/><path d="M8 11h5M8 13h4"/></svg>
+              </span>
+            </div>
+            <div class="db-stat-value bronze" id="kpi-ca">—</div>
+            <div class="db-stat-label">CA du mois (payé)</div>
+          </div>
+          <div class="db-stat-card">
+            <div class="db-stat-top">
+              <span class="db-icon-badge db-icon-encre">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              </span>
+            </div>
+            <div class="db-stat-value" id="kpi-questionnaires">—</div>
+            <div class="db-stat-label">Questionnaires en attente</div>
+          </div>
+          <div class="db-stat-card">
+            <div class="db-stat-top">
+              <span class="db-icon-badge db-icon-rouge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4"/><circle cx="12" cy="17" r=".6" fill="currentColor" stroke="none"/></svg>
+              </span>
+            </div>
+            <div class="db-stat-value" id="kpi-echoues">—</div>
+            <div class="db-stat-label">Paiements échoués</div>
+          </div>
         </div>
+
+        <!-- Graphique + alertes -->
+        <div class="db-grid-2" style="margin-bottom:1.5rem">
+          <div class="admin-section" style="margin-bottom:0">
+            <div class="db-section-head">
+              <h2>CA par mois</h2>
+              <div class="db-legend"><span><span class="dot bronze"></span>Payé</span></div>
+            </div>
+            <div class="admin-chart-box"><canvas id="chart-ca-mois"></canvas></div>
+          </div>
+          <div class="admin-section" style="margin-bottom:0">
+            <h2>Alertes</h2>
+            <div id="dash-alerts"></div>
+          </div>
+        </div>
+
+        <!-- Commandes par statut (filtre rapide) -->
+        <div class="admin-section">
+          <h2>Commandes par statut</h2>
+          <div class="db-category-row" id="db-categories"></div>
+        </div>
+
+        <!-- Commandes récentes -->
+        <div class="admin-section">
+          <div class="db-section-head">
+            <h2>Commandes récentes</h2>
+            <a class="db-link" href="commandes/">Voir toutes les commandes →</a>
+          </div>
+          <div class="admin-table-wrap" id="dash-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Client</th><th>Prestation</th><th>Montant</th><th>Paiement</th><th>Statut</th><th>Date</th></tr></thead>
+              <tbody id="dash-tbody"></tbody>
+            </table>
+          </div>
+          <p class="admin-empty" id="dash-table-empty" hidden>Aucune commande pour ce filtre.</p>
+        </div>
+
+        <!-- Projets -->
+        <div class="admin-section">
+          <div class="db-section-head">
+            <h2>Projets</h2>
+            <a class="db-link" href="projects/">Vue complète →</a>
+          </div>
+          <p style="font-size:.8rem;color:var(--gris);margin:-.4rem 0 1rem">Commandes payées, glisser pour changer de statut.</p>
+          <div class="kanban-board" id="dash-kanban"></div>
+        </div>
+
       </div>
     </main>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
   <script>window.ADMIN_BASE = './'; window.ADMIN_NAV_ID = 'dashboard';</script>
   <script src="js/admin-shared.js"></script>
   <script>
     (function () {
+      var KANBAN_COLUMNS = ['nouveau','onboarding_envoye','questionnaire_recu','en_creation','a_valider','video_livree','termine'];
+      var WORKFLOW_ORDER = KANBAN_COLUMNS.concat(['annulee']);
       var WORKFLOW_LABELS = {
         nouveau: 'Nouveau', onboarding_envoye: 'Onboarding envoyé',
         questionnaire_recu: 'Questionnaire reçu', en_creation: 'En création',
         a_valider: 'À valider', video_livree: 'Vidéo livrée', termine: 'Terminé',
         annulee: 'Annulée', devis: 'Devis', en_cours: 'En cours', livree: 'Livrée'
       };
-      var ACTIVE_STAGES = ['nouveau','onboarding_envoye','questionnaire_recu','en_creation','a_valider','video_livree','termine'];
+      var PAYMENT_LABELS = { en_attente: 'En attente', paye: 'Payé', echoue: 'Échoué', rembourse: 'Remboursé' };
 
-      function eur(cents_or_units) {
-        return (cents_or_units || 0).toLocaleString('fr-FR') + ' €';
+      function eur(v) { return Math.round(v || 0).toLocaleString('fr-FR') + ' €'; }
+      function clientLabel(cp) {
+        if (!cp) return '—';
+        return [cp.prenom_1, cp.prenom_2].filter(Boolean).join(' & ') || cp.email || '—';
+      }
+      function prestaLabel(c) {
+        var items = c.commande_items || [];
+        return items.length ? items.map(function (it) { return it.prestations ? it.prestations.nom : '?'; }).join(', ') : '—';
+      }
+      function joursDepuis(dateStr) {
+        var d = Math.floor((Date.now() - new Date(dateStr)) / 86400000);
+        return d <= 0 ? 'aujourd’hui' : d === 1 ? 'il y a 1 jour' : 'il y a ' + d + ' jours';
+      }
+
+      var sb, commandes = [], activeStatut = null;
+
+      function renderTable() {
+        var rows = commandes
+          .filter(function (c) { return !activeStatut || c.statut === activeStatut; })
+          .sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); })
+          .slice(0, 8);
+
+        if (!rows.length) {
+          document.getElementById('dash-table-wrap').hidden = true;
+          document.getElementById('dash-table-empty').hidden = false;
+          return;
+        }
+        document.getElementById('dash-table-wrap').hidden = false;
+        document.getElementById('dash-table-empty').hidden = true;
+
+        document.getElementById('dash-tbody').innerHTML = rows.map(function (c) {
+          return '<tr data-id="' + c.id + '">' +
+            '<td>' + clientLabel(c.couples) + '</td>' +
+            '<td>' + prestaLabel(c) + '</td>' +
+            '<td>' + eur(c.montant_total) + '</td>' +
+            '<td><span class="admin-badge ' + c.payment_statut + '">' + (PAYMENT_LABELS[c.payment_statut] || c.payment_statut) + '</span></td>' +
+            '<td>' + (WORKFLOW_LABELS[c.statut] || c.statut) + '</td>' +
+            '<td>' + new Date(c.created_at).toLocaleDateString('fr-FR') + '</td>' +
+          '</tr>';
+        }).join('');
+
+        Array.prototype.forEach.call(document.querySelectorAll('#dash-tbody tr'), function (tr) {
+          tr.addEventListener('click', function () {
+            window.location.href = 'commandes/detail.html?id=' + tr.getAttribute('data-id');
+          });
+        });
+      }
+
+      function renderCategories() {
+        var counts = {};
+        commandes.forEach(function (c) { counts[c.statut] = (counts[c.statut] || 0) + 1; });
+        var present = WORKFLOW_ORDER.filter(function (s) { return counts[s]; });
+
+        var html = '<button type="button" class="db-category-card' + (activeStatut === null ? ' active' : '') + '" data-statut="">' +
+          '<span class="db-category-dot"></span><div class="db-category-count">' + commandes.length + '</div><div class="db-category-label">Toutes</div></button>';
+        html += present.map(function (s) {
+          return '<button type="button" class="db-category-card' + (activeStatut === s ? ' active' : '') + '" data-statut="' + s + '">' +
+            '<span class="db-category-dot"></span><div class="db-category-count">' + counts[s] + '</div><div class="db-category-label">' + (WORKFLOW_LABELS[s] || s) + '</div></button>';
+        }).join('');
+
+        var el = document.getElementById('db-categories');
+        el.innerHTML = html;
+        Array.prototype.forEach.call(el.querySelectorAll('.db-category-card'), function (btn) {
+          btn.addEventListener('click', function () {
+            activeStatut = btn.getAttribute('data-statut') || null;
+            renderCategories();
+            renderTable();
+          });
+        });
+      }
+
+      function cardHtml(c) {
+        return '<div class="kanban-card" draggable="true" data-id="' + c.id + '">' +
+          '<div class="kanban-card-name">' + clientLabel(c.couples) + '</div>' +
+          '<div class="kanban-card-meta">' + prestaLabel(c) + ' · ' + joursDepuis(c.created_at) + '</div>' +
+        '</div>';
+      }
+
+      function renderKanban() {
+        var payees = commandes.filter(function (c) { return c.payment_statut === 'paye'; });
+        var board = document.getElementById('dash-kanban');
+        board.innerHTML = KANBAN_COLUMNS.map(function (statut) {
+          var cards = payees.filter(function (c) { return c.statut === statut; });
+          return '<div class="kanban-col" data-statut="' + statut + '">' +
+            '<div class="kanban-col-head"><span>' + WORKFLOW_LABELS[statut] + '</span><span class="kanban-count">' + cards.length + '</span></div>' +
+            '<div class="kanban-col-body">' + cards.map(cardHtml).join('') + '</div>' +
+          '</div>';
+        }).join('');
+
+        Array.prototype.forEach.call(board.querySelectorAll('.kanban-card'), function (card) {
+          card.addEventListener('dragstart', function (e) {
+            e.dataTransfer.setData('text/plain', card.getAttribute('data-id'));
+            card.classList.add('dragging');
+          });
+          card.addEventListener('dragend', function () { card.classList.remove('dragging'); });
+          card.addEventListener('click', function () {
+            window.location.href = 'commandes/detail.html?id=' + card.getAttribute('data-id');
+          });
+        });
+
+        Array.prototype.forEach.call(board.querySelectorAll('.kanban-col'), function (col) {
+          col.addEventListener('dragover', function (e) { e.preventDefault(); col.classList.add('drag-over'); });
+          col.addEventListener('dragleave', function () { col.classList.remove('drag-over'); });
+          col.addEventListener('drop', function (e) {
+            e.preventDefault();
+            col.classList.remove('drag-over');
+            var id = e.dataTransfer.getData('text/plain');
+            var statut = col.getAttribute('data-statut');
+            var row = commandes.filter(function (r) { return r.id === id; })[0];
+            if (!row || row.statut === statut) return;
+            var previous = row.statut;
+            row.statut = statut;
+            renderKanban(); renderCategories(); renderTable();
+            sb.from('commandes').update({ statut: statut }).eq('id', id).then(function (res) {
+              if (res.error) {
+                alert('Échec de la mise à jour : ' + res.error.message);
+                row.statut = previous;
+                renderKanban(); renderCategories(); renderTable();
+              }
+            });
+          });
+        });
       }
 
       FeliAdmin.requireSession().then(function (auth) {
         if (!auth) return;
-        var sb = FeliAdmin.sb;
+        sb = FeliAdmin.sb;
 
         Promise.all([
-          sb.from('commandes').select('id,statut,payment_statut,montant_total,created_at,updated_at'),
-          sb.from('questionnaires').select('commande_id')
+          sb.from('commandes').select('id,statut,payment_statut,montant_total,created_at,updated_at,couples(prenom_1,prenom_2,email),commande_items(prestations(nom,slug))'),
+          sb.from('questionnaires').select('commande_id,traite')
         ]).then(function (results) {
-          var commandes = (results[0].data) || [];
-          var questionnaires = (results[1].data) || [];
+          commandes = results[0].data || [];
+          var questionnaires = results[1].data || [];
           var questCommandeIds = {};
           questionnaires.forEach(function (q) { if (q.commande_id) questCommandeIds[q.commande_id] = true; });
 
-          /* --- Cards --- */
+          var payees = commandes.filter(function (c) { return c.payment_statut === 'paye'; });
           var now = new Date();
           var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-          var caDuMois = 0;
-          var countsByStatut = {};
+          var caDuMois = payees.filter(function (c) { return new Date(c.created_at) >= monthStart; })
+            .reduce(function (s, c) { return s + (c.montant_total || 0); }, 0);
 
-          commandes.forEach(function (c) {
-            countsByStatut[c.statut] = (countsByStatut[c.statut] || 0) + 1;
-            if (c.payment_statut === 'paye' && new Date(c.created_at) >= monthStart) {
-              caDuMois += (c.montant_total || 0);
-            }
-          });
-
-          var cardsHtml = '';
-          cardsHtml += '<div class="admin-card"><div class="admin-card-label">Commandes totales</div><div class="admin-card-value">' + commandes.length + '</div></div>';
-          cardsHtml += '<div class="admin-card"><div class="admin-card-label">CA du mois (payé)</div><div class="admin-card-value bronze">' + eur(caDuMois) + '</div></div>';
-          ACTIVE_STAGES.forEach(function (s) {
-            if (!countsByStatut[s]) return;
-            cardsHtml += '<div class="admin-card"><div class="admin-card-label">' + (WORKFLOW_LABELS[s] || s) + '</div><div class="admin-card-value">' + countsByStatut[s] + '</div></div>';
-          });
-          document.getElementById('dash-cards').innerHTML = cardsHtml || '<p class="admin-empty">Aucune commande enregistrée pour l’instant.</p>';
+          document.getElementById('kpi-commandes').textContent = commandes.length;
+          document.getElementById('kpi-ca').textContent = eur(caDuMois);
+          document.getElementById('kpi-questionnaires').textContent = questionnaires.filter(function (q) { return !q.traite; }).length;
+          document.getElementById('kpi-echoues').textContent = commandes.filter(function (c) { return c.payment_statut === 'echoue'; }).length;
 
           /* --- Alertes --- */
           var alerts = [];
           var fiveDaysAgo = new Date(now.getTime() - 5 * 24 * 3600 * 1000);
-
           commandes.forEach(function (c) {
             if (c.statut === 'onboarding_envoye' && new Date(c.updated_at) < fiveDaysAgo && !questCommandeIds[c.id]) {
               alerts.push('Commande <code>' + c.id.slice(0, 8) + '…</code> : onboarding envoyé depuis plus de 5 jours, questionnaire toujours pas reçu.');
@@ -94,11 +286,29 @@
               alerts.push('Commande <code>' + c.id.slice(0, 8) + '…</code> : paiement en échec, à traiter.');
             }
           });
-
-          var alertsEl = document.getElementById('dash-alerts');
-          alertsEl.innerHTML = alerts.length
+          document.getElementById('dash-alerts').innerHTML = alerts.length
             ? alerts.map(function (a) { return '<div class="admin-alert">' + a + '</div>'; }).join('')
             : '<p class="admin-empty">Aucune alerte pour l’instant.</p>';
+
+          /* --- Chart CA par mois --- */
+          var parMois = {};
+          payees.forEach(function (c) {
+            var d = new Date(c.created_at);
+            var key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+            parMois[key] = (parMois[key] || 0) + (c.montant_total || 0);
+          });
+          var moisKeys = Object.keys(parMois).sort();
+          Chart.defaults.font.family = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif";
+          Chart.defaults.color = '#8A8378';
+          new Chart(document.getElementById('chart-ca-mois'), {
+            type: 'bar',
+            data: { labels: moisKeys, datasets: [{ data: moisKeys.map(function (k) { return parMois[k]; }), backgroundColor: '#A6845C', borderRadius: 4 }] },
+            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#E4DCCB' } }, x: { grid: { display: false } } } }
+          });
+
+          renderCategories();
+          renderTable();
+          renderKanban();
 
           document.getElementById('dash-loading').hidden = true;
           document.getElementById('dash-content').hidden = false;
