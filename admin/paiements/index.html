@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="only light">
 <meta name="robots" content="noindex, nofollow">
 <title>Paiements — Admin FELICITI</title>
-<link rel="stylesheet" href="../css/admin.css?v=1">
+<link rel="stylesheet" href="../css/admin.css?v=2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
 </head>
 <body>
@@ -25,10 +25,28 @@
 
       <div id="p-loading" class="admin-loading">Chargement…</div>
       <div id="p-content" hidden>
-        <div class="admin-cards">
-          <div class="admin-card"><div class="admin-card-label">Encaissé</div><div class="admin-card-value bronze" id="p-encaisse">0 €</div></div>
-          <div class="admin-card"><div class="admin-card-label">Échoué</div><div class="admin-card-value" id="p-echoue">0 €</div></div>
-          <div class="admin-card"><div class="admin-card-label">Remboursé</div><div class="admin-card-value" id="p-rembourse">0 €</div></div>
+        <div class="db-stats">
+          <div class="db-stat-card">
+            <div class="db-stat-top"><span class="db-icon-badge db-icon-vert">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5a4 4 0 100 7"/><path d="M8 11h5M8 13h4"/></svg>
+            </span></div>
+            <div class="db-stat-value" id="p-encaisse">0 €</div>
+            <div class="db-stat-label">Encaissé</div>
+          </div>
+          <div class="db-stat-card">
+            <div class="db-stat-top"><span class="db-icon-badge db-icon-rouge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4"/><circle cx="12" cy="17" r=".6" fill="currentColor" stroke="none"/></svg>
+            </span></div>
+            <div class="db-stat-value" id="p-echoue">0 €</div>
+            <div class="db-stat-label">Échoué</div>
+          </div>
+          <div class="db-stat-card">
+            <div class="db-stat-top"><span class="db-icon-badge db-icon-violet">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9"/><path d="M3 5v7h7"/></svg>
+            </span></div>
+            <div class="db-stat-value" id="p-rembourse">0 €</div>
+            <div class="db-stat-label">Remboursé</div>
+          </div>
         </div>
 
         <div class="admin-table-wrap" id="p-table-wrap">

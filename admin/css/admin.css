@@ -7,7 +7,7 @@
 :root{
   --lin:#F3EDE4; --creme:#FAF6EF; --taupe:#D8CBB8; --encre:#2E2620;
   --bronze:#A6845C; --filet:#E4DCCB;
-  --vert:#4C7A57; --rouge:#B4483C; --gris:#8A8378;
+  --vert:#4C7A57; --rouge:#B4483C; --gris:#8A8378; --violet:#6B5B95;
   --sidebar-w:220px;
 }
 
@@ -120,7 +120,7 @@ table.admin-table{width:100%; border-collapse:collapse; font-size:.86rem; min-wi
 .admin-badge.paye{background:#EAF2EC; color:var(--vert)}
 .admin-badge.en_attente{background:#F1ECE3; color:var(--gris)}
 .admin-badge.echoue{background:#FBEAE7; color:var(--rouge)}
-.admin-badge.rembourse{background:#EDEAF5; color:#6B5B95}
+.admin-badge.rembourse{background:#EDEAF5; color:var(--violet)}
 
 /* ---------- Détail commande ---------- */
 .admin-back{display:inline-block; margin-bottom:1rem; font-size:.85rem; color:var(--gris); text-decoration:none}
@@ -149,6 +149,8 @@ table.admin-table{width:100%; border-collapse:collapse; font-size:.86rem; min-wi
 .db-icon-vert{background:rgba(76,122,87,.15); color:var(--vert)}
 .db-icon-rouge{background:rgba(180,72,60,.15); color:var(--rouge)}
 .db-icon-encre{background:rgba(46,38,32,.08); color:var(--encre)}
+.db-icon-violet{background:rgba(107,91,149,.15); color:var(--violet)}
+.db-icon-gris{background:rgba(138,131,120,.15); color:var(--gris)}
 .db-stat-value{font-family:Georgia,serif; font-size:1.7rem; font-weight:700; line-height:1}
 .db-stat-label{font-size:.8rem; color:var(--gris); margin-top:.35rem}
 
