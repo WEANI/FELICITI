@@ -72,6 +72,24 @@ h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0 
 .admin-sidebar-sub{font-size:.72rem; color:rgba(46,38,32,.65); margin-bottom:1.6rem}
 .admin-nav{display:flex; flex-direction:column; gap:.15rem; flex:1}
 .admin-nav-sep{border-top:1px solid rgba(46,38,32,.18); margin:.7rem .7rem .55rem}
+
+/* ---------- Notifications ---------- */
+.admin-notif-wrap{position:relative; margin-bottom:1.2rem}
+.admin-notif-btn{position:relative; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; background:rgba(46,38,32,.1); border:none; cursor:pointer; color:var(--encre)}
+.admin-notif-btn:hover{background:rgba(46,38,32,.18)}
+.admin-notif-btn svg{width:18px; height:18px}
+.admin-notif-badge{position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; padding:0 4px; border-radius:99px; background:var(--rouge); color:#fff; font-size:.62rem; font-weight:700; display:flex; align-items:center; justify-content:center; line-height:1}
+.admin-notif-panel{position:absolute; top:44px; left:0; width:300px; max-height:380px; overflow-y:auto; background:#fff; border:1px solid var(--filet); border-radius:10px; box-shadow:0 8px 24px rgba(46,38,32,.18); z-index:50; color:var(--encre)}
+.admin-notif-panel-head{display:flex; justify-content:space-between; align-items:center; padding:.7rem .9rem; border-bottom:1px solid var(--filet); font-size:.8rem; font-weight:700}
+.admin-notif-panel-head button{background:none; border:none; color:var(--bronze); font-size:.72rem; cursor:pointer; font-weight:600; padding:0}
+.admin-notif-item{display:block; padding:.65rem .9rem; border-bottom:1px solid var(--filet); text-decoration:none; color:var(--encre)}
+.admin-notif-item:last-child{border-bottom:none}
+.admin-notif-item:hover{background:#F5EFE4}
+.admin-notif-item.unread{background:#FBF6EE}
+.admin-notif-item-title{font-size:.82rem; font-weight:600}
+.admin-notif-item-msg{font-size:.78rem; color:var(--gris); margin-top:.1rem}
+.admin-notif-item-time{font-size:.68rem; color:var(--taupe); margin-top:.25rem}
+.admin-notif-empty{padding:1.2rem; text-align:center; font-size:.8rem; color:var(--gris); font-style:italic}
 .admin-nav a{
   display:block; padding:.55rem .7rem; border-radius:6px; text-decoration:none;
   color:var(--creme); font-size:.87rem;
