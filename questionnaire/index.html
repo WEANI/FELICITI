@@ -37,6 +37,10 @@
         <span class="q-help">Dans l'ordre que vous préférez voir apparaître.</span>
         <input type="text" name="prenoms" required>
       </label>
+      <label>Votre ville de vie
+        <span class="q-help">Là où vous vivez aujourd'hui, en couple.</span>
+        <input type="text" name="ville_vie" required>
+      </label>
     </fieldset>
 
     <fieldset class="q-section">
@@ -77,7 +81,11 @@
 
       <label>L'ambiance que vous recherchez
         <span class="q-help">En quelques mots ou adjectifs&nbsp;: feutrée, lumineuse, joyeuse, épurée, chaleureuse… Décrivez la lumière et l'atmosphère qui vous ressemblent.</span>
-        <textarea name="ambiance" rows="3"></textarea>
+        <textarea name="ambiance" rows="3" required></textarea>
+      </label>
+      <label>Trois mots pour vous décrire (vous deux)
+        <span class="q-help">Trois mots, pas plus&nbsp;: ceux qui vous ressemblent le plus.</span>
+        <input type="text" name="trois_mots" required>
       </label>
       <label>Une phrase ou un mot qui compte pour vous
         <span class="q-help">Une expression qui est la vôtre, une phrase qui vous relie, un mot signature. Elle pourra ponctuer votre faire-part.</span>
@@ -97,10 +105,10 @@
 
       <label>Comment vous êtes-vous rencontrés&nbsp;?
         <span class="q-help">Le point de départ de toute histoire.</span>
-        <textarea name="rencontre" rows="3"></textarea>
+        <textarea name="rencontre" rows="3" required></textarea>
       </label>
       <label>Un moment tous les deux dont vous vous souvenez toujours
-        <textarea name="moment_a_deux" rows="3"></textarea>
+        <textarea name="moment_a_deux" rows="3" required></textarea>
       </label>
       <label>Qu'est-ce qui vous a fait dire «&nbsp;c'est lui / c'est elle&nbsp;»&nbsp;?
         <textarea name="declic" rows="3"></textarea>
@@ -169,9 +177,9 @@
     var confirmBlock = document.getElementById('onboardingConfirm');
 
     var TEXT_FIELDS = [
-      'prenoms', 'date', 'lieu', 'horaires', 'deroule', 'texte_invitation',
+      'prenoms', 'ville_vie', 'date', 'lieu', 'horaires', 'deroule', 'texte_invitation',
       'dress_code', 'hebergement_infos', 'rsvp', 'infos_specifiques',
-      'ambiance', 'phrase_signature', 'specificites_evenement',
+      'ambiance', 'trois_mots', 'phrase_signature', 'specificites_evenement',
       'rencontre', 'moment_a_deux', 'declic', 'rituel', 'pourquoi_ce_lieu',
       'histoire_texte'
     ];
