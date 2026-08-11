@@ -7,7 +7,7 @@
 :root{
   --lin:#F3EDE4; --creme:#FAF6EF; --taupe:#D8CBB8; --encre:#2E2620;
   --bronze:#A6845C; --filet:#E4DCCB;
-  --vert:#4C7A57; --rouge:#B4483C; --gris:#8A8378; --violet:#6B5B95;
+  --vert:#4C7A57; --rouge:#B4483C; --gris:#8A8378; --violet:#6B5B95; --ambre:#B4772E;
   --sidebar-w:220px;
 }
 
@@ -49,6 +49,12 @@ h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0 
 .admin-btn:hover{opacity:.88}
 .admin-btn:disabled{opacity:.5; cursor:default}
 .admin-btn.secondary{background:transparent; color:var(--encre); border:1px solid var(--taupe)}
+.admin-btn-sm{
+  display:inline-flex; align-items:center; gap:.3rem; width:auto; padding:.35rem .7rem;
+  border:1px solid var(--taupe); border-radius:6px; background:transparent; color:var(--encre);
+  font-size:.78rem; font-weight:600; text-decoration:none; white-space:nowrap;
+}
+.admin-btn-sm:hover{border-color:var(--bronze); color:var(--bronze)}
 .admin-msg{font-size:.82rem; margin:.8rem 0 0; padding:.6rem .7rem; border-radius:6px}
 .admin-msg.error{background:#FBEAE7; color:var(--rouge)}
 .admin-msg.ok{background:#EAF2EC; color:var(--vert)}
@@ -61,10 +67,11 @@ h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0 
   width:var(--sidebar-w); flex:0 0 var(--sidebar-w); background:var(--bronze); color:var(--encre);
   padding:1.4rem 1rem; display:flex; flex-direction:column;
 }
-.admin-sidebar-mark{font-family:Georgia,serif; font-weight:700; font-size:1.15rem; color:#fff; margin-bottom:.1rem}
+.admin-sidebar-mark{font-family:Georgia,serif; font-weight:700; font-size:1.55rem; letter-spacing:.01em; color:#fff; margin-bottom:.15rem}
 .admin-sidebar-mark span{color:var(--encre)}
 .admin-sidebar-sub{font-size:.72rem; color:rgba(46,38,32,.65); margin-bottom:1.6rem}
 .admin-nav{display:flex; flex-direction:column; gap:.15rem; flex:1}
+.admin-nav-sep{border-top:1px solid rgba(46,38,32,.18); margin:.7rem .7rem .55rem}
 .admin-nav a{
   display:block; padding:.55rem .7rem; border-radius:6px; text-decoration:none;
   color:var(--creme); font-size:.87rem;
@@ -113,6 +120,8 @@ table.admin-table{width:100%; border-collapse:collapse; font-size:.86rem; min-wi
 .admin-table tbody tr:last-child td{border-bottom:none}
 .admin-table tbody tr{cursor:pointer}
 .admin-table tbody tr:hover{background:#F5EFE4}
+.admin-row-chevron{width:1.4rem; text-align:center; color:var(--taupe); font-size:1.1rem; font-weight:600}
+.admin-table tbody tr:hover .admin-row-chevron{color:var(--bronze)}
 .admin-table select{padding:.35rem .5rem; border:1px solid var(--taupe); border-radius:5px; font-size:.8rem; background:#fff}
 .admin-table select:hover{border-color:var(--bronze)}
 
@@ -182,6 +191,13 @@ table.admin-table{width:100%; border-collapse:collapse; font-size:.86rem; min-wi
 .admin-list-simple .meta{color:var(--gris); font-size:.78rem}
 
 /* ---------- Kanban ---------- */
+.kanban-scroll-wrap{position:relative}
+.kanban-scroll-wrap::after{
+  content:''; position:absolute; top:0; right:0; bottom:.5rem; width:56px;
+  background:linear-gradient(to right, rgba(255,255,255,0), #fff);
+  pointer-events:none; opacity:1; transition:opacity .2s;
+}
+.kanban-scroll-wrap.at-end::after{opacity:0}
 .kanban-board{display:flex; gap:1rem; overflow-x:auto; padding-bottom:.5rem; align-items:flex-start}
 .kanban-col{flex:0 0 240px; background:#fff; border:1px solid var(--filet); border-radius:10px; padding:.8rem; min-height:120px}
 .kanban-col.drag-over{border-color:var(--bronze); background:#F5EFE4}
@@ -190,8 +206,13 @@ table.admin-table{width:100%; border-collapse:collapse; font-size:.86rem; min-wi
 .kanban-card{background:#fff; border:1px solid var(--filet); border-radius:8px; padding:.6rem .7rem; margin-bottom:.6rem; cursor:grab; font-size:.82rem}
 .kanban-card:active{cursor:grabbing}
 .kanban-card.dragging{opacity:.4}
-.kanban-card-name{font-weight:600; margin-bottom:.15rem}
+.kanban-card-top{display:flex; justify-content:space-between; align-items:flex-start; gap:.4rem; margin-bottom:.15rem}
+.kanban-card-name{font-weight:600}
 .kanban-card-meta{color:var(--gris); font-size:.75rem}
+.kanban-age{flex:0 0 auto; padding:.05rem .45rem; border-radius:99px; font-size:.68rem; font-weight:600; white-space:nowrap}
+.kanban-age.recent{background:#EAF2EC; color:var(--vert)}
+.kanban-age.moyen{background:#FBF0E1; color:var(--ambre)}
+.kanban-age.vieux{background:#FBEAE7; color:var(--rouge)}
 
 @media (max-width:760px){
   .admin-shell{flex-direction:column}

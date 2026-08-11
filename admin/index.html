@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="only light">
 <meta name="robots" content="noindex, nofollow">
 <title>Tableau de bord — Admin FELICITI</title>
-<link rel="stylesheet" href="css/admin.css?v=2">
+<link rel="stylesheet" href="css/admin.css?v=3">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
 </head>
 <body>
@@ -90,7 +90,7 @@
           </div>
           <div class="admin-table-wrap" id="dash-table-wrap">
             <table class="admin-table">
-              <thead><tr><th>Client</th><th>Prestation</th><th>Montant</th><th>Paiement</th><th>Statut</th><th>Date</th></tr></thead>
+              <thead><tr><th>Client</th><th>Prestation</th><th>Montant</th><th>Paiement</th><th>Statut</th><th>Date</th><th aria-hidden="true"></th></tr></thead>
               <tbody id="dash-tbody"></tbody>
             </table>
           </div>
@@ -104,7 +104,9 @@
             <a class="db-link" href="projects/">Vue complète →</a>
           </div>
           <p style="font-size:.8rem;color:var(--gris);margin:-.4rem 0 1rem">Commandes payées, glisser pour changer de statut.</p>
-          <div class="kanban-board" id="dash-kanban"></div>
+          <div class="kanban-scroll-wrap" id="dash-kanban-wrap">
+            <div class="kanban-board" id="dash-kanban"></div>
+          </div>
         </div>
 
       </div>
@@ -114,7 +116,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
   <script>window.ADMIN_BASE = './'; window.ADMIN_NAV_ID = 'dashboard';</script>
-  <script src="js/admin-shared.js?v=1"></script>
+  <script src="js/admin-shared.js?v=2"></script>
   <script>
     (function () {
       var KANBAN_COLUMNS = ['nouveau','onboarding_envoye','questionnaire_recu','en_creation','a_valider','video_livree','termine'];
@@ -139,6 +141,21 @@
       function joursDepuis(dateStr) {
         var d = Math.floor((Date.now() - new Date(dateStr)) / 86400000);
         return d <= 0 ? 'aujourd’hui' : d === 1 ? 'il y a 1 jour' : 'il y a ' + d + ' jours';
+      }
+      function ageBadge(dateStr) {
+        var d = Math.floor((Date.now() - new Date(dateStr)) / 86400000);
+        var cls = d < 3 ? 'recent' : d <= 7 ? 'moyen' : 'vieux';
+        return '<span class="kanban-age ' + cls + '">' + d + 'j</span>';
+      }
+      /* Masque le dégradé de bord droit une fois arrivé au bout du scroll
+         horizontal (sinon il resterait affiché même sans contenu caché). */
+      function setupKanbanScrollFade(wrapEl, boardEl) {
+        function check() {
+          wrapEl.classList.toggle('at-end', boardEl.scrollLeft + boardEl.clientWidth >= boardEl.scrollWidth - 2);
+        }
+        boardEl.addEventListener('scroll', check);
+        window.addEventListener('resize', check);
+        check();
       }
 
       var sb, commandes = [], activeStatut = null;
@@ -165,6 +182,7 @@
             '<td><span class="admin-badge ' + c.payment_statut + '">' + (PAYMENT_LABELS[c.payment_statut] || c.payment_statut) + '</span></td>' +
             '<td>' + (WORKFLOW_LABELS[c.statut] || c.statut) + '</td>' +
             '<td>' + new Date(c.created_at).toLocaleDateString('fr-FR') + '</td>' +
+            '<td class="admin-row-chevron">›</td>' +
           '</tr>';
         }).join('');
 
@@ -200,7 +218,7 @@
 
       function cardHtml(c) {
         return '<div class="kanban-card" draggable="true" data-id="' + c.id + '">' +
-          '<div class="kanban-card-name">' + clientLabel(c.couples) + '</div>' +
+          '<div class="kanban-card-top"><div class="kanban-card-name">' + clientLabel(c.couples) + '</div>' + ageBadge(c.created_at) + '</div>' +
           '<div class="kanban-card-meta">' + prestaLabel(c) + ' · ' + joursDepuis(c.created_at) + '</div>' +
         '</div>';
       }
@@ -249,6 +267,8 @@
             });
           });
         });
+
+        setupKanbanScrollFade(document.getElementById('dash-kanban-wrap'), board);
       }
 
       FeliAdmin.requireSession().then(function (auth) {

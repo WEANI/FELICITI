@@ -14,25 +14,33 @@
 
   var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  /* "consultation" : à regarder au quotidien. "config" : réglages ponctuels,
+     séparés visuellement dans la sidebar (voir renderShell). */
   var NAV_ITEMS = [
-    { id: 'dashboard', label: 'Tableau de bord', href: base },
-    { id: 'analytics', label: 'Analytique', href: base + 'analytics/' },
-    { id: 'commandes', label: 'Commandes', href: base + 'commandes/' },
-    { id: 'projects', label: 'Projets', href: base + 'projects/' },
-    { id: 'clients', label: 'Clients', href: base + 'clients/' },
-    { id: 'questionnaires', label: 'Questionnaires', href: base + 'questionnaires/' },
-    { id: 'paiements', label: 'Paiements', href: base + 'paiements/' },
-    { id: 'whatsapp', label: 'WhatsApp', href: base + 'whatsapp/' },
-    { id: 'parametres', label: 'Paramètres', href: base + 'parametres/' }
+    { id: 'dashboard', label: 'Tableau de bord', href: base, group: 'consultation' },
+    { id: 'analytics', label: 'Analytique', href: base + 'analytics/', group: 'consultation' },
+    { id: 'commandes', label: 'Commandes', href: base + 'commandes/', group: 'consultation' },
+    { id: 'projects', label: 'Projets', href: base + 'projects/', group: 'consultation' },
+    { id: 'clients', label: 'Clients', href: base + 'clients/', group: 'consultation' },
+    { id: 'questionnaires', label: 'Questionnaires', href: base + 'questionnaires/', group: 'consultation' },
+    { id: 'paiements', label: 'Paiements', href: base + 'paiements/', group: 'consultation' },
+    { id: 'whatsapp', label: 'WhatsApp', href: base + 'whatsapp/', group: 'config' },
+    { id: 'parametres', label: 'Paramètres', href: base + 'parametres/', group: 'config' }
   ];
 
   function renderShell(activeId, email) {
     var sidebar = document.getElementById('admin-sidebar-slot');
     if (!sidebar) return;
-    var nav = NAV_ITEMS.map(function (item) {
+    var nav = '';
+    var currentGroup = null;
+    NAV_ITEMS.forEach(function (item) {
+      if (item.group !== currentGroup) {
+        if (currentGroup !== null) nav += '<div class="admin-nav-sep"></div>';
+        currentGroup = item.group;
+      }
       var cls = item.id === activeId ? ' class="active"' : '';
-      return '<a href="' + item.href + '"' + cls + '>' + item.label + '</a>';
-    }).join('');
+      nav += '<a href="' + item.href + '"' + cls + '>' + item.label + '</a>';
+    });
     sidebar.innerHTML =
       '<div class="admin-sidebar-mark">FELICIT<span>I</span></div>' +
       '<div class="admin-sidebar-sub">Admin</div>' +
