@@ -193,32 +193,24 @@
       return [str.trim(), null];
     }
 
-    /* Crée le couple (identifié par les prénoms saisis) et le rattache à la
-       commande auto-créée sans identité sur /merci, via une fonction dédiée
-       (pas d'UPDATE public direct sur commandes — voir link_couple_to_commande
-       en base). N'échoue jamais bruyamment : le questionnaire part quand
+    /* Complète (ou crée, si /merci n'a pas encore fait connaître le couple
+       via son formulaire d'e-mail) la fiche couple avec les prénoms saisis
+       ici — même fonction que /merci, upsert_couple_for_commande ne
+       remplace jamais une valeur déjà connue par du vide (coalesce côté
+       base). N'échoue jamais bruyamment : le questionnaire part quand
        même si cette liaison ne passe pas. */
     function creerEtLierCouple(commandeIdVal, prenomsStr) {
-      if (!window.crypto || !crypto.randomUUID) return Promise.resolve(null);
       var parts = splitPrenoms(prenomsStr);
-      var coupleId = crypto.randomUUID();
-      var headers = {
-        'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-        'Content-Type': 'application/json'
-      };
-      return fetch(SUPABASE_URL + '/rest/v1/couples', {
+      return fetch(SUPABASE_URL + '/rest/v1/rpc/upsert_couple_for_commande', {
         method: 'POST',
-        headers: Object.assign({ 'Prefer': 'return=minimal' }, headers),
-        body: JSON.stringify({ id: coupleId, prenom_1: parts[0], prenom_2: parts[1] })
+        headers: {
+          'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ p_commande_id: commandeIdVal, p_prenom_1: parts[0], p_prenom_2: parts[1] })
       }).then(function (res) {
-        if (!res.ok) throw new Error('couple HTTP ' + res.status);
-        return fetch(SUPABASE_URL + '/rest/v1/rpc/link_couple_to_commande', {
-          method: 'POST', headers: headers,
-          body: JSON.stringify({ p_commande_id: commandeIdVal, p_couple_id: coupleId })
-        });
-      }).then(function (res) {
-        if (!res.ok) throw new Error('link HTTP ' + res.status);
-        return coupleId;
+        if (!res.ok) throw new Error('upsert couple HTTP ' + res.status);
+        return res.json();
       }).catch(function (err) {
         console.warn('FELICITI · liaison couple impossible', err);
         return null;

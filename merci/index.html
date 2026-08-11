@@ -31,8 +31,19 @@
     <span class="merci-wordmark">FELICITI</span>
     <h1>Merci pour votre commande&nbsp;!</h1>
     <p id="merciLigne1">Votre commande a bien été validée.</p>
-    <p>Vous allez recevoir un e-mail de confirmation.</p>
     <p>La prochaine étape&nbsp;: remplissez votre questionnaire d'onboarding pour que nous puissions composer votre création.</p>
+
+    <form id="merciEmailForm" class="form-wrap" style="margin:1.5rem 0">
+      <div class="form-field">
+        <label for="merciEmail">Votre e-mail, pour recevoir la confirmation et le lien du questionnaire</label>
+        <input id="merciEmail" name="email" type="email" placeholder="vous@exemple.fr" required>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-solid" id="merciEmailBtn">Recevoir ma confirmation</button>
+      </div>
+    </form>
+    <p id="merciEmailMsg" role="status" aria-live="polite"></p>
+
     <div class="merci-btns">
       <a class="merci-cta" id="merciCta" href="../questionnaire/">Remplir mon questionnaire</a>
       <a class="merci-whatsapp" href="https://wa.me/33600000000?text=Bonjour%20FELICITI%2C%20je%20viens%20de%20commander" target="_blank" rel="noopener">Nous écrire</a>
@@ -48,6 +59,7 @@
       var params = new URLSearchParams(window.location.search);
       var slug = params.get('prestation');
       var ctaEl = document.getElementById('merciCta');
+      var currentCommandeId = null;
 
       function sbHeaders(extra) {
         var h = { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY };
@@ -56,10 +68,39 @@
       }
 
       function setCta(commandeId) {
+        currentCommandeId = commandeId;
         var url = '../questionnaire/?prestation=' + encodeURIComponent(slug);
         if (commandeId) url += '&commande=' + encodeURIComponent(commandeId);
         ctaEl.href = url;
       }
+
+      /* Envoie l'e-mail (via upsert_couple_for_commande) : c'est ce qui
+         déclenche côté base l'envoi du mail de confirmation (trigger sur
+         commandes.couple_id, voir migration trigger_email_confirmation). */
+      var emailForm = document.getElementById('merciEmailForm');
+      var emailMsg = document.getElementById('merciEmailMsg');
+      emailForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!currentCommandeId) {
+          emailMsg.textContent = 'Un instant, la commande est en cours de création… réessayez dans quelques secondes.';
+          return;
+        }
+        var btn = document.getElementById('merciEmailBtn');
+        btn.disabled = true; btn.textContent = 'Envoi…';
+        fetch(SUPABASE_URL + '/rest/v1/rpc/upsert_couple_for_commande', {
+          method: 'POST',
+          headers: sbHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ p_commande_id: currentCommandeId, p_email: document.getElementById('merciEmail').value.trim() })
+        }).then(function (res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          emailForm.hidden = true;
+          emailMsg.textContent = 'Confirmation envoyée — vérifiez votre boîte mail (et vos spams, au cas où).';
+        }).catch(function (err) {
+          console.warn('FELICITI · envoi confirmation impossible', err);
+          btn.disabled = false; btn.textContent = 'Recevoir ma confirmation';
+          emailMsg.textContent = 'Une erreur est survenue, réessayez ou contactez-nous sur WhatsApp.';
+        });
+      });
 
       /* Crée la commande + son item côté Supabase, une seule fois par visite
          (sessionStorage évite les doublons si la page est rechargée). Ne
