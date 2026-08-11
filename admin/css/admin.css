@@ -64,7 +64,7 @@ h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0 
 /* ---------- Layout protégé ---------- */
 .admin-shell{display:flex; min-height:100svh}
 .admin-sidebar{
-  width:var(--sidebar-w); flex:0 0 var(--sidebar-w); background:#000; color:var(--creme);
+  width:var(--sidebar-w); flex:0 0 var(--sidebar-w); background:#343330; color:var(--creme);
   padding:1.4rem 1rem; display:flex; flex-direction:column;
 }
 .admin-sidebar-mark{font-family:Georgia,serif; font-weight:700; font-size:1.55rem; letter-spacing:.01em; color:#fff; margin-bottom:.15rem}
