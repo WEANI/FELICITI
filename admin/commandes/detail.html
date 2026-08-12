@@ -28,9 +28,12 @@
             </div>
 
             <div class="admin-section">
-              <h2 style="display:flex;align-items:center;justify-content:space-between;gap:.6rem">
+              <h2 style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap">
                 Questionnaire
-                <button type="button" id="q-copy-btn" class="admin-btn-sm" hidden>Copier le questionnaire</button>
+                <span style="display:flex;gap:.5rem">
+                  <button type="button" id="q-copy-btn" class="admin-btn-sm" hidden>Copier le questionnaire</button>
+                  <button type="button" id="q-zip-btn" class="admin-btn-sm" hidden>Tout télécharger (.zip)</button>
+                </span>
               </h2>
               <div id="det-questionnaire"></div>
             </div>
@@ -59,8 +62,9 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script>window.ADMIN_BASE = '../'; window.ADMIN_NAV_ID = 'commandes';</script>
-  <script src="../js/admin-shared.js?v=3"></script>
+  <script src="../js/admin-shared.js?v=4"></script>
   <script>
     (function () {
       var WORKFLOW_LABELS = {
@@ -150,9 +154,11 @@
             /* --- Questionnaire --- */
             var qEl = document.getElementById('det-questionnaire');
             var qCopyBtn = document.getElementById('q-copy-btn');
+            var qZipBtn = document.getElementById('q-zip-btn');
             if (!questionnaires.length) {
               qEl.innerHTML = '<p class="admin-empty">Aucun questionnaire reçu pour l’instant.</p>';
               qCopyBtn.hidden = true;
+              qZipBtn.hidden = true;
             } else {
               var q = questionnaires[0]; /* le plus récent */
               var photoPaths = Array.isArray(q.data && q.data.photos) ? q.data.photos : [];
@@ -171,19 +177,35 @@
 
               /* Photos jointes : déposées dans le bucket Storage "medias"
                  (chemins bruts dans data.photos), on récupère des URL
-                 signées temporaires pour les afficher en miniatures —
-                 le bucket n'est pas public, une URL directe ne suffit pas. */
+                 signées temporaires pour les afficher en miniatures — le
+                 bucket n'est pas public, une URL directe ne suffit pas.
+                 Deux jeux d'URL signées : un pour l'aperçu (ouvre l'image),
+                 un avec l'option "download" pour forcer le téléchargement
+                 au lieu d'ouvrir l'image dans l'onglet. */
               if (photoPaths.length) {
-                sb.storage.from('medias').createSignedUrls(photoPaths, 3600).then(function (res) {
-                  var items = (res.data || []).filter(function (d) { return d.signedUrl; });
-                  if (!items.length) return;
+                Promise.all([
+                  sb.storage.from('medias').createSignedUrls(photoPaths, 3600),
+                  sb.storage.from('medias').createSignedUrls(photoPaths, 3600, { download: true })
+                ]).then(function (resArr) {
+                  var viewItems = resArr[0].data || [];
+                  var dlItems = resArr[1].data || [];
+                  var rows = [];
+                  for (var i = 0; i < photoPaths.length; i++) {
+                    var v = viewItems[i], d = dlItems[i];
+                    if (!v || !v.signedUrl) continue;
+                    rows.push({ view: v.signedUrl, dl: (d && d.signedUrl) || v.signedUrl });
+                  }
+                  if (!rows.length) return;
                   document.getElementById('det-questionnaire-photos').innerHTML =
-                    '<p style="font-size:.78rem;color:var(--gris);margin:.8rem 0 .4rem">Photos jointes (' + items.length + ')</p>' +
-                    '<div style="display:flex;flex-wrap:wrap;gap:.5rem">' +
-                    items.map(function (d) {
-                      return '<a href="' + d.signedUrl + '" target="_blank" rel="noopener">' +
-                        '<img src="' + d.signedUrl + '" alt="" style="width:90px;height:90px;object-fit:cover;border-radius:6px;border:1px solid var(--filet)">' +
-                        '</a>';
+                    '<p style="font-size:.78rem;color:var(--gris);margin:.8rem 0 .4rem">Photos jointes (' + rows.length + ')</p>' +
+                    '<div style="display:flex;flex-wrap:wrap;gap:.6rem">' +
+                    rows.map(function (r) {
+                      return '<div style="text-align:center">' +
+                        '<a href="' + r.view + '" target="_blank" rel="noopener">' +
+                          '<img src="' + r.view + '" alt="" style="width:90px;height:90px;object-fit:cover;border-radius:6px;border:1px solid var(--filet);display:block">' +
+                        '</a>' +
+                        '<a href="' + r.dl + '" download style="font-size:.7rem;color:var(--bronze);display:block;margin-top:.2rem">Télécharger</a>' +
+                      '</div>';
                     }).join('') +
                     '</div>';
                 });
@@ -213,6 +235,11 @@
                   alert('Impossible de copier automatiquement — sélectionnez le texte manuellement.');
                 });
               };
+
+              /* Zip complet : réponses + photos, voir admin-shared.js.
+                 La note vocale (WhatsApp) n'y est jamais incluse. */
+              qZipBtn.hidden = false;
+              qZipBtn.onclick = function () { FeliAdmin.downloadDossierZip(id, qZipBtn); };
             }
 
             /* --- Messages --- */

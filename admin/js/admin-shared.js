@@ -162,6 +162,80 @@
       .subscribe();
   }
 
+  /* ---------- Téléchargement du dossier (questionnaire + photos) ----------
+     Assemble un .zip avec les réponses au questionnaire (questionnaire.txt)
+     et les photos jointes (dossier photos/, récupérées depuis le bucket
+     Storage "medias" via URL signées). Nécessite JSZip, chargé en CDN par
+     la page appelante avant ce script. La note vocale n'est JAMAIS incluse
+     ici : elle arrive par WhatsApp (lien wa.me depuis le questionnaire),
+     hors du système — aucune intégration whapi active pour la récupérer
+     automatiquement (voir Paramètres). Le fichier texte le rappelle. */
+  function humanKey(k) {
+    var s = k.replace(/_/g, ' ');
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  function downloadDossierZip(commandeId, btn) {
+    if (!window.JSZip) { alert('Erreur : bibliothèque zip non chargée.'); return; }
+    var originalLabel = btn ? btn.textContent : null;
+    if (btn) { btn.disabled = true; btn.textContent = 'Préparation du zip…'; }
+
+    Promise.all([
+      sb.from('questionnaires').select('data,created_at').eq('commande_id', commandeId).order('created_at', { ascending: false }),
+      sb.from('commandes').select('id,couples(prenom_1,prenom_2)').eq('id', commandeId).maybeSingle()
+    ]).then(function (results) {
+      var questionnaires = results[0].data || [];
+      var commande = results[1].data;
+      if (!questionnaires.length) { alert('Aucun questionnaire reçu pour cette commande.'); return null; }
+      var q = questionnaires[0];
+      var cp = commande && commande.couples;
+      var coupleLabel = cp ? ([cp.prenom_1, cp.prenom_2].filter(Boolean).join(' & ') || commandeId.slice(0, 8)) : commandeId.slice(0, 8);
+      var photoPaths = Array.isArray(q.data && q.data.photos) ? q.data.photos : [];
+
+      var lines = ['Questionnaire — ' + coupleLabel, 'Reçu le ' + new Date(q.created_at).toLocaleString('fr-FR'), ''];
+      lines.push('Note vocale : envoyée par WhatsApp le cas échéant — non incluse dans ce zip, à récupérer manuellement dans la conversation WhatsApp.');
+      if (photoPaths.length) lines.push('Photos jointes : ' + photoPaths.length + ' fichier(s), voir le dossier photos/ de cette archive.');
+      lines.push('');
+      Object.keys(q.data || {}).forEach(function (k) {
+        if (k === 'photos') return;
+        var v = q.data[k];
+        if (v === '' || v == null) return;
+        lines.push(humanKey(k) + ' : ' + v);
+      });
+
+      var zip = new window.JSZip();
+      zip.file('questionnaire.txt', lines.join('\n'));
+
+      var photosDone = photoPaths.length
+        ? sb.storage.from('medias').createSignedUrls(photoPaths, 300).then(function (res) {
+            var items = (res.data || []).filter(function (d) { return d.signedUrl; });
+            return Promise.all(items.map(function (d, i) {
+              return fetch(d.signedUrl).then(function (r) { return r.blob(); }).then(function (blob) {
+                var ext = (d.path || '').split('.').pop() || 'jpg';
+                zip.file('photos/photo-' + (i + 1) + '.' + ext, blob);
+              }).catch(function () { /* une photo en échec ne bloque pas les autres */ });
+            }));
+          })
+        : Promise.resolve();
+
+      return photosDone.then(function () { return zip.generateAsync({ type: 'blob' }); }).then(function (blob) {
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'FELICITI-' + coupleLabel.replace(/[^a-zA-Z0-9&_-]+/g, '_') + '.zip';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      });
+    }).catch(function (err) {
+      console.warn('FELICITI · téléchargement du dossier impossible', err);
+      alert('Échec du téléchargement — réessayez.');
+    }).then(function () {
+      if (btn) { btn.disabled = false; btn.textContent = originalLabel; }
+    });
+  }
+
   function signOut() {
     sb.auth.signOut().then(function () {
       window.location.replace(base + 'connexion/');
@@ -195,6 +269,7 @@
     sb: sb,
     base: base,
     requireSession: requireSession,
-    signOut: signOut
+    signOut: signOut,
+    downloadDossierZip: downloadDossierZip
   };
 })(window, document);

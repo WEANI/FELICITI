@@ -29,8 +29,9 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script>window.ADMIN_BASE = '../'; window.ADMIN_NAV_ID = 'projects';</script>
-  <script src="../js/admin-shared.js?v=3"></script>
+  <script src="../js/admin-shared.js?v=4"></script>
   <script>
     (function () {
       /* "à valider" ajouté par rapport à la spec d'origine (6 colonnes) :
@@ -73,7 +74,9 @@
         var presta = items.length ? items.map(function (it) { return it.prestations ? it.prestations.nom : '?'; }).join(', ') : '—';
         return '<div class="kanban-card" draggable="true" data-id="' + c.id + '">' +
           '<div class="kanban-card-top"><div class="kanban-card-name">' + clientLabel(c.couples) + '</div>' + ageBadge(c.created_at) + '</div>' +
-          '<div class="kanban-card-meta">' + presta + ' · ' + joursDepuis(c.created_at) + '</div>' +
+          '<div class="kanban-card-meta">' + presta + ' · ' + joursDepuis(c.created_at) +
+            ' · <button type="button" class="kanban-dl-btn" data-dl-id="' + c.id + '" title="Télécharger questionnaire + photos (.zip)" style="border:none;background:none;padding:0;cursor:pointer;color:var(--taupe);font-size:.78rem;text-decoration:underline;text-underline-offset:2px">télécharger</button>' +
+          '</div>' +
         '</div>';
       }
 
@@ -95,6 +98,16 @@
           card.addEventListener('dragend', function () { card.classList.remove('dragging'); });
           card.addEventListener('click', function () {
             window.location.href = '../commandes/detail.html?id=' + card.getAttribute('data-id');
+          });
+        });
+
+        /* Téléchargement direct depuis la carte (questionnaire + photos en
+           .zip, voir admin-shared.js) — stoppe la propagation pour ne pas
+           déclencher la navigation vers la fiche commande. */
+        Array.prototype.forEach.call(board.querySelectorAll('.kanban-dl-btn'), function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            FeliAdmin.downloadDossierZip(btn.getAttribute('data-dl-id'), btn);
           });
         });
 
