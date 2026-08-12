@@ -24,6 +24,12 @@
     déclaré côté client — pas de webhook Stripe sur ce projet statique,
     voir le commentaire sur payment_statut en base pour le détail de cette
     limite (déjà documentée pour /post-achat).
+    v4 : si le lien de paiement Stripe transmet ?session_id=
+    ({CHECKOUT_SESSION_ID}, à configurer par lien dans le Dashboard Stripe),
+    l'e-mail du client est récupéré automatiquement depuis Stripe — plus
+    besoin de le redemander. Le formulaire e-mail reste affiché en secours
+    si ce paramètre est absent (lien pas encore mis à jour) ou en cas
+    d'échec de la récupération.
   -->
   <a class="q-back" href="../">← Retour à l'accueil</a>
 
@@ -33,7 +39,7 @@
     <p id="merciLigne1">Votre commande a bien été validée.</p>
     <p>La prochaine étape&nbsp;: remplissez votre questionnaire d'onboarding pour que nous puissions composer votre création.</p>
 
-    <form id="merciEmailForm" class="form-wrap" style="margin:1.5rem 0">
+    <form id="merciEmailForm" class="form-wrap" style="margin:1.5rem 0" hidden>
       <div class="form-field">
         <label for="merciEmail">Votre e-mail, pour recevoir la confirmation et le lien du questionnaire</label>
         <input id="merciEmail" name="email" type="email" placeholder="vous@exemple.fr" required>
@@ -58,7 +64,10 @@
 
       var params = new URLSearchParams(window.location.search);
       var slug = params.get('prestation');
+      var sessionId = params.get('session_id');
       var ctaEl = document.getElementById('merciCta');
+      var emailForm = document.getElementById('merciEmailForm');
+      var emailMsg = document.getElementById('merciEmailMsg');
       var currentCommandeId = null;
 
       function sbHeaders(extra) {
@@ -74,11 +83,43 @@
         ctaEl.href = url;
       }
 
+      /* Si le lien Stripe transmet ?session_id=, récupère l'e-mail
+         directement depuis Stripe (fonction resolve-checkout-email) — pas
+         besoin de le redemander. Le formulaire e-mail sert de secours :
+         affiché immédiatement s'il n'y a pas de session_id, ou après coup
+         si la récupération automatique échoue. Ne bloque jamais l'affichage
+         de la confirmation en cas d'échec réseau. */
+      function tryAutoEmail(commandeId) {
+        if (!sessionId) { emailForm.hidden = false; return; }
+        var storageKey = 'felicitiEmailResolved:' + commandeId;
+        if (sessionStorage.getItem(storageKey)) return;
+
+        emailMsg.textContent = 'Récupération de votre confirmation…';
+        fetch(SUPABASE_URL + '/functions/v1/resolve-checkout-email', {
+          method: 'POST',
+          headers: sbHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ commande_id: commandeId, session_id: sessionId })
+        }).then(function (res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.json();
+        }).then(function (data) {
+          sessionStorage.setItem(storageKey, '1');
+          if (data && data.skipped) {
+            emailMsg.textContent = '';
+            emailForm.hidden = false;
+            return;
+          }
+          emailMsg.textContent = 'Confirmation envoyée — vérifiez votre boîte mail (et vos spams, au cas où).';
+        }).catch(function (err) {
+          console.warn('FELICITI · récupération e-mail Stripe impossible', err);
+          emailMsg.textContent = '';
+          emailForm.hidden = false;
+        });
+      }
+
       /* Envoie l'e-mail (via upsert_couple_for_commande) : c'est ce qui
          déclenche côté base l'envoi du mail de confirmation (trigger sur
          commandes.couple_id, voir migration trigger_email_confirmation). */
-      var emailForm = document.getElementById('merciEmailForm');
-      var emailMsg = document.getElementById('merciEmailMsg');
       emailForm.addEventListener('submit', function (e) {
         e.preventDefault();
         if (!currentCommandeId) {
@@ -108,10 +149,10 @@
       function creerCommande(prestationId, prixEuros) {
         var storageKey = 'felicitiCommande:' + slug;
         var existing = sessionStorage.getItem(storageKey);
-        if (existing) { setCta(existing); return; }
+        if (existing) { setCta(existing); tryAutoEmail(existing); return; }
 
         var commandeId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : null;
-        if (!commandeId) { setCta(null); return; }
+        if (!commandeId) { setCta(null); emailForm.hidden = false; return; }
 
         fetch(SUPABASE_URL + '/rest/v1/commandes', {
           method: 'POST',
@@ -133,9 +174,11 @@
           if (!res.ok) throw new Error('commande_items HTTP ' + res.status);
           sessionStorage.setItem(storageKey, commandeId);
           setCta(commandeId);
+          tryAutoEmail(commandeId);
         }).catch(function (err) {
           console.warn('FELICITI · création commande impossible', err);
           setCta(null);
+          emailForm.hidden = false;
         });
       }
 
@@ -152,10 +195,15 @@
           .then(function (rows) {
             if (rows && rows[0]) {
               creerCommande(rows[0].id, parseInt(p.prix, 10) || 0);
+            } else {
+              emailForm.hidden = false;
             }
           }).catch(function (err) {
             console.warn('FELICITI · lecture prestation impossible', err);
+            emailForm.hidden = false;
           });
+      } else {
+        emailForm.hidden = false;
       }
     })();
   </script>
