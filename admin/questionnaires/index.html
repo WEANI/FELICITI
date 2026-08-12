@@ -61,7 +61,8 @@
           var cp = q.commandes && q.commandes.couples;
           var clientLabel = cp ? ([cp.prenom_1, cp.prenom_2].filter(Boolean).join(' & ') || cp.email) : ((q.data && q.data.prenoms) || '—');
           var cmdLink = q.commande_id ? '<a class="admin-btn-sm" href="../commandes/detail.html?id=' + q.commande_id + '">Voir la commande</a>' : '—';
-          return '<tr data-id="' + q.id + '">' +
+          var trStyle = q.commande_id ? '' : ' style="cursor:default"';
+          return '<tr data-id="' + q.id + '"' + (q.commande_id ? ' data-commande-id="' + q.commande_id + '"' : '') + trStyle + '>' +
             '<td>' + new Date(q.created_at).toLocaleString('fr-FR') + '</td>' +
             '<td>' + clientLabel + '</td>' +
             '<td>' + cmdLink + '</td>' +
@@ -87,6 +88,20 @@
               var row = allRows.filter(function (r) { return r.id === id; })[0];
               if (row) row.traite = cb.checked;
             });
+          });
+        });
+
+        /* Clic sur la ligne = même destination que le bouton « Voir la
+           commande » (couple + commande + questionnaire y sont déjà tous
+           affichés). Le bouton stoppe la propagation pour éviter une
+           double navigation ; les lignes sans commande liée ne sont pas
+           cliquables (pas de page à afficher pour l'instant). */
+        Array.prototype.forEach.call(document.querySelectorAll('#q-tbody a.admin-btn-sm'), function (a) {
+          a.addEventListener('click', function (e) { e.stopPropagation(); });
+        });
+        Array.prototype.forEach.call(document.querySelectorAll('#q-tbody tr[data-commande-id]'), function (tr) {
+          tr.addEventListener('click', function () {
+            window.location.href = '../commandes/detail.html?id=' + tr.getAttribute('data-commande-id');
           });
         });
       }

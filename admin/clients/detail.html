@@ -57,7 +57,8 @@
 
           Promise.all([
             sb.from('couples').select('*').eq('id', id).maybeSingle(),
-            sb.from('commandes').select('id,statut,payment_statut,montant_total,created_at').eq('couple_id', id).order('created_at', { ascending: false })
+            sb.from('commandes').select('id,statut,payment_statut,montant_total,created_at').eq('couple_id', id).order('created_at', { ascending: false }),
+            sb.from('questionnaires').select('data,created_at').eq('couple_id', id).order('created_at', { ascending: false })
           ]).then(function (results) {
             var couple = results[0].data;
             if (!couple) {
@@ -66,15 +67,34 @@
               return;
             }
             var commandes = results[1].data || [];
+            var questionnaires = results[2].data || [];
 
             document.getElementById('det-title').textContent =
               [couple.prenom_1, couple.prenom_2].filter(Boolean).join(' & ') || couple.email || 'Client';
 
+            /* Date du mariage / lieu : la fiche couple ne les stocke pas
+               tant que rien ne les y écrit ; en attendant, on les affiche
+               à partir des réponses au questionnaire (data.date / data.lieu,
+               champs obligatoires du formulaire) — le plus récent d'abord,
+               sans jamais écraser une valeur déjà présente sur la fiche. */
+            function fromQuestionnaire(field) {
+              for (var i = 0; i < questionnaires.length; i++) {
+                var v = questionnaires[i].data && questionnaires[i].data[field];
+                if (v) return v;
+              }
+              return null;
+            }
+            var dateMariage = couple.date_mariage || fromQuestionnaire('date');
+            var lieu = couple.lieu || fromQuestionnaire('lieu');
+            var dateFromQ = !couple.date_mariage && dateMariage;
+            var lieuFromQ = !couple.lieu && lieu;
+            var qHint = ' <span style="color:var(--gris);font-size:.76rem">(via questionnaire)</span>';
+
             document.getElementById('det-kv').innerHTML =
               '<dt>E-mail</dt><dd>' + esc(couple.email || '—') + '</dd>' +
               '<dt>WhatsApp</dt><dd>' + esc(couple.whatsapp || '—') + '</dd>' +
-              '<dt>Date mariage</dt><dd>' + esc(couple.date_mariage || '—') + '</dd>' +
-              '<dt>Lieu</dt><dd>' + esc(couple.lieu || '—') + '</dd>' +
+              '<dt>Date mariage</dt><dd>' + esc(dateMariage || '—') + (dateFromQ ? qHint : '') + '</dd>' +
+              '<dt>Lieu</dt><dd>' + esc(lieu || '—') + (lieuFromQ ? qHint : '') + '</dd>' +
               '<dt>Invités</dt><dd>' + esc(couple.nombre_invites != null ? couple.nombre_invites : '—') + '</dd>' +
               '<dt>Client depuis</dt><dd>' + new Date(couple.created_at).toLocaleDateString('fr-FR') + '</dd>';
 

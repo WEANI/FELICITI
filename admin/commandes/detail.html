@@ -28,7 +28,10 @@
             </div>
 
             <div class="admin-section">
-              <h2>Questionnaire</h2>
+              <h2 style="display:flex;align-items:center;justify-content:space-between;gap:.6rem">
+                Questionnaire
+                <button type="button" id="q-copy-btn" class="admin-btn-sm" hidden>Copier le questionnaire</button>
+              </h2>
               <div id="det-questionnaire"></div>
             </div>
 
@@ -127,19 +130,29 @@
 
             /* --- Client --- */
             var cp = commande.couples;
+            /* Comme sur la fiche client : date/lieu affichés depuis le
+               questionnaire tant que la fiche couple ne les a pas elle-même. */
+            var qLatest = questionnaires[0];
+            var cpDate = cp && (cp.date_mariage || (qLatest && qLatest.data && qLatest.data.date));
+            var cpLieu = cp && (cp.lieu || (qLatest && qLatest.data && qLatest.data.lieu));
+            var cpDateFromQ = cp && !cp.date_mariage && cpDate;
+            var cpLieuFromQ = cp && !cp.lieu && cpLieu;
+            var cpQHint = ' <span style="color:var(--gris);font-size:.76rem">(via questionnaire)</span>';
             document.getElementById('det-client-kv').innerHTML = cp
               ? '<dt>Prénoms</dt><dd>' + esc([cp.prenom_1, cp.prenom_2].filter(Boolean).join(' & ') || '—') + '</dd>' +
                 '<dt>E-mail</dt><dd>' + esc(cp.email || '—') + '</dd>' +
                 '<dt>WhatsApp</dt><dd>' + esc(cp.whatsapp || '—') + '</dd>' +
-                '<dt>Date mariage</dt><dd>' + esc(cp.date_mariage || '—') + '</dd>' +
-                '<dt>Lieu</dt><dd>' + esc(cp.lieu || '—') + '</dd>' +
+                '<dt>Date mariage</dt><dd>' + esc(cpDate || '—') + (cpDateFromQ ? cpQHint : '') + '</dd>' +
+                '<dt>Lieu</dt><dd>' + esc(cpLieu || '—') + (cpLieuFromQ ? cpQHint : '') + '</dd>' +
                 '<dt>Invités</dt><dd>' + esc(cp.nombre_invites != null ? cp.nombre_invites : '—') + '</dd>'
               : '<dt>Client</dt><dd>Non renseigné</dd>';
 
             /* --- Questionnaire --- */
             var qEl = document.getElementById('det-questionnaire');
+            var qCopyBtn = document.getElementById('q-copy-btn');
             if (!questionnaires.length) {
               qEl.innerHTML = '<p class="admin-empty">Aucun questionnaire reçu pour l’instant.</p>';
+              qCopyBtn.hidden = true;
             } else {
               var q = questionnaires[0]; /* le plus récent */
               var dl = '<dl class="admin-qdata">';
@@ -152,6 +165,27 @@
               qEl.innerHTML =
                 '<p style="font-size:.8rem;color:var(--gris);margin:0 0 .6rem">Reçu le ' + new Date(q.created_at).toLocaleString('fr-FR') + (q.traite ? ' · traité' : ' · non traité') + '</p>' +
                 dl;
+
+              /* Copie en texte brut « Label : valeur », une ligne par
+                 champ rempli — pratique pour coller le questionnaire
+                 ailleurs (script de création, échange par mail…). */
+              qCopyBtn.hidden = false;
+              qCopyBtn.textContent = 'Copier le questionnaire';
+              qCopyBtn.onclick = function () {
+                var lines = [];
+                Object.keys(q.data || {}).forEach(function (k) {
+                  var v = q.data[k];
+                  if (v === '' || v == null) return;
+                  lines.push(humanKey(k) + ' : ' + v);
+                });
+                var text = lines.join('\n');
+                navigator.clipboard.writeText(text).then(function () {
+                  qCopyBtn.textContent = 'Copié ✓';
+                  setTimeout(function () { qCopyBtn.textContent = 'Copier le questionnaire'; }, 1800);
+                }).catch(function () {
+                  alert('Impossible de copier automatiquement — sélectionnez le texte manuellement.');
+                });
+              };
             }
 
             /* --- Messages --- */
