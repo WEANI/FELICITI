@@ -155,8 +155,10 @@
               qCopyBtn.hidden = true;
             } else {
               var q = questionnaires[0]; /* le plus récent */
+              var photoPaths = Array.isArray(q.data && q.data.photos) ? q.data.photos : [];
               var dl = '<dl class="admin-qdata">';
               Object.keys(q.data || {}).forEach(function (k) {
+                if (k === 'photos') return; /* affichées à part, en galerie */
                 var v = q.data[k];
                 if (v === '' || v == null) return;
                 dl += '<dt>' + esc(humanKey(k)) + '</dt><dd>' + esc(v) + '</dd>';
@@ -164,16 +166,41 @@
               dl += '</dl>';
               qEl.innerHTML =
                 '<p style="font-size:.8rem;color:var(--gris);margin:0 0 .6rem">Reçu le ' + new Date(q.created_at).toLocaleString('fr-FR') + (q.traite ? ' · traité' : ' · non traité') + '</p>' +
-                dl;
+                dl +
+                '<div id="det-questionnaire-photos"></div>';
+
+              /* Photos jointes : déposées dans le bucket Storage "medias"
+                 (chemins bruts dans data.photos), on récupère des URL
+                 signées temporaires pour les afficher en miniatures —
+                 le bucket n'est pas public, une URL directe ne suffit pas. */
+              if (photoPaths.length) {
+                sb.storage.from('medias').createSignedUrls(photoPaths, 3600).then(function (res) {
+                  var items = (res.data || []).filter(function (d) { return d.signedUrl; });
+                  if (!items.length) return;
+                  document.getElementById('det-questionnaire-photos').innerHTML =
+                    '<p style="font-size:.78rem;color:var(--gris);margin:.8rem 0 .4rem">Photos jointes (' + items.length + ')</p>' +
+                    '<div style="display:flex;flex-wrap:wrap;gap:.5rem">' +
+                    items.map(function (d) {
+                      return '<a href="' + d.signedUrl + '" target="_blank" rel="noopener">' +
+                        '<img src="' + d.signedUrl + '" alt="" style="width:90px;height:90px;object-fit:cover;border-radius:6px;border:1px solid var(--filet)">' +
+                        '</a>';
+                    }).join('') +
+                    '</div>';
+                });
+              }
 
               /* Copie en texte brut « Label : valeur », une ligne par
                  champ rempli — pratique pour coller le questionnaire
-                 ailleurs (script de création, échange par mail…). */
+                 ailleurs (script de création, échange par mail…). Les
+                 photos sont jointes à part (voir bouton galerie ci-dessus),
+                 on ne colle que le nombre de fichiers dans le texte copié. */
               qCopyBtn.hidden = false;
               qCopyBtn.textContent = 'Copier le questionnaire';
               qCopyBtn.onclick = function () {
                 var lines = [];
+                if (photoPaths.length) lines.push('Photos jointes : ' + photoPaths.length + ' fichier(s) — voir la fiche commande');
                 Object.keys(q.data || {}).forEach(function (k) {
+                  if (k === 'photos') return;
                   var v = q.data[k];
                   if (v === '' || v == null) return;
                   lines.push(humanKey(k) + ' : ' + v);
