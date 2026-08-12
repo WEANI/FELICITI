@@ -222,22 +222,6 @@ html,body{margin:0;background:var(--lin);color:var(--encre);
   text-transform:uppercase;color:#fff;text-decoration:none;
   border-bottom:1px solid var(--ambre);padding-bottom:.4rem}
 
-/* ---------- NOUVEAU : timelapse vertical (section « Le jour J ») ----------
-   Bande verticale en boucle silencieuse, posée au-dessus du déroulé de la
-   journée — la lumière qui change fait écho au programme horaire juste en
-   dessous. Réutilise la vidéo scrub existante (seul rush « journée qui
-   passe » disponible pour l'instant) ; à remplacer si un vrai timelapse du
-   lieu est tourné un jour. */
-.jourj-timelapse{position:relative;width:100%;max-width:220px;aspect-ratio:9/16;
-  margin:0 auto 2.6rem;border-radius:10px;overflow:hidden;background:#000;
-  box-shadow:0 24px 60px -24px rgba(46,38,32,.45)}
-.jourj-timelapse video{width:100%;height:100%;object-fit:cover;display:block}
-.jourj-timelapse::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(0,0,0,0) 58%,rgba(20,15,10,.4) 100%)}
-.jourj-timelapse-label{position:absolute;left:0;right:0;bottom:.7rem;z-index:1;text-align:center;
-  font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:#fff;
-  text-shadow:0 2px 10px rgba(0,0,0,.5)}
-
 /* Filet bronze partagé (countdown + Le jour J) */
 .filet-bronze{width:32px;height:0;border-bottom:.5px solid var(--bronze);margin:0 auto}
 /* variante animée (tracé 0 -> 32px à l'entrée dans le viewport) */
@@ -253,24 +237,37 @@ html,body{margin:0;background:var(--lin);color:var(--encre);
   font-size:clamp(1.7rem,5vw,2.6rem);color:var(--encre);margin:0 0 1.2rem}
 .section-jourj .filet-bronze{margin-bottom:3rem}
 
-/* Timeline du déroulé */
-.fp-timeline{list-style:none;margin:0 auto;padding:0;max-width:420px;
-  display:flex;flex-direction:column;gap:0}
+/* ---------- Timeline VERTICALE du déroulé ----------
+   Une ligne continue relie les badges-icônes de chaque étape (au lieu des
+   simples séparateurs horizontaux) : c'est ce trait qui fait "timeline"
+   plutôt que "liste". La position de la ligne (left:97px) est déduite des
+   largeurs de colonnes de la grille ci-dessous (64px + gap 1rem + moitié
+   des 34px de l'icône) — colonnes fixes en px, donc valable à toutes les
+   largeurs d'écran, pas besoin de la recalculer en JS. */
+.fp-timeline-wrap{max-width:420px;margin:0 auto;position:relative}
+.fp-timeline{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}
+.fp-timeline-line{position:absolute;top:35px;bottom:35px;left:97px;width:1px;
+  background:var(--taupe);z-index:0}
 .fp-step{display:grid;grid-template-columns:64px 34px 1fr;align-items:center;
   gap:1rem;padding:1.1rem 0;position:relative;
   opacity:0;transform:translateY(12px);
   transition:opacity .4s ease-out,transform .4s ease-out;
   transition-delay:calc(var(--i,0) * 80ms)}
 .fp-step.is-visible{opacity:1;transform:translateY(0)}
-.fp-step:not(:last-child){border-bottom:.5px solid var(--filet)}
 .fp-time{font-size:.82rem;letter-spacing:.14em;color:var(--bronze);text-align:right;width:64px}
-.fp-ico{width:34px;height:34px;color:var(--bronze);display:flex;align-items:center;justify-content:center}
-.fp-ico svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.1}
+/* badge circulaire : posé SUR la ligne, fond = fond de section (la
+   "coupe" visuellement) plutôt qu'un simple trait d'icône qui laisserait
+   la ligne le traverser. */
+.fp-ico{width:34px;height:34px;border-radius:50%;color:var(--terre);
+  background:var(--sable);border:1px solid var(--taupe);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;z-index:1;transition:background .3s ease,border-color .3s ease,color .3s ease}
+.fp-ico svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.3}
 .fp-step-label{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--encre)}
-/* ligne en cours (jour J, dans le créneau horaire) */
-.fp-step.is-active{border-bottom-color:var(--bronze);border-bottom-width:1.5px}
+/* étape en cours (jour J, dans le créneau horaire) : badge plein */
+.fp-step.is-active .fp-ico{background:var(--terre);border-color:var(--terre);color:var(--sable)}
 .fp-step.is-active .fp-time{font-weight:600}
-.fp-step.is-active .fp-step-label{color:var(--bronze)}
+.fp-step.is-active .fp-step-label{color:var(--terre)}
 
 /* Accordéon des informations utiles — bouton + grid-template-rows animés
    (remplace <details>/<summary> pour permettre une transition de hauteur
@@ -346,8 +343,6 @@ html,body{margin:0;background:var(--lin);color:var(--encre);
   .fp-signature .demo-inner{opacity:1;transition:none}
   .fp-gallery{opacity:1;transform:none;transition:none}
   .fp-lieu-img{transform:none}
-  .jourj-timelapse video{display:none}
-  .jourj-timelapse{background:url("/public/demo/frames/demo_120.webp") center/cover no-repeat}
 }
 </style>
 </head>
@@ -463,16 +458,15 @@ html,body{margin:0;background:var(--lin);color:var(--encre);
     <h2 class="fp-h2">Le jour J</h2>
     <div class="filet-bronze filet-bronze--animated" id="jourjFilet"></div>
 
-    <!-- NOUVEAU — timelapse vertical, voir jourj-timelapse dans le CSS.
-         Réutilise la vidéo scrub (seul rush "journée qui passe"
-         disponible) ; lecture pilotée en JS (coupée si reduced-motion). -->
-    <div class="jourj-timelapse">
-      <video id="jourjVideo" muted loop playsinline preload="none"
-        poster="/public/demo/frames/demo_120.webp" src="/public/demo/demo-scrub.mp4"></video>
-      <span class="jourj-timelapse-label">Toute une journée</span>
-    </div>
-
-    <ol class="fp-timeline">
+    <!-- NOUVEAU — timeline verticale : la ligne .fp-timeline-line relie
+         les badges-icônes de chaque étape, voir le CSS pour le calcul
+         de sa position. Le <div> ne peut pas être un enfant direct du
+         <ol> (HTML invalide, un navigateur le remonterait hors de la
+         liste) — d'où ce conteneur .fp-timeline-wrap qui porte le
+         position:relative à la place de .fp-timeline lui-même. -->
+    <div class="fp-timeline-wrap">
+      <div class="fp-timeline-line" aria-hidden="true"></div>
+      <ol class="fp-timeline">
       <li class="fp-step" data-h="16" data-m="0">
         <span class="fp-time">16h00</span>
         <span class="fp-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.5" cy="14" r="5.5"/><circle cx="15" cy="10" r="5.5"/></svg></span>
@@ -493,7 +487,8 @@ html,body{margin:0;background:var(--lin);color:var(--encre);
         <span class="fp-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 10 4a6.2 6.2 0 0 0 10 10.5z"/><path d="M18 3.5l.5 1.6 1.6.5-1.6.5-.5 1.6-.5-1.6-1.6-.5 1.6-.5z"/></svg></span>
         <span class="fp-step-label">La soirée</span>
       </li>
-    </ol>
+      </ol>
+    </div>
 
     <div class="fp-accordion">
       <div class="fp-acc-item">
@@ -866,9 +861,11 @@ const CFG = {
     }
   })();
 
-  /* ---------- Carrousel photos (flèches + points, scroll-snap natif) ----------
-     Navigation manuelle, indépendante de prefers-reduced-motion : ce n'est
-     pas une animation auto-jouée, l'utilisateur garde la main. */
+  /* ---------- Carrousel photos AUTOMATIQUE (flèches + points, scroll-snap natif) ----------
+     Défilement automatique en boucle (~4s/photo) ; coupé si
+     prefers-reduced-motion, et mis en pause dès que l'utilisateur touche
+     au carrousel (survol, tactile, flèches, points) — reprend après un
+     temps d'inactivité. */
   (function initCarousel(){
     const track = document.getElementById('galCarousel');
     const prevBtn = document.getElementById('galPrev');
@@ -882,7 +879,7 @@ const CFG = {
       dot.type = 'button';
       dot.className = 'fp-carousel-dot' + (i === 0 ? ' is-active' : '');
       dot.setAttribute('aria-label', 'Aller à la photo ' + (i + 1));
-      dot.addEventListener('click', ()=> slides[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }));
+      dot.addEventListener('click', ()=> { slides[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); pauseAutoplay(); });
       dotsWrap.appendChild(dot);
     });
     const dots = Array.from(dotsWrap.children);
@@ -907,29 +904,49 @@ const CFG = {
       requestAnimationFrame(()=>{ syncDots(); scrollTicking = false; });
     }, { passive: true });
 
+    function goTo(i){
+      slides[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
     function go(delta){
-      const next = Math.min(slides.length - 1, Math.max(0, closestIndex() + delta));
-      slides[next].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      goTo(Math.min(slides.length - 1, Math.max(0, closestIndex() + delta)));
     }
-    if(prevBtn) prevBtn.addEventListener('click', ()=> go(-1));
-    if(nextBtn) nextBtn.addEventListener('click', ()=> go(1));
-  })();
+    if(prevBtn) prevBtn.addEventListener('click', ()=> { go(-1); pauseAutoplay(); });
+    if(nextBtn) nextBtn.addEventListener('click', ()=> { go(1); pauseAutoplay(); });
 
-  /* ---------- Timelapse vertical (section « Le jour J ») ----------
-     Lecture uniquement pendant que la bande est réellement à l'écran
-     (économise batterie/données), jamais lancée si prefers-reduced-motion
-     (le CSS affiche alors une image fixe à la place, voir plus haut). */
-  if(!reduce){
-    const jourjVideo = document.getElementById('jourjVideo');
-    if(jourjVideo){
-      new IntersectionObserver(entries=>{
-        entries.forEach(entry=>{
-          if(entry.isIntersecting){ jourjVideo.play().catch(()=>{}); }
-          else{ jourjVideo.pause(); }
-        });
-      }, { threshold: 0.3 }).observe(jourjVideo);
+    /* Boucle automatique : reprend toujours à la première photo après la
+       dernière. Désactivée si prefers-reduced-motion (les flèches et
+       points restent utilisables, seul le défilement auto est coupé) ET
+       tant que le carrousel n'est pas réellement à l'écran — goTo() fait
+       un scrollIntoView, donc un minuteur qui continuerait de tourner
+       hors champ ramènerait la page de force vers la galerie pendant que
+       la personne lit une autre section, un peu plus bas. */
+    let autoplayTimer = null, resumeTimer = null, galleryVisible = false;
+    function stopAutoplay(){
+      if(autoplayTimer){ clearInterval(autoplayTimer); autoplayTimer = null; }
     }
-  }
+    function startAutoplay(){
+      if(reduce || !galleryVisible) return;
+      stopAutoplay();
+      autoplayTimer = setInterval(()=> goTo((closestIndex() + 1) % slides.length), 4200);
+    }
+    function pauseAutoplay(){
+      stopAutoplay();
+      clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(startAutoplay, 6000);
+    }
+    track.addEventListener('pointerdown', pauseAutoplay, { passive: true });
+    track.addEventListener('wheel', pauseAutoplay, { passive: true });
+    track.addEventListener('mouseenter', stopAutoplay);
+    track.addEventListener('mouseleave', startAutoplay);
+
+    const gallerySection = track.closest('.fp-gallery') || track;
+    new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        galleryVisible = entry.isIntersecting;
+        if(galleryVisible) startAutoplay(); else stopAutoplay();
+      });
+    }, { threshold: 0.4 }).observe(gallerySection);
+  })();
 
   /* ---------- Accordéons (grid-template-rows animé) ---------- */
   document.querySelectorAll('.fp-acc-item').forEach(item=>{
