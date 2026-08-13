@@ -39,10 +39,15 @@ html,body{margin:0;background:var(--lin);color:var(--encre);
 .fs-stage::before{content:"";position:absolute;inset:0;z-index:0;
   background:var(--bg-poster) center/cover no-repeat;filter:blur(38px) brightness(.72);
   transform:scale(1.15);opacity:.55}
-/* colonne vidéo : plein écran sur mobile, colonne 9:16 centrée sur desktop */
+/* colonne vidéo : plein écran sur mobile, colonne 9:16 centrée par défaut.
+   Sur desktop, la vidéo source est maintenant un plan large 16:9 (voir
+   CFG dans le script plus bas) : .is-wide (ajoutée en JS selon isMobile)
+   la fait passer en plein cadre, sans colonne ni fond flou derrière. */
 .fs-viewport{position:relative;z-index:1;height:100vh;height:100svh;width:100%;
   max-width:calc(100svh * 9 / 16);overflow:hidden;background:#000;
   box-shadow:0 30px 80px -30px rgba(46,38,32,.5)}
+.fs-scrub.is-wide .fs-viewport{max-width:100%;box-shadow:none}
+.fs-scrub.is-wide .fs-stage::before{display:none}
 .fs-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;
   will-change:transform;transform-origin:center;pointer-events:none}
 /* fallback prefers-reduced-motion : vidéo simple à la place du scrub canvas */
@@ -386,20 +391,41 @@ html,body{margin:0;background:var(--lin);color:var(--encre);
      Moteur scrub-scroll (canvas + GSAP ScrollTrigger). Réglages : CFG.
      ===================================================================== -->
 <script>
-const CFG = {
-  framePath:  '/public/demo/frames/', // frames de la vidéo de démo
-  framePrefix:'demo_',
+/* Deux rushs distincts (voir /public/demo/frames-desktop et
+   /public/demo/frames-mobile) : le desktop reçoit un plan large 16:9
+   (plein cadre, .is-wide), le mobile garde un cadrage vertical 9:16
+   natif — pas de recadrage de l'un pour fabriquer l'autre. isMobile doit
+   donc être connu AVANT de choisir CFG. */
+const isMobile = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+
+const CFG = isMobile ? {
+  framePath:  '/public/demo/frames-mobile/',
+  framePrefix:'demo-mobile_',
   frameExt:   'webp',
-  framePad:   3,             // demo_001 => padding 3
+  framePad:   3,             // demo-mobile_001 => padding 3
   frameStart: 1,
-  frameCount: 240,           // nombre réel de frames
-  posterUrl:  '/public/demo/frames/demo_001.webp',
-  videoUrl:   '/public/demo/demo-scrub.mp4', // fallback prefers-reduced-motion
+  frameCount: 239,           // nombre réel de frames
+  posterUrl:  '/public/demo/poster-mobile.webp',
+  videoUrl:   '/public/demo/demo-scrub-mobile.mp4', // fallback prefers-reduced-motion
 
   scrollLength: '320%',      // distance d'épinglage
   scrub: 0.6,
   breath: 0.03,
   useLenisDesktop: true      // Lenis desktop only ; coupé sur mobile
+} : {
+  framePath:  '/public/demo/frames-desktop/',
+  framePrefix:'demo-desktop_',
+  frameExt:   'webp',
+  framePad:   3,
+  frameStart: 1,
+  frameCount: 239,
+  posterUrl:  '/public/demo/poster-desktop.webp',
+  videoUrl:   '/public/demo/demo-scrub-desktop.mp4',
+
+  scrollLength: '320%',
+  scrub: 0.6,
+  breath: 0.03,
+  useLenisDesktop: true
 };
 
 (function(){
@@ -413,10 +439,10 @@ const CFG = {
   const hint     = section.querySelector('.fs-hint');
   const bar      = section.querySelector('.fs-loader-bar');
 
+  section.classList.toggle('is-wide', !isMobile);
   stage.style.setProperty('--bg-poster', `url("${CFG.posterUrl}")`);
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isMobile = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
 
   const clamp=(v,a,b)=>v<a?a:v>b?b:v;
   const ease =t=>t*t*(3-2*t);
