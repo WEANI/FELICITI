@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<meta name="robots" content="noindex, nofollow">
+<title>Espace client — FELICITI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/espace.css?v=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<div id="page-loading" style="padding:60px 44px;font-size:14px;color:var(--taupe)">Chargement de votre espace…</div>
+
+<div class="app" id="app" hidden>
+
+  <!-- ===== BARRE LATÉRALE ===== -->
+  <nav class="nav">
+    <div class="nav-tete"><span class="mark">FELICIT<span class="i-last">I</span></span></div>
+
+    <div class="nav-couple">
+      <div class="nom" id="nav-nom">—</div>
+      <div class="date" id="nav-date">—</div>
+    </div>
+
+    <div class="nav-liste">
+      <div class="nav-groupe">Mon projet</div>
+      <button class="item" data-vue="v-apercu" aria-current="true"><span class="lib">Vue d'ensemble</span></button>
+      <button class="item" data-vue="v-histoire"><span class="lib">Mon histoire</span></button>
+      <button class="item" data-vue="v-scenarios"><span class="lib">Mes scénarios</span></button>
+      <button class="item" data-vue="v-creation"><span class="lib">Ma création</span></button>
+
+      <div class="nav-groupe">Mes invités</div>
+      <button class="item" data-vue="v-invites"><span class="lib">Réponses</span><span class="cpt" id="nav-invites-cpt"></span></button>
+
+      <div class="nav-groupe">Administratif</div>
+      <button class="item" data-vue="v-dossier"><span class="lib">Mon dossier</span></button>
+      <button class="item" data-vue="v-messages"><span class="lib">Messages</span></button>
+    </div>
+
+    <div class="nav-pied">
+      Une question ?<br><a href="mailto:commande@feliciti.fr">commande@feliciti.fr</a>
+      <div style="margin-top:14px"><button type="button" id="signout-btn" style="font-size:12px;color:var(--taupe);text-decoration:underline">Se déconnecter</button></div>
+    </div>
+  </nav>
+
+  <!-- ===== VOLET PRINCIPAL ===== -->
+  <div class="main">
+
+    <!-- ---------- VUE D'ENSEMBLE ---------- -->
+    <section class="vue on" id="v-apercu">
+      <header class="bandeau">
+        <div class="fil-ariane">Votre projet</div>
+        <h1>Vue d'ensemble</h1>
+        <div class="onglets">
+          <button class="onglet" aria-selected="true" data-sous="a-etat">Où en est votre projet</button>
+          <button class="onglet" aria-selected="false" data-sous="a-faire">À vous de jouer</button>
+        </div>
+      </header>
+      <div class="corps">
+
+        <div class="sous on" id="a-etat">
+          <div class="carte">
+            <div class="eyebrow">Étape en cours</div>
+            <h2 id="etat-titre">—</h2>
+            <p class="note" id="etat-note">—</p>
+            <div class="jalons" id="jalons"></div>
+          </div>
+
+          <div class="carte">
+            <div class="eyebrow">Vos invités</div>
+            <div class="stats" id="apercu-stats" style="margin-top:4px"></div>
+            <button class="lien" data-aller="v-invites">Voir le détail des réponses</button>
+          </div>
+        </div>
+
+        <div class="sous" id="a-faire">
+          <div id="afaire-list"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ---------- MON HISTOIRE ---------- -->
+    <section class="vue" id="v-histoire">
+      <header class="bandeau">
+        <div class="fil-ariane">Votre projet</div>
+        <h1>Mon histoire</h1>
+        <div class="onglets">
+          <button class="onglet" aria-selected="true" data-sous="h-quest">Questionnaire</button>
+          <button class="onglet" aria-selected="false" data-sous="h-voix">Note vocale</button>
+          <button class="onglet" aria-selected="false" data-sous="h-photos">Photos</button>
+        </div>
+      </header>
+      <div class="corps">
+
+        <div class="sous on" id="h-quest">
+          <div class="carte" id="quest-carte">
+            <p class="vide">Chargement…</p>
+          </div>
+        </div>
+
+        <div class="sous" id="h-voix">
+          <div class="carte">
+            <div class="eyebrow">Note vocale</div>
+            <h2>Votre note vocale</h2>
+            <p class="note">Elle nous arrive directement par WhatsApp — c'est là que vous la retrouverez, pas ici. C'est elle qui porte le récit : quand elle raconte autre chose que le questionnaire, c'est elle que nous suivons pour écrire votre scénario.</p>
+          </div>
+        </div>
+
+        <div class="sous" id="h-photos">
+          <div class="carte">
+            <div class="eyebrow" id="photos-eyebrow">Vos photos</div>
+            <h2>Vos photos</h2>
+            <p class="note">Elles nourrissent les sections sous le film. Elles n'apparaissent jamais dans la vidéo elle-même.</p>
+            <div class="photos-grid" id="photos-grid"></div>
+            <p class="note" style="margin-top:16px;font-size:13px;color:var(--taupe)">Besoin d'en ajouter ou d'en remplacer une ? Écrivez-nous dans <button class="lien" data-aller="v-messages" style="font-size:13px">Messages</button>.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ---------- SCÉNARIOS ---------- -->
+    <section class="vue" id="v-scenarios">
+      <header class="bandeau">
+        <div class="fil-ariane">Votre projet</div>
+        <h1>Mes scénarios</h1>
+        <div class="onglets">
+          <button class="onglet" aria-selected="true" data-sous="s-prop">Les propositions</button>
+          <button class="onglet" aria-selected="false" data-sous="s-hist">Mes retours</button>
+        </div>
+      </header>
+      <div class="corps">
+
+        <div class="sous on" id="s-prop">
+          <p class="note" style="margin-bottom:20px">Chaque direction écrite à partir de votre histoire tient sur un fil conducteur — la matière qui traverse le film et devient le carton d'invitation.</p>
+          <div id="scenarios-list"><p class="vide">Chargement…</p></div>
+        </div>
+
+        <div class="sous" id="s-hist">
+          <div id="scenarios-retours"><p class="vide">Chargement…</p></div>
+          <div class="carte">
+            <h3>Écrire à propos d'un scénario</h3>
+            <textarea class="champ" id="scenario-msg-txt" style="width:100%;min-height:90px;margin-top:10px;resize:vertical" placeholder="Votre remarque ou votre demande d'ajustement"></textarea>
+            <div style="margin-top:14px"><button class="btn" id="scenario-msg-send">Envoyer</button></div>
+            <div id="scenario-msg-status"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ---------- MA CRÉATION ---------- -->
+    <section class="vue" id="v-creation">
+      <header class="bandeau">
+        <div class="fil-ariane">Votre projet</div>
+        <h1>Ma création</h1>
+        <div class="onglets">
+          <button class="onglet" aria-selected="true" data-sous="c-fp">Mon faire-part</button>
+          <button class="onglet" aria-selected="false" data-sous="c-relec">Relecture</button>
+        </div>
+      </header>
+      <div class="corps">
+
+        <div class="sous on" id="c-fp">
+          <div class="carte" id="creation-carte"><p class="vide">Chargement…</p></div>
+        </div>
+
+        <div class="sous" id="c-relec">
+          <div class="carte" id="relecture-carte"><p class="vide">Chargement…</p></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ---------- INVITÉS / RSVP ---------- -->
+    <section class="vue" id="v-invites">
+      <header class="bandeau">
+        <div class="fil-ariane">Vos invités</div>
+        <h1>Réponses de vos invités</h1>
+        <div class="onglets">
+          <button class="onglet" aria-selected="true" data-sous="i-liste">Toutes les réponses</button>
+          <button class="onglet" aria-selected="false" data-sous="i-tables">À la table</button>
+          <button class="onglet" aria-selected="false" data-sous="i-doubl">Doublons</button>
+        </div>
+      </header>
+      <div class="corps">
+
+        <div class="sous on" id="i-liste">
+          <div class="stats" id="invites-stats"></div>
+
+          <div class="outils">
+            <input class="champ" type="search" id="inv-search" placeholder="Chercher un nom">
+            <select class="champ" id="inv-filter">
+              <option value="">Toutes les réponses</option>
+              <option value="present">Présents</option>
+              <option value="absent">Absents</option>
+              <option value="regime">Avec régime particulier</option>
+            </select>
+            <button class="btn mince" id="inv-export">Exporter en CSV</button>
+          </div>
+
+          <div id="inv-table-wrap">
+            <table class="tbl">
+              <thead><tr><th>Invité</th><th>Réponse</th><th>Convives</th><th>Régime</th><th>Reçue le</th></tr></thead>
+              <tbody id="inv-tbody"></tbody>
+            </table>
+          </div>
+          <p class="vide" id="inv-empty" hidden>Aucune réponse pour l'instant.</p>
+        </div>
+
+        <div class="sous" id="i-tables">
+          <div class="carte">
+            <div class="eyebrow">Vue traiteur</div>
+            <h2>Ce qu'il faut prévoir</h2>
+            <div id="traiteur-kv"></div>
+          </div>
+        </div>
+
+        <div class="sous" id="i-doubl">
+          <div id="doublons-wrap"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ---------- DOSSIER ---------- -->
+    <section class="vue" id="v-dossier">
+      <header class="bandeau">
+        <div class="fil-ariane">Administratif</div>
+        <h1>Mon dossier</h1>
+        <div class="onglets">
+          <button class="onglet" aria-selected="true" data-sous="d-cmd">Commande</button>
+          <button class="onglet" aria-selected="false" data-sous="d-coord">Coordonnées</button>
+        </div>
+      </header>
+      <div class="corps">
+
+        <div class="sous on" id="d-cmd">
+          <div class="carte" id="dossier-carte"><p class="vide">Chargement…</p></div>
+        </div>
+
+        <div class="sous" id="d-coord">
+          <div class="carte" id="coord-carte"><p class="vide">Chargement…</p></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ---------- MESSAGES ---------- -->
+    <section class="vue" id="v-messages">
+      <header class="bandeau">
+        <div class="fil-ariane">Administratif</div>
+        <h1>Messages</h1>
+        <div class="onglets">
+          <button class="onglet" aria-selected="true" data-sous="m-fil">Notre échange</button>
+        </div>
+      </header>
+      <div class="corps">
+        <div class="sous on" id="m-fil">
+          <div id="messages-list"></div>
+          <div class="carte">
+            <h3>Écrire à FELICITI</h3>
+            <textarea class="champ" id="msg-txt" style="width:100%;min-height:96px;margin-top:10px;resize:vertical" placeholder="Votre message"></textarea>
+            <div style="margin-top:14px"><button class="btn" id="msg-send">Envoyer</button></div>
+            <div id="msg-status"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<p class="vide" id="page-notfound" hidden style="padding:60px 44px">Impossible de charger votre espace pour l'instant.</p>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>window.ESPACE_BASE = './';</script>
+<script src="js/client-shared.js?v=1"></script>
+<script>
+(function () {
+  var WORKFLOW_LABELS = {
+    nouveau: 'Nouvelle commande', onboarding_envoye: 'Questionnaire à remplir',
+    questionnaire_recu: 'Questionnaire reçu', en_creation: 'En création',
+    a_valider: 'À valider', video_livree: 'Vidéo livrée', termine: 'Terminée',
+    annulee: 'Annulée', devis: 'Devis', en_cours: 'En cours', livree: 'Livrée'
+  };
+  var PAYMENT_LABELS = { en_attente: 'En attente', paye: 'Payé', echoue: 'Échoué', rembourse: 'Remboursé' };
+  var RSVP_LABELS = { en_attente: 'En attente', present: 'Présent', absent: 'Absent' };
+
+  function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+  function eur(v) { return (v || 0).toLocaleString('fr-FR') + ' €'; }
+  function fmtDate(s) { return s ? new Date(s).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' }) : '—'; }
+  function fmtDateShort(s) { return s ? new Date(s).toLocaleDateString('fr-FR', { day:'numeric', month:'short' }) : '—'; }
+  function humanKey(k) { var s = k.replace(/_/g, ' '); return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  var sb, coupleId, primaryCommande = null, allInvites = [], allScenarios = [], allMessages = [], questionnaire = null, couple = null;
+
+  /* ---------- Navigation (identique à la maquette) ---------- */
+  var items = [].slice.call(document.querySelectorAll('.item[data-vue]'));
+  var vues = [].slice.call(document.querySelectorAll('.vue'));
+  function aller(id) {
+    items.forEach(function (i) { i.setAttribute('aria-current', String(i.dataset.vue === id)); });
+    vues.forEach(function (v) { v.classList.toggle('on', v.id === id); });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  items.forEach(function (i) { i.addEventListener('click', function () { aller(i.dataset.vue); }); });
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-aller]');
+    if (b) aller(b.dataset.aller);
+  });
+  document.querySelectorAll('.onglet').forEach(function (o) {
+    o.addEventListener('click', function () {
+      var vue = o.closest('.vue');
+      vue.querySelectorAll('.onglet').forEach(function (x) { x.setAttribute('aria-selected', String(x === o)); });
+      vue.querySelectorAll('.sous').forEach(function (s) { s.classList.toggle('on', s.id === o.dataset.sous); });
+    });
+  });
+  document.getElementById('signout-btn').addEventListener('click', function () { FeliClient.signOut(); });
+
+  /* ---------- Chargement ---------- */
+  FeliClient.requireSession().then(function (auth) {
+    if (!auth) return;
+    sb = FeliClient.sb;
+    coupleId = auth.coupleId;
+
+    Promise.all([
+      sb.from('couples').select('*').eq('id', coupleId).maybeSingle(),
+      sb.from('commandes').select('*').eq('couple_id', coupleId).order('created_at', { ascending: false }),
+      sb.from('questionnaires').select('*').eq('couple_id', coupleId).order('created_at', { ascending: false }),
+      sb.from('invites').select('*').eq('couple_id', coupleId).order('created_at', { ascending: false }),
+      sb.from('messages').select('*').eq('couple_id', coupleId).order('created_at', { ascending: true })
+    ]).then(function (results) {
+      couple = results[0].data;
+      var commandes = results[1].data || [];
+      questionnaire = (results[2].data || [])[0] || null;
+      allInvites = results[3].data || [];
+      allMessages = results[4].data || [];
+      primaryCommande = commandes[0] || null;
+
+      if (!couple) {
+        document.getElementById('page-loading').hidden = true;
+        document.getElementById('page-notfound').hidden = false;
+        return;
+      }
+
+      var extra = primaryCommande
+        ? Promise.all([
+            sb.from('scenarios').select('*').eq('commande_id', primaryCommande.id).order('ordre', { ascending: true }),
+            sb.from('production_stages').select('*').eq('commande_id', primaryCommande.id).maybeSingle()
+          ])
+        : Promise.resolve([{ data: [] }, { data: null }]);
+
+      extra.then(function (r2) {
+        allScenarios = r2[0].data || [];
+
+        renderNav();
+        renderApercu();
+        renderHistoire();
+        renderScenarios();
+        renderCreation();
+        renderInvites();
+        renderDossier();
+        renderMessages();
+
+        document.getElementById('page-loading').hidden = true;
+        document.getElementById('app').hidden = false;
+      });
+    });
+  });
+
+  /* ---------- Nav / en-tête ---------- */
+  function renderNav() {
+    document.getElementById('nav-nom').textContent =
+      [couple.prenom_1, couple.prenom_2].filter(Boolean).join(' & ') || couple.email || 'Votre espace';
+    var dateAff = couple.date_mariage || (questionnaire && questionnaire.data && questionnaire.data.date);
+    document.getElementById('nav-date').textContent = couple.date_mariage ? fmtDate(couple.date_mariage) : (dateAff || '—');
+    var nbReponses = allInvites.filter(function (i) { return !i.ecarte; }).length;
+    document.getElementById('nav-invites-cpt').textContent = nbReponses || '';
+  }
+
+  /* ---------- Vue d'ensemble ---------- */
+  function renderApercu() {
+    var etatTitre = document.getElementById('etat-titre');
+    var etatNote = document.getElementById('etat-note');
+    if (!primaryCommande) {
+      etatTitre.textContent = 'Bienvenue';
+      etatNote.textContent = 'Votre espace est prêt. Les informations de votre projet apparaîtront ici dès que votre commande sera enregistrée.';
+    } else {
+      etatTitre.textContent = WORKFLOW_LABELS[primaryCommande.statut] || primaryCommande.statut;
+      if (primaryCommande.mise_en_ligne_at) {
+        etatNote.textContent = 'Livré le ' + fmtDate(primaryCommande.mise_en_ligne_at) + '. Les réponses de vos invités arrivent au fur et à mesure — vous les retrouvez dans « Réponses ».';
+      } else {
+        etatNote.textContent = 'Votre création est en cours. Nous vous tenons informés à chaque étape — retrouvez le détail dans « Ma création ».';
+      }
+    }
+
+    var scenarioRetenu = allScenarios.filter(function (s) { return s.statut === 'retenu'; })[0] || null;
+    var jalonsData = [
+      { label: 'Commande', date: primaryCommande ? primaryCommande.created_at : null, done: !!primaryCommande },
+      { label: 'Votre histoire', date: questionnaire ? questionnaire.created_at : null, done: !!questionnaire },
+      { label: 'Scénario retenu', date: scenarioRetenu ? scenarioRetenu.updated_at : null, done: !!scenarioRetenu },
+      { label: 'Relecture', date: primaryCommande ? primaryCommande.relecture_validee_at : null, done: !!(primaryCommande && primaryCommande.relecture_validee_at) },
+      { label: 'En ligne', date: primaryCommande ? primaryCommande.mise_en_ligne_at : null, done: !!(primaryCommande && primaryCommande.mise_en_ligne_at) },
+      { label: 'Le jour J', date: couple.date_mariage, done: couple.date_mariage ? (new Date(couple.date_mariage) < new Date()) : false }
+    ];
+    var firstNotDone = -1;
+    for (var i = 1; i <= 4; i++) { if (!jalonsData[i].done) { firstNotDone = i; break; } }
+    document.getElementById('jalons').innerHTML = jalonsData.map(function (j, idx) {
+      var cls = j.done ? 'fait' : (idx === firstNotDone ? 'encours' : 'futur');
+      return '<div class="jalon ' + cls + '"><div class="q">' + esc(fmtDateShort(j.date)) + '</div><div class="l">' + esc(j.label) + '</div></div>';
+    }).join('');
+
+    var reponses = allInvites.filter(function (i) { return !i.ecarte; });
+    var presents = reponses.filter(function (i) { return i.statut === 'present'; });
+    var absents = reponses.filter(function (i) { return i.statut === 'absent'; });
+    var convives = presents.reduce(function (n, i) { return n + 1 + (i.accompagnants || 0); }, 0);
+    document.getElementById('apercu-stats').innerHTML =
+      '<div class="stat"><div class="n">' + reponses.length + '</div><div class="l">Réponses</div></div>' +
+      '<div class="stat"><div class="n bz">' + presents.length + '</div><div class="l">Présents</div></div>' +
+      '<div class="stat"><div class="n">' + absents.length + '</div><div class="l">Absents</div></div>' +
+      '<div class="stat"><div class="n">' + convives + '</div><div class="l">Convives</div></div>';
+
+    var todos = [];
+    var avecRegime = presents.filter(function (i) { return i.allergies || i.menu; });
+    if (avecRegime.length) {
+      todos.push('<div class="carte"><div class="todo"><div class="quand">À vérifier</div><div class="quoi">Régimes alimentaires signalés</div>' +
+        '<p class="note">' + avecRegime.length + ' invité(s) ont signalé une allergie ou un régime particulier.</p>' +
+        '<div style="margin-top:16px"><button class="btn" data-aller="v-invites">Voir les réponses</button></div></div></div>');
+    }
+    if (primaryCommande && (primaryCommande.video_url || primaryCommande.access_code)) {
+      todos.push('<div class="carte"><div class="todo"><div class="quand">Quand vous voulez</div><div class="quoi">Relancer les silencieux</div>' +
+        '<p class="note">Votre lien et votre code d\'accès sont prêts à renvoyer. Nous ne savons pas qui n\'a pas répondu — c\'est vous qui tenez la liste.</p>' +
+        '<div style="margin-top:16px"><button class="btn mince" data-aller="v-creation">Retrouver le lien et le code</button></div></div></div>');
+    }
+    document.getElementById('afaire-list').innerHTML = todos.length ? todos.join('') : '<div class="carte"><p class="vide">Rien de particulier pour l\'instant — tout est entre nos mains.</p></div>';
+  }
+
+  /* ---------- Mon histoire ---------- */
+  function renderHistoire() {
+    var qCarte = document.getElementById('quest-carte');
+    if (!questionnaire) {
+      qCarte.innerHTML = '<div class="eyebrow">Questionnaire</div><h2>Vos réponses</h2><p class="vide">Nous n\'avons pas encore reçu vos réponses.</p>';
+    } else {
+      var dl = '';
+      Object.keys(questionnaire.data || {}).forEach(function (k) {
+        if (k === 'photos') return;
+        var v = questionnaire.data[k];
+        if (v === '' || v == null) return;
+        dl += '<div class="kv"><div class="k">' + esc(humanKey(k)) + '</div><div class="v">' + esc(v) + '</div></div>';
+      });
+      qCarte.innerHTML =
+        '<div class="eyebrow">Reçu le ' + esc(fmtDate(questionnaire.created_at)) + '</div><h2>Vos réponses</h2>' + dl +
+        '<p class="note" style="margin-top:18px;font-size:13px;color:var(--taupe)">Une erreur, un ajustement à faire ? Écrivez-nous dans <button class="lien" data-aller="v-messages" style="font-size:13px">Messages</button>.</p>';
+    }
+
+    var grid = document.getElementById('photos-grid');
+    var photos = questionnaire && Array.isArray(questionnaire.data && questionnaire.data.photos) ? questionnaire.data.photos : [];
+    document.getElementById('photos-eyebrow').textContent = photos.length ? (photos.length + ' photo' + (photos.length > 1 ? 's' : '')) : 'Vos photos';
+    if (!photos.length) {
+      grid.innerHTML = '<p class="vide" style="grid-column:1/-1">Vous n\'avez pas encore ajouté de photos.</p>';
+    } else {
+      grid.innerHTML = '<p class="vide" style="grid-column:1/-1">Chargement…</p>';
+      sb.storage.from('medias').createSignedUrls(photos, 3600).then(function (res) {
+        var items = (res.data || []).filter(function (d) { return d.signedUrl; });
+        if (!items.length) { grid.innerHTML = '<p class="vide" style="grid-column:1/-1">Photos indisponibles pour l\'instant.</p>'; return; }
+        grid.innerHTML = items.map(function (d) {
+          return '<a class="photo-item" href="' + d.signedUrl + '" target="_blank" rel="noopener"><img src="' + d.signedUrl + '" alt="" loading="lazy"></a>';
+        }).join('');
+      });
+    }
+  }
+
+  /* ---------- Scénarios ---------- */
+  function renderScenarios() {
+    var wrap = document.getElementById('scenarios-list');
+    if (!allScenarios.length) {
+      wrap.innerHTML = '<div class="carte"><p class="vide">Vos scénarios sont en cours de rédaction — vous les retrouverez ici dès qu\'ils seront prêts.</p></div>';
+    } else {
+      wrap.innerHTML = allScenarios.map(function (s) {
+        var planche = Array.isArray(s.planche) ? s.planche : [];
+        var badge = s.statut === 'retenu' ? '<span class="pastille oui">Scénario retenu</span>'
+          : s.statut === 'rejete' ? '<span class="pastille non">Non retenu</span>'
+          : '<span class="pastille">En proposition</span>';
+        return '<div class="sc' + (s.statut === 'retenu' ? ' retenu' : '') + '">' +
+          '<h3>' + esc(s.titre) + '</h3>' +
+          (s.condition_texte ? '<p class="cond">' + esc(s.condition_texte) + '</p>' : '') +
+          (planche.length ? '<div class="planche">' + planche.map(function (c) { return '<div class="case">' + esc(c) + '</div>'; }).join('') + '</div>' : '') +
+          '<div class="sc-pied">' + badge + '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    var retours = document.getElementById('scenarios-retours');
+    var msgs = allMessages.filter(function (m) { return m.sujet === 'scenario'; });
+    retours.innerHTML = msgs.length
+      ? msgs.map(messageCardHtml).join('')
+      : '<div class="carte"><p class="vide">Aucun échange pour l\'instant.</p></div>';
+  }
+  function messageCardHtml(m) {
+    var qui = m.direction === 'in' ? 'Vous' : 'FELICITI';
+    return '<div class="carte"><div class="eyebrow">' + qui + ' — ' + esc(fmtDate(m.created_at)) + '</div><p class="note">' + esc(m.contenu || '') + '</p></div>';
+  }
+
+  /* ---------- Ma création ---------- */
+  function renderCreation() {
+    var el = document.getElementById('creation-carte');
+    if (!primaryCommande || (!primaryCommande.video_url && !primaryCommande.access_code)) {
+      el.innerHTML = '<div class="eyebrow">Pas encore en ligne</div><h2>Votre création arrive</h2><p class="note">Vous recevrez un e-mail dès que votre faire-part sera prêt à être partagé.</p>';
+    } else {
+      var codeBloc = '<div class="code-bloc" style="margin-top:22px">';
+      if (primaryCommande.video_url) {
+        codeBloc += '<div><div class="eyebrow">Adresse</div><div class="mono-url" id="creation-url">' + esc(primaryCommande.video_url) + '</div></div>';
+      }
+      if (primaryCommande.access_code) {
+        codeBloc += '<div><div class="eyebrow">Code d\'accès</div><div class="code-val" id="creation-code">' + esc(primaryCommande.access_code) + '</div></div>';
+      }
+      codeBloc += '</div>';
+      el.innerHTML =
+        '<div class="eyebrow">En ligne' + (primaryCommande.mise_en_ligne_at ? ' depuis le ' + esc(fmtDate(primaryCommande.mise_en_ligne_at)) : '') + '</div>' +
+        '<h2>Le lien à transmettre</h2>' +
+        '<p class="note">Vos invités ouvrent le lien' + (primaryCommande.access_code ? ', saisissent le code,' : '') + ' puis découvrent le film.</p>' +
+        codeBloc +
+        '<div style="margin-top:22px;display:flex;gap:14px;flex-wrap:wrap">' +
+          '<button class="btn plein" id="copy-creation">Copier le lien' + (primaryCommande.access_code ? ' et le code' : '') + '</button>' +
+          (primaryCommande.video_url ? '<a class="btn mince" href="' + esc(primaryCommande.video_url) + '" target="_blank" rel="noopener">Voir mon faire-part</a>' : '') +
+        '</div>';
+      var copyBtn = document.getElementById('copy-creation');
+      if (copyBtn) {
+        copyBtn.addEventListener('click', function () {
+          var text = [primaryCommande.video_url, primaryCommande.access_code ? ('Code : ' + primaryCommande.access_code) : ''].filter(Boolean).join(' — ');
+          navigator.clipboard.writeText(text).then(function () {
+            copyBtn.textContent = 'Copié ✓';
+            setTimeout(function () { copyBtn.textContent = 'Copier le lien' + (primaryCommande.access_code ? ' et le code' : ''); }, 1800);
+          });
+        });
+      }
+    }
+
+    var relEl = document.getElementById('relecture-carte');
+    if (primaryCommande && primaryCommande.relecture_validee_at) {
+      relEl.innerHTML = '<div class="eyebrow">Validée le ' + esc(fmtDate(primaryCommande.relecture_validee_at)) + '</div><h3>Votre relecture</h3><p class="note">Vos corrections ont bien été prises en compte.</p>';
+    } else {
+      relEl.innerHTML = '<p class="vide">Aucune relecture pour l\'instant — elle vous sera soumise avant la mise en ligne.</p>';
+    }
+  }
+
+  /* ---------- Invités / RSVP ---------- */
+  function renderInvites() {
+    function actifs() { return allInvites.filter(function (i) { return !i.ecarte; }); }
+
+    function computeStats(list) {
+      var presents = list.filter(function (i) { return i.statut === 'present'; });
+      var absents = list.filter(function (i) { return i.statut === 'absent'; });
+      var convives = presents.reduce(function (n, i) { return n + 1 + (i.accompagnants || 0); }, 0);
+      return { total: list.length, presents: presents.length, absents: absents.length, convives: convives };
+    }
+
+    function renderStats() {
+      var s = computeStats(actifs());
+      document.getElementById('invites-stats').innerHTML =
+        '<div class="stat"><div class="n">' + s.total + '</div><div class="l">Réponses</div></div>' +
+        '<div class="stat"><div class="n bz">' + s.presents + '</div><div class="l">Présents</div></div>' +
+        '<div class="stat"><div class="n">' + s.absents + '</div><div class="l">Absents</div></div>' +
+        '<div class="stat"><div class="n">' + s.convives + '</div><div class="l">Convives</div></div>';
+    }
+
+    function renderTable() {
+      var search = document.getElementById('inv-search').value.trim().toLowerCase();
+      var filter = document.getElementById('inv-filter').value;
+      var rows = actifs().filter(function (i) {
+        if (search && (i.nom || '').toLowerCase().indexOf(search) === -1) return false;
+        if (filter === 'present' && i.statut !== 'present') return false;
+        if (filter === 'absent' && i.statut !== 'absent') return false;
+        if (filter === 'regime' && !(i.allergies || i.menu)) return false;
+        return true;
+      });
+      document.getElementById('inv-table-wrap').hidden = !rows.length;
+      document.getElementById('inv-empty').hidden = !!rows.length;
+      document.getElementById('inv-tbody').innerHTML = rows.map(function (i) {
+        var badge = i.statut === 'present' ? '<span class="pastille oui">Présent</span>'
+          : i.statut === 'absent' ? '<span class="pastille non">Absent</span>'
+          : '<span class="pastille">En attente</span>';
+        var regime = [i.menu, i.allergies].filter(Boolean).join(' · ') || '—';
+        return '<tr><td>' + esc(i.nom || '—') + '</td><td>' + badge + '</td><td>' + (i.statut === 'present' ? (1 + (i.accompagnants || 0)) : '—') + '</td>' +
+          '<td class="sec">' + esc(regime) + '</td><td class="sec">' + esc(fmtDateShort(i.repondu_at || i.created_at)) + '</td></tr>';
+      }).join('');
+    }
+
+    function renderTraiteur() {
+      var s = computeStats(actifs().filter(function (i) { return i.statut === 'present'; }));
+      var avecAllergie = actifs().filter(function (i) { return i.statut === 'present' && i.allergies; });
+      var menus = {};
+      actifs().filter(function (i) { return i.statut === 'present' && i.menu; }).forEach(function (i) { menus[i.menu] = (menus[i.menu] || 0) + 1; });
+      var menusTxt = Object.keys(menus).length ? Object.keys(menus).map(function (m) { return m + ' (' + menus[m] + ')'; }).join(', ') : '—';
+      document.getElementById('traiteur-kv').innerHTML =
+        '<div class="kv"><div class="k">Convives présents</div><div class="v">' + s.convives + '</div></div>' +
+        '<div class="kv"><div class="k">Menus signalés</div><div class="v">' + esc(menusTxt) + '</div></div>' +
+        '<div class="kv"><div class="k">Allergies signalées</div><div class="v">' + (avecAllergie.length ? esc(avecAllergie.map(function (i) { return i.nom + ' — ' + i.allergies; }).join(' · ')) : '—') + '</div></div>';
+    }
+
+    function renderDoublons() {
+      var groups = {};
+      actifs().forEach(function (i) {
+        var key = (i.nom || '').trim().toLowerCase();
+        if (!key) return;
+        (groups[key] = groups[key] || []).push(i);
+      });
+      var doublons = Object.keys(groups).map(function (k) { return groups[k]; }).filter(function (g) { return g.length > 1; });
+      var wrap = document.getElementById('doublons-wrap');
+      if (!doublons.length) {
+        wrap.innerHTML = '<p class="vide">Aucun doublon détecté.</p>';
+        return;
+      }
+      var rows = doublons.reduce(function (acc, g) { return acc.concat(g); }, []);
+      wrap.innerHTML =
+        '<div class="avert"><strong>Certaines réponses portent le même nom.</strong> À vous de décider laquelle compte — nous n\'écartons rien sans vous.</div>' +
+        '<table class="tbl"><thead><tr><th>Invité</th><th>Réponse</th><th>Convives</th><th>Reçue le</th><th></th></tr></thead><tbody>' +
+        rows.map(function (i) {
+          var badge = i.statut === 'present' ? '<span class="pastille oui">Présent</span>' : i.statut === 'absent' ? '<span class="pastille non">Absent</span>' : '<span class="pastille">En attente</span>';
+          return '<tr class="doublon" data-id="' + i.id + '"><td>' + esc(i.nom || '—') + '</td><td>' + badge + '</td><td>' + (1 + (i.accompagnants || 0)) + '</td>' +
+            '<td class="sec">' + esc(fmtDateShort(i.repondu_at || i.created_at)) + '</td><td><button class="lien ecarter-btn" data-id="' + i.id + '">Écarter</button></td></tr>';
+        }).join('') + '</tbody></table>';
+
+      wrap.querySelectorAll('.ecarter-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = btn.getAttribute('data-id');
+          btn.disabled = true;
+          sb.rpc('client_ecarter_invite', { p_invite_id: id, p_ecarte: true }).then(function (res) {
+            if (res.error) { alert('Échec : ' + res.error.message); btn.disabled = false; return; }
+            var row = allInvites.filter(function (i) { return i.id === id; })[0];
+            if (row) row.ecarte = true;
+            renderInvitesAll();
+          });
+        });
+      });
+    }
+
+    function renderInvitesAll() {
+      renderStats(); renderTable(); renderTraiteur(); renderDoublons();
+    }
+
+    document.getElementById('inv-search').addEventListener('input', renderTable);
+    document.getElementById('inv-filter').addEventListener('change', renderTable);
+    document.getElementById('inv-export').addEventListener('click', function () {
+      var rows = [['Invité', 'Réponse', 'Convives', 'Menu', 'Allergies', 'Reçue le']];
+      actifs().forEach(function (i) {
+        rows.push([i.nom || '', RSVP_LABELS[i.statut] || i.statut, i.statut === 'present' ? (1 + (i.accompagnants || 0)) : '', i.menu || '', i.allergies || '', i.repondu_at || i.created_at || '']);
+      });
+      var csv = rows.map(function (r) { return r.map(function (v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
+      var blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a'); a.href = url; a.download = 'invites-felicit.csv'; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    });
+
+    renderInvitesAll();
+  }
+
+  /* ---------- Dossier ---------- */
+  function renderDossier() {
+    var cmdEl = document.getElementById('dossier-carte');
+    if (!primaryCommande) {
+      cmdEl.innerHTML = '<p class="vide">Aucune commande associée à votre espace pour l\'instant.</p>';
+    } else {
+      cmdEl.innerHTML =
+        '<div class="eyebrow">' + esc(primaryCommande.reference || primaryCommande.id.slice(0, 8)) + ' — ' + esc(fmtDate(primaryCommande.created_at)) + '</div>' +
+        '<h2>Votre commande</h2>' +
+        '<div class="kv"><div class="k">Montant</div><div class="v">' + eur(primaryCommande.montant_total) + ' — ' + esc(PAYMENT_LABELS[primaryCommande.payment_statut] || primaryCommande.payment_statut) + '</div></div>' +
+        (primaryCommande.mise_en_ligne_at ? '<div class="kv"><div class="k">Mise en ligne</div><div class="v">' + esc(fmtDate(primaryCommande.mise_en_ligne_at)) + '</div></div>' : '') +
+        '<div style="margin-top:22px"><a class="btn mince" href="mailto:commande@feliciti.fr?subject=' + encodeURIComponent('Facture — ' + (primaryCommande.reference || '')) + '">Demander ma facture</a></div>';
+    }
+
+    var coordEl = document.getElementById('coord-carte');
+    coordEl.innerHTML =
+      '<h2>Vos coordonnées</h2>' +
+      '<div class="kv"><div class="k">Les mariés</div><div class="v">' + esc([couple.prenom_1, couple.prenom_2].filter(Boolean).join(' & ') || '—') + '</div></div>' +
+      '<div class="kv"><div class="k">E-mail</div><div class="v">' + esc(couple.email || '—') + '</div></div>' +
+      '<div class="kv"><div class="k">WhatsApp</div><div class="v">' + esc(couple.whatsapp || '—') + '</div></div>' +
+      '<div style="margin-top:22px"><button class="btn mince" id="coord-modifier">Demander une modification</button></div>';
+    document.getElementById('coord-modifier').addEventListener('click', function () {
+      aller('v-messages');
+      var txt = document.getElementById('msg-txt');
+      if (!txt.value) txt.value = 'Bonjour, je souhaite mettre à jour mes coordonnées : ';
+      txt.focus();
+    });
+  }
+
+  /* ---------- Messages ---------- */
+  function sendMessage(sujet, textareaEl, statusEl) {
+    var contenu = textareaEl.value.trim();
+    if (!contenu) return;
+    var payload = { couple_id: coupleId, direction: 'in', type: 'text', sujet: sujet, contenu: contenu };
+    if (primaryCommande) payload.commande_id = primaryCommande.id;
+    statusEl.innerHTML = '<p class="auth-msg">Envoi…</p>';
+    sb.from('messages').insert(payload).then(function (res) {
+      if (res.error) { statusEl.innerHTML = '<p class="auth-msg error">Échec de l\'envoi, réessayez.</p>'; return; }
+      textareaEl.value = '';
+      statusEl.innerHTML = '<p class="auth-msg ok">Message envoyé.</p>';
+      allMessages.push(payload);
+      if (sujet === 'scenario') renderScenarios(); else renderMessages();
+    });
+  }
+
+  function renderMessages() {
+    var msgs = allMessages.filter(function (m) { return m.sujet !== 'scenario'; });
+    document.getElementById('messages-list').innerHTML = msgs.length
+      ? msgs.map(messageCardHtml).join('')
+      : '<div class="carte"><p class="vide">Aucun échange pour l\'instant — écrivez-nous ci-dessous si besoin.</p></div>';
+  }
+
+  /* Boutons d'envoi : écouteurs posés une seule fois (les boutons existent
+     dans le HTML statique, indépendamment des données) — sinon renderXxx()
+     rappelé après un envoi réussi ré-attacherait un écouteur à chaque fois
+     et dupliquerait les envois suivants. */
+  document.getElementById('msg-send').addEventListener('click', function () {
+    sendMessage('general', document.getElementById('msg-txt'), document.getElementById('msg-status'));
+  });
+  document.getElementById('scenario-msg-send').addEventListener('click', function () {
+    sendMessage('scenario', document.getElementById('scenario-msg-txt'), document.getElementById('scenario-msg-status'));
+  });
+})();
+</script>
+</body>
+</html>

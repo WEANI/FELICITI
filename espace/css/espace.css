@@ -1,0 +1,265 @@
+/* ==========================================================================
+   FELICITI — Espace client. Repris quasi tel quel de la maquette fournie
+   (feliciti-espace-client-sidebar.html) : mêmes tokens, mêmes classes.
+   Ajouts en bas de fichier : pages de connexion + états vides honnêtes
+   (scénarios/invités/création pas encore renseignés côté admin).
+   ========================================================================== */
+:root{
+  --lin:#E9E3D8;
+  --creme:#F6F3ED;
+  --blanc:#FCFAF6;
+  --taupe:#635A4E;
+  --taupe-clair:#CFC6B9;
+  --encre:#26221E;
+  --encre-doux:#332E28;
+  --bronze:#6B4E2E;
+  --bronze-pale:#E3D8C8;
+  --display:"Cormorant Garamond",Georgia,serif;
+  --corps:"Jost",-apple-system,"Segoe UI",sans-serif;
+  --nav:250px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--lin);color:var(--encre);
+  font-family:var(--corps);font-weight:400;font-size:15px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;text-align:left}
+input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--bronze);outline-offset:3px}
+
+/* ---------- marque ---------- */
+.mark{
+  font-family:var(--display);font-weight:400;font-size:19px;
+  letter-spacing:.34em;text-transform:uppercase;line-height:1;display:inline-block;
+}
+.mark .i-last{position:relative;display:inline-block}
+.mark .i-last::after{
+  content:"";position:absolute;top:-.30em;left:50%;
+  width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--bronze);
+}
+
+/* ---------- charpente ---------- */
+.app{display:flex;min-height:100vh}
+
+/* ---------- barre latérale ---------- */
+.nav{
+  width:var(--nav);flex:0 0 var(--nav);
+  background:var(--creme);border-right:1px solid var(--taupe-clair);
+  position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;
+  padding:30px 0 22px;
+}
+.nav-tete{padding:0 26px 30px}
+.nav-couple{
+  padding:0 26px 24px;margin-bottom:8px;
+  border-bottom:1px solid var(--taupe-clair);
+}
+.nav-couple .nom{font-family:var(--display);font-size:21px;line-height:1.2}
+.nav-couple .date{font-size:12px;color:var(--taupe);letter-spacing:.08em;margin-top:4px}
+
+.nav-liste{flex:1;padding-top:18px}
+.nav-groupe{
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--taupe);
+  padding:16px 26px 8px;
+}
+.item{
+  width:100%;display:flex;align-items:center;gap:10px;
+  padding:9px 26px;font-size:14px;color:var(--encre-doux);
+  border-left:2px solid transparent;transition:color .18s,background .18s,border-color .18s;
+}
+.item:hover{color:var(--encre);background:rgba(227,216,200,.35)}
+.item[aria-current="true"]{
+  color:var(--encre);border-left-color:var(--bronze);
+  background:rgba(227,216,200,.5);
+}
+.item .lib{flex:1}
+.item .pt{width:6px;height:6px;border-radius:50%;background:var(--bronze);flex:0 0 6px}
+.item .cpt{font-size:12px;color:var(--taupe);letter-spacing:.06em}
+
+.nav-pied{padding:18px 26px 0;border-top:1px solid var(--taupe-clair);font-size:12px;color:var(--taupe)}
+.nav-pied a{color:var(--bronze);text-decoration:none;border-bottom:1px solid var(--bronze-pale)}
+.nav-pied a:hover{border-color:var(--bronze)}
+
+/* ---------- volet principal ---------- */
+.main{flex:1;min-width:0}
+.bandeau{
+  background:var(--creme);border-bottom:1px solid var(--taupe-clair);
+  padding:26px 44px 0;position:sticky;top:0;z-index:10;
+}
+.fil-ariane{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--taupe);margin-bottom:10px}
+.bandeau h1{font-family:var(--display);font-weight:300;font-size:34px;line-height:1.15;margin-bottom:16px}
+.onglets{display:flex;gap:26px;overflow-x:auto}
+.onglet{
+  padding:10px 0 12px;font-size:13px;letter-spacing:.06em;color:var(--taupe);
+  border-bottom:1px solid transparent;white-space:nowrap;transition:color .18s,border-color .18s;
+}
+.onglet:hover{color:var(--encre-doux)}
+.onglet[aria-selected="true"]{color:var(--encre);border-bottom-color:var(--bronze)}
+
+.corps{padding:38px 44px 80px;max-width:940px}
+.vue{display:none}
+.vue.on{display:block}
+.sous{display:none}
+.sous.on{display:block}
+
+/* ---------- briques ---------- */
+.carte{background:var(--blanc);border:1px solid var(--taupe-clair);padding:26px 28px}
+.carte+.carte{margin-top:18px}
+.carte h2{font-family:var(--display);font-weight:400;font-size:23px;margin-bottom:6px}
+.carte h3{font-family:var(--display);font-weight:400;font-size:19px;margin-bottom:4px}
+.carte .note{color:var(--encre-doux);font-size:14px;max-width:56ch}
+.eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--taupe);margin-bottom:10px}
+
+.btn{
+  display:inline-block;border:1px solid var(--bronze);color:var(--bronze);
+  padding:9px 22px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  transition:background .2s,color .2s;
+}
+.btn:hover{background:var(--bronze);color:var(--creme)}
+.btn.plein{background:var(--bronze);color:var(--creme)}
+.btn.plein:hover{background:var(--encre);border-color:var(--encre)}
+.btn.mince{border-color:var(--taupe-clair);color:var(--encre-doux)}
+.btn.mince:hover{background:var(--taupe-clair);color:var(--encre)}
+.btn:disabled{opacity:.55;cursor:default;pointer-events:none}
+.lien{font-size:13px;color:var(--bronze);border-bottom:1px solid var(--bronze-pale);padding-bottom:1px;text-decoration:none}
+.lien:hover{border-color:var(--bronze)}
+
+/* étapes / jalons */
+.jalons{display:flex;flex-wrap:wrap;gap:0;margin-top:20px}
+.jalon{flex:1;min-width:118px;padding:14px 12px 12px;border-top:2px solid var(--taupe-clair)}
+.jalon.fait{border-top-color:var(--bronze)}
+.jalon.encours{border-top-color:var(--bronze)}
+.jalon .q{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--taupe)}
+.jalon .l{font-size:14px;margin-top:3px}
+.jalon.futur .l{color:var(--taupe)}
+
+/* à faire */
+.todo{border-left:2px solid var(--bronze);padding-left:20px;margin-bottom:6px}
+.todo .quoi{font-family:var(--display);font-size:24px;line-height:1.2;margin-bottom:6px}
+.todo .quand{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--bronze);margin-bottom:12px}
+
+/* stats RSVP */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--taupe-clair);border:1px solid var(--taupe-clair);margin-bottom:20px}
+.stat{background:var(--blanc);padding:20px 18px}
+.stat .n{font-family:var(--display);font-size:36px;line-height:1;font-weight:300}
+.stat .n.bz{color:var(--bronze)}
+.stat .l{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--taupe);margin-top:8px}
+
+/* barre outils */
+.outils{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.champ{
+  flex:1;min-width:170px;background:var(--blanc);border:1px solid var(--taupe-clair);
+  padding:9px 12px;font-size:14px;font-weight:300;
+}
+.champ::placeholder{color:var(--taupe)}
+select.champ{flex:0 0 auto;min-width:150px}
+
+/* table */
+.tbl{width:100%;border-collapse:collapse;background:var(--blanc);border:1px solid var(--taupe-clair)}
+.tbl th{
+  text-align:left;font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--taupe);font-weight:400;padding:12px 16px;border-bottom:1px solid var(--taupe-clair);
+}
+.tbl td{padding:13px 16px;border-bottom:1px solid rgba(207,198,185,.5);font-size:14px;vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover{background:var(--creme)}
+.tbl .sec{color:var(--encre-doux);font-size:13px}
+.pastille{
+  display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 10px;border:1px solid var(--taupe-clair);color:var(--encre-doux);
+}
+.pastille.oui{border-color:var(--bronze);color:var(--bronze)}
+.pastille.non{color:var(--taupe)}
+.doublon{background:rgba(227,216,200,.4)}
+.avert{
+  border:1px solid var(--bronze-pale);background:rgba(227,216,200,.34);
+  padding:13px 16px;font-size:13px;color:var(--encre-doux);margin-bottom:16px;
+}
+.avert strong{font-weight:500;color:var(--encre)}
+
+/* code d'accès */
+.code-bloc{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-end}
+.code-val{
+  font-family:var(--display);font-size:40px;letter-spacing:.22em;
+  color:var(--bronze);line-height:1;
+}
+.mono-url{
+  font-size:13px;color:var(--encre-doux);background:var(--creme);
+  border:1px solid var(--taupe-clair);padding:9px 12px;word-break:break-all;
+}
+
+/* scénarios */
+.sc{border:1px solid var(--taupe-clair);background:var(--blanc);padding:24px 26px}
+.sc+.sc{margin-top:16px}
+.sc.retenu{border-color:var(--bronze);background:rgba(227,216,200,.3)}
+.sc .cond{font-family:var(--display);font-style:italic;font-size:16px;color:var(--bronze);margin:2px 0 14px}
+.planche{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.case{
+  aspect-ratio:4/5;background:var(--creme);border:1px solid var(--taupe-clair);
+  padding:9px;display:flex;align-items:flex-end;font-size:11px;line-height:1.35;color:var(--encre-doux);
+}
+.sc-pied{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+
+/* listes clés/valeurs */
+.kv{border-top:1px solid var(--taupe-clair);padding:14px 0;display:flex;gap:20px;flex-wrap:wrap}
+.kv .k{flex:0 0 190px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--taupe);padding-top:3px}
+.kv .v{flex:1;min-width:200px;font-size:14px}
+
+.onde{display:flex;align-items:center;gap:2px;height:38px;margin:14px 0}
+.onde span{flex:1;background:var(--bronze-pale);min-width:2px}
+
+/* état vide honnête (pas de fausses données de démo) */
+.vide{padding:22px 0;color:var(--taupe);font-size:14px;font-style:italic}
+
+/* miniatures photo (questionnaire) */
+.photos-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px}
+.photo-item{aspect-ratio:4/5;overflow:hidden;border:1px solid var(--taupe-clair);background:var(--creme)}
+.photo-item img{width:100%;height:100%;object-fit:cover;display:block}
+
+@media (max-width:900px){
+  .app{flex-direction:column}
+  .nav{
+    width:100%;flex:none;height:auto;position:static;
+    border-right:none;border-bottom:1px solid var(--taupe-clair);padding:20px 0 0;
+  }
+  .nav-tete,.nav-couple{padding-left:20px;padding-right:20px}
+  .nav-couple{padding-bottom:16px}
+  .nav-liste{display:flex;overflow-x:auto;padding:0 12px}
+  .nav-groupe{display:none}
+  .item{border-left:none;border-bottom:2px solid transparent;padding:12px 14px;white-space:nowrap}
+  .item[aria-current="true"]{border-bottom-color:var(--bronze);background:none}
+  .nav-pied{display:none}
+  .bandeau{padding:20px 20px 0}
+  .bandeau h1{font-size:27px}
+  .corps{padding:26px 20px 60px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .planche{grid-template-columns:repeat(2,1fr)}
+  .photos-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ==========================================================================
+   Pages de connexion / mot de passe (nouveau — pas dans la maquette)
+   ========================================================================== */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.auth-box{width:100%;max-width:380px;background:var(--blanc);border:1px solid var(--taupe-clair);padding:38px 34px}
+.auth-mark{text-align:center;margin-bottom:6px}
+.auth-sub{text-align:center;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--taupe);margin-bottom:28px}
+.auth-field{margin-bottom:16px}
+.auth-field label{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--taupe);margin-bottom:6px}
+.auth-field input{width:100%;background:var(--creme);border:1px solid var(--taupe-clair);padding:11px 12px;font-size:14px}
+.auth-btn{
+  width:100%;background:var(--bronze);color:var(--creme);border:1px solid var(--bronze);
+  padding:12px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-align:center;
+  margin-top:6px;transition:background .2s;
+}
+.auth-btn:hover{background:var(--encre);border-color:var(--encre)}
+.auth-btn:disabled{opacity:.6;cursor:default}
+.auth-msg{font-size:13px;margin-top:14px;line-height:1.5}
+.auth-msg.error{color:#8B3A2E}
+.auth-msg.ok{color:var(--bronze)}
+.auth-foot{text-align:center;margin-top:22px;font-size:13px}
+.auth-foot a{color:var(--bronze);border-bottom:1px solid var(--bronze-pale);text-decoration:none}
+.auth-foot a:hover{border-color:var(--bronze)}

@@ -54,6 +54,28 @@
               <h2>Production</h2>
               <div class="admin-checklist" id="det-stages"></div>
             </div>
+
+            <div class="admin-section">
+              <h2>Espace client</h2>
+              <p id="ec-status" style="font-size:.82rem;color:var(--gris);margin:0 0 .8rem">—</p>
+              <button type="button" id="ec-activer-btn" class="admin-btn-sm">Activer l'accès</button>
+
+              <div class="admin-field" style="margin-top:1rem">
+                <label for="ec-video-url">Lien de la création</label>
+                <input type="text" id="ec-video-url" placeholder="https://…">
+              </div>
+              <div class="admin-field">
+                <label for="ec-access-code">Code d'accès</label>
+                <input type="text" id="ec-access-code" placeholder="ABCD26">
+              </div>
+              <button type="button" id="ec-save-btn" class="admin-btn-sm">Enregistrer le lien / code</button>
+
+              <div style="margin-top:1rem;display:flex;gap:.5rem;flex-wrap:wrap">
+                <button type="button" id="ec-relecture-btn" class="admin-btn-sm"></button>
+                <button type="button" id="ec-enligne-btn" class="admin-btn-sm"></button>
+              </div>
+              <div id="ec-msg" style="font-size:.8rem;margin-top:.5rem"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -100,7 +122,7 @@
           var sb = FeliAdmin.sb;
 
           Promise.all([
-            sb.from('commandes').select('id,statut,payment_statut,montant_total,notes,stripe_reference,created_at,couple_id,couples(*),commande_items(prix,quantite,prestations(nom,slug))').eq('id', id).maybeSingle(),
+            sb.from('commandes').select('id,statut,payment_statut,montant_total,notes,stripe_reference,created_at,couple_id,video_url,access_code,relecture_validee_at,mise_en_ligne_at,couples(*),commande_items(prix,quantite,prestations(nom,slug))').eq('id', id).maybeSingle(),
             sb.from('questionnaires').select('*').eq('commande_id', id).order('created_at', { ascending: false }),
             sb.from('messages').select('*').eq('commande_id', id).order('created_at', { ascending: true }),
             sb.from('production_stages').select('*').eq('commande_id', id).maybeSingle()
@@ -271,6 +293,89 @@
                 });
               });
             });
+
+            /* --- Espace client --- */
+            var ecStatus = document.getElementById('ec-status');
+            var ecActiverBtn = document.getElementById('ec-activer-btn');
+            var ecVideoUrl = document.getElementById('ec-video-url');
+            var ecAccessCode = document.getElementById('ec-access-code');
+            var ecMsg = document.getElementById('ec-msg');
+            var ecRelectureBtn = document.getElementById('ec-relecture-btn');
+            var ecEnLigneBtn = document.getElementById('ec-enligne-btn');
+
+            if (!cp) {
+              ecStatus.textContent = 'Aucun client lié à cette commande — impossible d\'activer un accès.';
+              ecActiverBtn.hidden = true;
+              ecVideoUrl.disabled = ecAccessCode.disabled = true;
+              document.getElementById('ec-save-btn').hidden = true;
+              ecRelectureBtn.hidden = ecEnLigneBtn.hidden = true;
+            } else {
+              ecStatus.textContent = cp.auth_user_id
+                ? 'Accès activé — ' + (cp.email || 'e-mail non renseigné')
+                : 'Accès pas encore activé' + (cp.email ? ' — enverra l\'invitation à ' + cp.email : ' — aucun e-mail sur cette fiche client');
+              ecActiverBtn.textContent = cp.auth_user_id ? 'Renvoyer l\'accès' : 'Activer l\'accès';
+              ecActiverBtn.disabled = !cp.email;
+              ecActiverBtn.addEventListener('click', function () {
+                ecActiverBtn.disabled = true;
+                ecMsg.textContent = 'Envoi…';
+                sb.auth.getSession().then(function (sres) {
+                  var token = sres.data && sres.data.session && sres.data.session.access_token;
+                  return fetch('https://wrpiggqshnoykqtmuprx.supabase.co/functions/v1/create-client-access', {
+                    method: 'POST',
+                    headers: {
+                      'apikey': 'sb_publishable_TT-qEm5ADIWQEE0e_qO2NQ_gx3pyZ1O',
+                      'Authorization': 'Bearer ' + token,
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ commande_id: id })
+                  });
+                }).then(function (res) {
+                  if (!res.ok) return res.text().then(function (t) { throw new Error(t); });
+                  return res.json();
+                }).then(function (data) {
+                  ecActiverBtn.disabled = false;
+                  if (data.skipped) { ecMsg.textContent = 'Non envoyé : ' + data.skipped; return; }
+                  ecMsg.textContent = data.renvoi ? 'Lien de réinitialisation renvoyé.' : 'Invitation envoyée.';
+                  ecActiverBtn.textContent = 'Renvoyer l\'accès';
+                }).catch(function (err) {
+                  ecActiverBtn.disabled = false;
+                  ecMsg.textContent = 'Échec : ' + err.message;
+                });
+              });
+
+              ecVideoUrl.value = commande.video_url || '';
+              ecAccessCode.value = commande.access_code || '';
+              document.getElementById('ec-save-btn').addEventListener('click', function () {
+                var btn = document.getElementById('ec-save-btn');
+                btn.disabled = true;
+                sb.from('commandes').update({
+                  video_url: ecVideoUrl.value.trim() || null,
+                  access_code: ecAccessCode.value.trim() || null
+                }).eq('id', id).then(function (res) {
+                  btn.disabled = false;
+                  ecMsg.textContent = res.error ? 'Échec : ' + res.error.message : 'Enregistré.';
+                });
+              });
+
+              function setupJalonBtn(btn, field, labelSet, labelClear) {
+                var val = commande[field];
+                btn.textContent = val ? labelClear : labelSet;
+                btn.addEventListener('click', function () {
+                  btn.disabled = true;
+                  var next = val ? null : new Date().toISOString();
+                  sb.from('commandes').update((function () { var o = {}; o[field] = next; return o; })()).eq('id', id).then(function (res) {
+                    btn.disabled = false;
+                    if (res.error) { ecMsg.textContent = 'Échec : ' + res.error.message; return; }
+                    val = next;
+                    commande[field] = next;
+                    btn.textContent = val ? labelClear : labelSet;
+                    ecMsg.textContent = 'Enregistré.';
+                  });
+                });
+              }
+              setupJalonBtn(ecRelectureBtn, 'relecture_validee_at', 'Marquer la relecture validée', 'Annuler la validation de relecture');
+              setupJalonBtn(ecEnLigneBtn, 'mise_en_ligne_at', 'Marquer en ligne', 'Annuler la mise en ligne');
+            }
 
             document.getElementById('det-loading').hidden = true;
             document.getElementById('det-content').hidden = false;

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
+<meta name="robots" content="noindex, nofollow">
+<title>Mot de passe oublié — Espace client FELICITI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/espace.css?v=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FAF6EF'/%3E%3Ctext x='7' y='24' font-family='Georgia,serif' font-size='23' font-weight='600' fill='%232E2620'%3EF%3C/text%3E%3Ccircle cx='24.5' cy='9' r='2.8' fill='%23A6845C'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-box">
+      <div class="auth-mark"><span class="mark">FELICIT<span class="i-last">I</span></span></div>
+      <p class="auth-sub">Mot de passe oublié</p>
+
+      <form id="reset-form">
+        <div class="auth-field">
+          <label for="rs-email">E-mail</label>
+          <input id="rs-email" type="email" autocomplete="username" required>
+        </div>
+        <button class="auth-btn" type="submit" id="reset-btn">Recevoir un lien de réinitialisation</button>
+      </form>
+      <div id="reset-msg"></div>
+
+      <p class="auth-foot"><a href="../connexion/">← Retour à la connexion</a></p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>window.ESPACE_BASE = '../';</script>
+  <script src="../js/client-shared.js?v=1"></script>
+  <script>
+    (function () {
+      var sb = FeliClient.sb;
+      function msg(el, text, kind) {
+        el.innerHTML = text ? '<p class="auth-msg ' + kind + '">' + text + '</p>' : '';
+      }
+
+      document.getElementById('reset-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var btn = document.getElementById('reset-btn');
+        var msgEl = document.getElementById('reset-msg');
+        var email = document.getElementById('rs-email').value.trim();
+        msg(msgEl, '', '');
+        btn.disabled = true; btn.textContent = 'Envoi…';
+
+        sb.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + '/espace/definir-mot-de-passe/'
+        }).then(function (res) {
+          /* Toujours le même message, que l'e-mail existe ou non — on ne
+             révèle jamais si une adresse est liée à un compte. */
+          btn.disabled = true; btn.textContent = 'Lien envoyé';
+          msg(msgEl,
+            'Si un espace client existe pour cette adresse, un lien de réinitialisation vient de lui être envoyé.',
+            'ok');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
